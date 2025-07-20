@@ -43,16 +43,30 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 - [x] Multi-environment deployment (staging/dev/prod) (2025-07-20)
 - [ ] Docker configuration for local development
 
-#### Week 3-4: Authentication & Multi-tenancy
-- [ ] Supabase Auth implementation
-- [ ] Email/password authentication
-- [ ] OAuth providers (Google, Microsoft)
-- [ ] Organization management
-- [ ] User roles and permissions (RBAC)
-- [ ] Row Level Security (RLS) policies
-- [ ] Onboarding flow
+#### Week 3-4: Authentication & Multi-tenancy (MVP)
+- [ ] Supabase Auth implementation with email/password only
+- [ ] 6-tier role hierarchy implementation:
+  - [ ] Tenant Admin (full organization control)
+  - [ ] Regional Manager (multi-store oversight)
+  - [ ] Store Manager (single store control)
+  - [ ] Analyst (cross-store read-only analytics)
+  - [ ] Store Staff (operational access)
+  - [ ] Viewer (dashboard read-only)
+- [ ] Organization (tenant) management
+- [ ] User profile system with role assignments
+- [ ] Store and region assignment tables
+- [ ] Row Level Security (RLS) policies for tenant isolation
+- [ ] Basic user management UI (admin only)
+- [ ] Audit logging for auth events
 
-**Deliverables**: Working auth system with multi-tenant support
+**Deliverables**: Working auth system with complete role hierarchy and tenant isolation
+
+**Deferred to Phase 5 (Enterprise Features)**:
+- OAuth providers (Google, Microsoft, etc.)
+- SAML 2.0 / Enterprise SSO
+- Multi-Factor Authentication (MFA)
+- Self-service invitation codes
+- Advanced compliance features (GDPR/CCPA tools)
 
 ---
 
@@ -125,74 +139,81 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 
 ---
 
-### 🤖 Phase 5: AI Integration (Weeks 17-20)
-**Goal**: Predictive analytics and insights
+### 🤖 Phase 5: AI & Advanced Analytics (Weeks 17-20)
+**Goal**: Predictive analytics and intelligent insights
 
-#### Week 17-18: AI Predictions
-- [ ] OpenAI integration
+#### Week 17-18: AI Integration
+- [ ] OpenAI integration for insights
 - [ ] Footfall predictions
 - [ ] Revenue forecasting
 - [ ] Anomaly detection
-- [ ] Confidence intervals
-- [ ] Model accuracy tracking
+- [ ] Natural language report summaries
+- [ ] Automated recommendations
 
-#### Week 19-20: Intelligent Insights
-- [ ] Automated insights generation
-- [ ] Natural language summaries
-- [ ] Actionable recommendations
-- [ ] What-if scenarios
-- [ ] Trend analysis
+#### Week 19-20: Advanced Analytics
+- [ ] Trend analysis and forecasting
+- [ ] What-if scenario modeling
 - [ ] Competitive benchmarking
+- [ ] Customer journey analytics
+- [ ] Heat map intelligence
+- [ ] Conversion optimization insights
 
-**Deliverables**: AI-powered analytics platform
+**Deliverables**: AI-powered analytics with predictive capabilities
 
 ---
 
-### 🔌 Phase 6: Enterprise Integrations (Weeks 21-24)
-**Goal**: Power BI and Dynamics 365 connectivity
+### 🔌 Phase 6: Enterprise Features & Integrations (Weeks 21-24)
+**Goal**: Enterprise authentication, compliance, and integrations
 
-#### Week 21-22: Power BI Integration
-- [ ] OData endpoint
-- [ ] Push datasets
-- [ ] DirectQuery support
-- [ ] Embedded reports
-- [ ] Row-level security
-- [ ] Automated refresh
+#### Week 21-22: Enterprise Authentication
+- [ ] OAuth providers integration (Google, Microsoft, etc.)
+- [ ] SAML 2.0 for Enterprise SSO (Okta, Azure AD, Auth0)
+- [ ] Multi-Factor Authentication (MFA/2FA)
+- [ ] Self-service invitation code system
+- [ ] Advanced permission delegation
+- [ ] Session management enhancements
 
-#### Week 23-24: Enterprise Features
-- [ ] Dynamics 365 sync
-- [ ] SSO implementation
-- [ ] Advanced RBAC
-- [ ] Audit logging
-- [ ] Compliance reports
-- [ ] White-labeling options
+#### Week 23-24: Enterprise Integrations & Compliance
+- [ ] Power BI embedding and connectivity
+- [ ] Dynamics 365 synchronization
+- [ ] GDPR compliance tools (data export, deletion)
+- [ ] CCPA compliance features
+- [ ] Advanced audit logging and reporting
+- [ ] White-labeling capabilities
+- [ ] API rate limiting and management
+- [ ] Webhook system for integrations
 
-**Deliverables**: Enterprise-ready platform
+**Deliverables**: Enterprise-ready platform with advanced auth and compliance
 
 ---
 
 ## Feature Rollout Schedule
 
 ### MVP Features (Month 1-2)
-- ✅ Authentication
-- ✅ Multi-tenancy
+- ✅ Email/password authentication
+- ✅ 6-tier role hierarchy (Admin → Viewer)
+- ✅ Multi-tenancy with RLS
 - ✅ Basic people counting
 - ✅ Real-time dashboard
-- ✅ Basic reporting
+- ✅ User management (admin only)
 
 ### Beta Features (Month 3-4)
 - 🚧 Sales integration
-- 🚧 Smart targets
+- 🚧 Smart targets & KPIs
 - 🚧 Advanced analytics
 - 🚧 Alert system
+- 🚧 Report builder
 - 🚧 Mobile responsive
 
 ### GA Features (Month 5-6)
-- 📅 AI predictions
+- 📅 AI predictions & insights
+- 📅 OAuth providers (Google/Microsoft)
+- 📅 Enterprise SSO (SAML)
+- 📅 MFA/2FA security
 - 📅 Power BI integration
-- 📅 Industry benchmarking
-- 📅 API access
+- 📅 API access & webhooks
 - 📅 White-labeling
+- 📅 Compliance tools (GDPR/CCPA)
 
 ## Technical Milestones
 
@@ -315,21 +336,32 @@ total_estimate: ~$500-800/month
 
 Based on the roadmap, the next immediate priorities are:
 
-### 1. Authentication & Multi-tenancy (Week 3-4)
-- Implement Supabase Auth with email/password
-- Set up OAuth providers (Google, Microsoft)
-- Create organization management system
-- Implement RBAC with proper permissions
-- Set up Row Level Security policies
+### 1. Authentication MVP (Week 3-4)
+- Implement Supabase Auth with email/password only
+- Create 6-tier role hierarchy system
+- Build organization (tenant) management
+- Implement Row Level Security policies
+- Create user management UI for admins
+- Set up audit logging
 
-### 2. Connect Frontend to Backend
-- Integrate existing HTML mockups with Next.js
-- Create API routes for sensor data
-- Implement real-time data updates
-- Connect dashboards to live data
+### 2. Connect Frontend to Backend (Week 5-6)
+- Convert HTML mockups to Next.js components
+- Create protected routes based on roles
+- Build role-aware dashboards
+- Implement API authentication
+- Connect sensor data to UI
 
-### 3. Data Ingestion Pipeline
+### 3. Data Ingestion Pipeline (Week 7-8)
 - Create sensor data models in Supabase
-- Build API endpoints for data collection
-- Implement data validation and processing
-- Set up real-time data synchronization
+- Build authenticated API endpoints
+- Apply RLS to sensor data
+- Implement real-time updates
+- Create data validation layer
+
+### 4. Future Authentication Enhancements (Phase 6)
+**Documented but deferred:**
+- OAuth providers (Google, Microsoft)
+- Enterprise SSO (SAML 2.0)
+- Multi-Factor Authentication
+- Self-service invitation codes
+- Advanced compliance features
