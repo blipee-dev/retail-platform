@@ -34,12 +34,18 @@ This guide covers deployment procedures for blipee OS Retail Intelligence using 
 ### Environment Strategy
 
 ```
-main branch     → Production (app.blipee.com)
-staging branch  → Staging (staging.blipee.com)
-develop branch  → Development (dev.blipee.com)
+main branch     → Production (https://retail-platform-blipee.vercel.app)
+staging branch  → Staging (https://retail-platform-git-staging-blipee.vercel.app)
+develop branch  → Development (https://retail-platform-git-develop-blipee.vercel.app)
 feature/*      → Preview deployments (auto-generated URLs)
 codespaces     → Individual development environments
 ```
+
+### Current Deployment Status
+
+- ✅ **Staging**: Deployed and accessible at https://retail-platform-git-staging-blipee.vercel.app
+- ✅ **Development**: Deployed and accessible at https://retail-platform-git-develop-blipee.vercel.app
+- ⏳ **Production**: Ready to deploy when main branch is updated
 
 ### Environment Variables
 

@@ -13,12 +13,16 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 - **Frontend Mockups**: Multiple dashboard designs ready
 - **Analysis Scripts**: Customer pathway and heatmap visualization
 - **Repository Organization**: Clean, well-structured codebase
+- **Multi-Environment Deployment**: Staging and development environments live
+- **Next.js 14 Setup**: Basic app structure with App Router
+- **Supabase Integration**: Database credentials configured
+- **CI/CD Pipeline**: GitHub Actions and Vercel auto-deployments
 
 ### 🚧 In Progress
 - **Real-time Data Processing**: Need WebSocket/polling implementation
 - **Frontend Integration**: Connect mockups to backend
-- **Production Deployment**: No deployment setup yet
 - **Authentication Integration**: Auth exists but not connected
+- **Custom Domain Configuration**: Need to set up domain aliases
 
 ## Development Phases
 
@@ -34,8 +38,9 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 - [x] GitHub Codespaces configuration (2025-07-20)
 - [x] Supabase project setup with credentials (2025-07-20)
 - [x] Vercel project setup and configuration (2025-07-20)
-- [ ] Next.js app structure implementation
-- [ ] CI/CD pipeline (GitHub Actions)
+- [x] Next.js app structure implementation (2025-07-20)
+- [x] CI/CD pipeline (GitHub Actions) (2025-07-20)
+- [x] Multi-environment deployment (staging/dev/prod) (2025-07-20)
 - [ ] Docker configuration for local development
 
 #### Week 3-4: Authentication & Multi-tenancy
@@ -302,6 +307,29 @@ total_estimate: ~$500-800/month
 
 **Note**: This roadmap is a living document and will be updated based on customer feedback, technical discoveries, and business priorities.
 
-**Last Updated**: 2025-07-16  
-**Version**: 1.0  
+**Last Updated**: 2025-07-20  
+**Version**: 1.1  
 **Owner**: blipee Product Team
+
+## Next Activities (Starting 2025-07-20)
+
+Based on the roadmap, the next immediate priorities are:
+
+### 1. Authentication & Multi-tenancy (Week 3-4)
+- Implement Supabase Auth with email/password
+- Set up OAuth providers (Google, Microsoft)
+- Create organization management system
+- Implement RBAC with proper permissions
+- Set up Row Level Security policies
+
+### 2. Connect Frontend to Backend
+- Integrate existing HTML mockups with Next.js
+- Create API routes for sensor data
+- Implement real-time data updates
+- Connect dashboards to live data
+
+### 3. Data Ingestion Pipeline
+- Create sensor data models in Supabase
+- Build API endpoints for data collection
+- Implement data validation and processing
+- Set up real-time data synchronization

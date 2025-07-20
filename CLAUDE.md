@@ -15,12 +15,17 @@ This file provides context for AI assistants (like Claude) working on the Retail
 - Customer pathway analysis
 - Frontend mockups and dashboards
 - Major repository reorganization (2025-07-20)
+- Multi-environment deployment setup (2025-07-20)
+- Next.js 14 application structure with App Router
+- Vercel deployment with automatic branch deployments
+- Environment-specific configurations
+- CI/CD pipeline with GitHub Actions
 
 ### 🚧 In Progress
 - Real-time data processing
 - Advanced analytics features
 - API standardization
-- Production deployment setup
+- Custom domain configuration
 
 ## Project Structure
 
@@ -55,12 +60,15 @@ retail-platform/
 
 ## Key Technologies
 
-- **Backend**: Python 3.x
+- **Backend**: Python 3.x, Next.js 14 (App Router)
+- **Database**: Supabase (PostgreSQL with Row Level Security)
+- **Deployment**: Vercel (automatic deployments)
 - **Sensors**: Milesight API integration (primary), Omnia (secondary)
-- **Frontend**: HTML/CSS/JavaScript (mockups ready, not fully integrated)
-- **Testing**: pytest
+- **Frontend**: Next.js 14, React, TypeScript
+- **Testing**: pytest (Python), Jest (JavaScript)
 - **Data Processing**: pandas, numpy
 - **Visualization**: matplotlib, seaborn
+- **CI/CD**: GitHub Actions, Vercel
 
 ## Important Files to Know
 
@@ -144,6 +152,37 @@ python scripts/analysis/analyze_customer_pathways.py
 - Updated all import paths
 - Consolidated documentation into single docs/ folder
 - Archived old/unused files
+- Set up multi-environment deployment:
+  - Staging: https://retail-platform-git-staging-blipee.vercel.app
+  - Development: https://retail-platform-git-develop-blipee.vercel.app
+  - Production: Ready for deployment to main branch
+- Created Next.js 14 app structure with environment awareness
+- Configured Supabase database integration
+- Set up GitHub Actions for CI/CD
+
+## Deployment Information
+
+### Environments
+- **Production**: Deploy to main branch → https://retail-platform-blipee.vercel.app
+- **Staging**: Deploy to staging branch → https://retail-platform-git-staging-blipee.vercel.app  
+- **Development**: Deploy to develop branch → https://retail-platform-git-develop-blipee.vercel.app
+
+### Environment Variables
+- Use `scripts/env-manager.sh` to manage Vercel environment variables
+- Environment files: `.env.development`, `.env.staging`, `.env.production`
+- Supabase credentials are configured in all environments
+
+### Deployment Commands
+```bash
+# Push environment variables to Vercel
+./scripts/env-manager.sh push staging
+./scripts/env-manager.sh push production
+
+# Deploy to specific environment
+git push origin staging  # Auto-deploys to staging
+git push origin develop  # Auto-deploys to development
+git push origin main     # Auto-deploys to production
+```
 
 ## Contact & Support
 
