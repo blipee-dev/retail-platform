@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Title - blipee OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="common-styles.css">
+    <style>
+        /* Enhanced Accessibility Styles */
+        
+        /* Skip to main content link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            border-radius: 0 0 0.5rem 0;
+            z-index: 100;
+        }
+        
+        .skip-link:focus {
+            top: 0;
+        }
+        
+        /* Enhanced focus indicators */
+        *:focus {
+            outline: 2px solid var(--blue);
+            outline-offset: 2px;
+        }
+        
+        /* Better contrast for light text */
+        .low-contrast-text {
+            color: rgba(255, 255, 255, 0.8); /* Increased from 0.6 */
+        }
+        
+        /* Mobile navigation */
+        .mobile-nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-nav-toggle {
+                display: block;
+            }
+            
+            .sidebar {
+                position: fixed;
+                left: -250px;
+                top: 0;
+                height: 100vh;
+                z-index: 999;
+                transition: left 0.3s ease;
+                display: flex !important;
+            }
+            
+            .sidebar.mobile-open {
+                left: 0;
+            }
+            
+            .mobile-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 998;
+            }
+            
+            .mobile-overlay.active {
+                display: block;
+            }
+            
+            /* Stack form elements on mobile */
+            .form-group {
+                flex-direction: column;
+            }
+            
+            /* Responsive tables */
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            /* Larger touch targets */
+            .btn, .nav-link {
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+            }
+        }
+        
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .card {
+                border: 2px solid white;
+            }
+            
+            .btn-secondary {
+                border-width: 2px;
+            }
+        }
+        
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip navigation link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <div class="dashboard-layout">
+        <!-- Header -->
+        <header class="header" role="banner">
+            <div class="header-left">
+                <button class="mobile-nav-toggle" 
+                        onclick="toggleMobileNav()" 
+                        aria-label="Toggle navigation menu"
+                        aria-expanded="false"
+                        aria-controls="sidebar-nav">
+                    <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+                <button class="sidebar-toggle" 
+                        onclick="toggleSidebar()"
+                        aria-label="Toggle sidebar"
+                        aria-expanded="true">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+                <div class="header-logo">
+                    <span role="img" aria-label="blipee logo">blipee</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <!-- Add page-specific actions here -->
+                <div class="user-profile" 
+                     onclick="toggleUserMenu(event)"
+                     role="button"
+                     tabindex="0"
+                     aria-label="User menu"
+                     aria-expanded="false"
+                     aria-haspopup="true">
+                    <div class="user-avatar" aria-hidden="true">JD</div>
+                    <div class="user-info">
+                        <span class="user-name">John Doe</span>
+                        <span class="user-role low-contrast-text">Administrator</span>
+                    </div>
+                    <nav class="user-dropdown" 
+                         id="userDropdown" 
+                         role="menu"
+                         aria-label="User menu">
+                        <a href="profile.html" class="dropdown-item" role="menuitem">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                            </svg>
+                            My Profile
+                        </a>
+                        <a href="settings.html" class="dropdown-item" role="menuitem">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                            </svg>
+                            Settings
+                        </a>
+                        <div class="dropdown-divider" role="separator"></div>
+                        <a href="logout.html" class="dropdown-item" role="menuitem">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path>
+                            </svg>
+                            Sign Out
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Mobile overlay -->
+        <div class="mobile-overlay" onclick="closeMobileNav()"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar-nav" role="navigation" aria-label="Main navigation">
+            <nav>
+                <ul class="nav-menu" role="list">
+                    <li class="nav-item" role="none">
+                        <a href="sites.html" class="nav-link" role="menuitem">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                            </svg>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="dashboard.html" class="nav-link" role="menuitem" aria-current="page">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="analytics.html" class="nav-link" role="menuitem">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span>Analytics</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="reports.html" class="nav-link" role="menuitem">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm2-3a1 1 0 011 1v5a1 1 0 11-2 0v-5a1 1 0 011-1zm4-1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Reports</span>
+                        </a>
+                    </li>
+                    <li class="nav-divider" role="separator"></li>
+                    <li class="nav-item" role="none">
+                        <a href="settings.html" class="nav-link" role="menuitem">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Sidebar Bottom -->
+            <div class="sidebar-bottom">
+                <!-- Sidebar Controls -->
+                <div class="sidebar-controls" role="group" aria-label="Theme and language controls">
+                    <div class="control-item">
+                        <button class="theme-toggle" 
+                                onclick="toggleTheme()" 
+                                aria-label="Toggle dark/light theme"
+                                aria-pressed="false">
+                            <svg class="theme-icon-dark" width="20" height="20" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                            </svg>
+                            <svg class="theme-icon-light" width="20" height="20" fill="currentColor" viewBox="0 0 20 20" style="display:none;" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="control-item">
+                        <label for="language-selector" class="sr-only">Select language</label>
+                        <select id="language-selector" 
+                                class="language-selector" 
+                                onchange="changeLanguage(this.value)"
+                                aria-label="Select language">
+                            <option value="en">EN</option>
+                            <option value="es">ES</option>
+                            <option value="fr">FR</option>
+                            <option value="pt">PT</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="sidebar-footer">
+                    <div class="sidebar-footer-content" style="text-align: center;">
+                        <div class="powered-by low-contrast-text">
+                            <span class="powered-text">Powered by</span>
+                            <span class="powered-logo">blipee</span>
+                        </div>
+                        <div class="version-info" style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; font-size: 0.625rem; color: rgba(255, 255, 255, 0.8);">
+                            <span>v2.1.0</span>
+                            <span aria-hidden="true">•</span>
+                            <span>Build 4512</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collapse Button -->
+            <button class="collapse-btn" 
+                    onclick="toggleSidebar()"
+                    aria-label="Collapse sidebar"
+                    aria-expanded="true">
+                <svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                </svg>
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="main-content" role="main">
+            <!-- Breadcrumb -->
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <ol style="display: flex; list-style: none; gap: 0.5rem; margin-bottom: 2rem;">
+                    <li><a href="sites.html" class="breadcrumb-item">All Stores</a></li>
+                    <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+                    <li><a href="dashboard.html" class="breadcrumb-item">Downtown Store</a></li>
+                    <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+                    <li><span class="breadcrumb-item active" aria-current="page">Current Page</span></li>
+                </ol>
+            </nav>
+
+            <!-- PAGE CONTENT GOES HERE -->
+            <h1>Page Title</h1>
+            <p>Your page content goes here...</p>
+
+            <!-- Example of accessible form -->
+            <section aria-labelledby="form-heading">
+                <h2 id="form-heading">Example Accessible Form</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="example-input" class="form-label">
+                            Example Field
+                            <span class="required" aria-label="required">*</span>
+                        </label>
+                        <input type="text" 
+                               id="example-input" 
+                               class="form-input" 
+                               aria-required="true"
+                               aria-describedby="example-help">
+                        <span id="example-help" class="form-help">
+                            This is help text for the field
+                        </span>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Example of responsive table -->
+            <section aria-labelledby="table-heading">
+                <h2 id="table-heading">Example Responsive Table</h2>
+                <div class="table-responsive">
+                    <table class="table" role="table">
+                        <caption class="sr-only">Sample data table</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Sample Item</td>
+                                <td>Active</td>
+                                <td>
+                                    <button class="btn btn-secondary" aria-label="Edit Sample Item">
+                                        Edit
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Screen reader only content -->
+    <div class="sr-only" aria-live="polite" aria-atomic="true">
+        <!-- Dynamic announcements go here -->
+    </div>
+
+    <script src="common-scripts.js"></script>
+    <script>
+        // Enhanced accessibility scripts
+        
+        // Mobile navigation
+        function toggleMobileNav() {
+            const sidebar = document.getElementById('sidebar-nav');
+            const overlay = document.querySelector('.mobile-overlay');
+            const toggle = document.querySelector('.mobile-nav-toggle');
+            const isOpen = sidebar.classList.contains('mobile-open');
+            
+            if (isOpen) {
+                closeMobileNav();
+            } else {
+                sidebar.classList.add('mobile-open');
+                overlay.classList.add('active');
+                toggle.setAttribute('aria-expanded', 'true');
+                
+                // Trap focus in mobile nav
+                sidebar.focus();
+            }
+        }
+        
+        function closeMobileNav() {
+            const sidebar = document.getElementById('sidebar-nav');
+            const overlay = document.querySelector('.mobile-overlay');
+            const toggle = document.querySelector('.mobile-nav-toggle');
+            
+            sidebar.classList.remove('mobile-open');
+            overlay.classList.remove('active');
+            toggle.setAttribute('aria-expanded', 'false');
+        }
+        
+        // Enhanced keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            // Escape key closes dropdowns and mobile nav
+            if (e.key === 'Escape') {
+                closeMobileNav();
+                const dropdown = document.getElementById('userDropdown');
+                if (dropdown.classList.contains('active')) {
+                    dropdown.classList.remove('active');
+                    document.querySelector('.user-profile').setAttribute('aria-expanded', 'false');
+                }
+            }
+            
+            // Tab trap for modals (implement when modals are added)
+        });
+        
+        // Make user profile keyboard accessible
+        document.querySelector('.user-profile').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleUserMenu(e);
+            }
+        });
+        
+        // Announce page changes for screen readers
+        function announcePageChange(message) {
+            const announcer = document.querySelector('[aria-live="polite"]');
+            announcer.textContent = message;
+            setTimeout(() => {
+                announcer.textContent = '';
+            }, 1000);
+        }
+        
+        // Enhanced theme toggle
+        function toggleTheme() {
+            const isDark = document.body.classList.toggle('light-theme');
+            const themeToggle = document.querySelector('.theme-toggle');
+            
+            document.querySelector('.theme-icon-dark').style.display = isDark ? 'none' : 'block';
+            document.querySelector('.theme-icon-light').style.display = isDark ? 'block' : 'none';
+            
+            themeToggle.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+            announcePageChange(isDark ? 'Light theme activated' : 'Dark theme activated');
+        }
+        
+        // Language change with announcement
+        function changeLanguage(lang) {
+            // In a real application, this would change the language
+            console.log('Language changed to:', lang);
+            const languages = {
+                'en': 'English',
+                'es': 'Spanish',
+                'fr': 'French',
+                'pt': 'Portuguese'
+            };
+            announcePageChange(`Language changed to ${languages[lang]}`);
+        }
+
+        // Enhanced sidebar toggle
+        function toggleSidebar() {
+            const layout = document.querySelector('.dashboard-layout');
+            const isCollapsed = layout.classList.contains('sidebar-collapsed');
+            layout.classList.toggle('sidebar-collapsed');
+            
+            const collapseBtn = document.querySelector('.collapse-btn');
+            const sidebarToggle = document.querySelector('.sidebar-toggle');
+            const icon = collapseBtn.querySelector('svg');
+            
+            if (!isCollapsed) {
+                icon.style.transform = 'rotate(180deg)';
+                collapseBtn.setAttribute('aria-expanded', 'false');
+                sidebarToggle.setAttribute('aria-expanded', 'false');
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+                collapseBtn.setAttribute('aria-expanded', 'true');
+                sidebarToggle.setAttribute('aria-expanded', 'true');
+            }
+            
+            // Save preference
+            localStorage.setItem('sidebarCollapsed', !isCollapsed);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Retail Intelligence Dashboard - blipee OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            --gradient-warning: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-info: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-ai: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --gradient-dark: linear-gradient(135deg, #232526 0%, #414345 100%);
+            
+            --color-primary: #667eea;
+            --color-success: #11998e;
+            --color-warning: #f5576c;
+            --color-info: #4facfe;
+            --color-ai: #fa709a;
+            
+            --bg-primary: #0f0f23;
+            --bg-secondary: #1a1a3a;
+            --bg-tertiary: #252547;
+            --bg-card: rgba(255, 255, 255, 0.02);
+            --bg-glass: rgba(255, 255, 255, 0.05);
+            
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            
+            --border-color: rgba(255, 255, 255, 0.1);
+            --border-hover: rgba(255, 255, 255, 0.2);
+            
+            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.3);
+            --shadow-ai: 0 0 30px rgba(250, 112, 154, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.03;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #4facfe);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Main Layout */
+        .dashboard-container {
+            min-height: 100vh;
+            padding: 2rem;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .store-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+
+        .store-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .header-stat {
+            text-align: center;
+        }
+
+        .header-stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .header-stat-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .live-status {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            background: var(--gradient-success);
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+        }
+
+        .pulse-dot {
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        /* Main Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            grid-template-rows: auto auto auto auto;
+            gap: 2rem;
+            grid-template-areas:
+                "kpi1 kpi2 kpi3 ai-insights"
+                "sales-chart sales-chart traffic-chart ai-insights"
+                "zones zones heatmap predictions"
+                "performance performance analytics recommendations";
+        }
+
+        /* Card Base Styles */
+        .card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            opacity: 0.8;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--border-hover);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-icon {
+            width: 24px;
+            height: 24px;
+            opacity: 0.8;
+        }
+
+        .card-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* KPI Cards */
+        .kpi-card {
+            text-align: center;
+            position: relative;
+        }
+
+        .kpi-card.kpi1 { grid-area: kpi1; }
+        .kpi-card.kpi2 { grid-area: kpi2; }
+        .kpi-card.kpi3 { grid-area: kpi3; }
+
+        .kpi-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .kpi-label {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .kpi-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .kpi-change.positive {
+            background: rgba(17, 153, 142, 0.2);
+            color: var(--color-success);
+        }
+
+        .kpi-change.negative {
+            background: rgba(245, 87, 108, 0.2);
+            color: var(--color-warning);
+        }
+
+        /* AI Insights Card */
+        .ai-insights {
+            grid-area: ai-insights;
+            background: linear-gradient(135deg, rgba(250, 112, 154, 0.1) 0%, rgba(254, 225, 64, 0.1) 100%);
+            border: 1px solid rgba(250, 112, 154, 0.3);
+            box-shadow: var(--shadow-ai);
+            position: relative;
+        }
+
+        .ai-insights::before {
+            background: var(--gradient-ai);
+        }
+
+        .ai-glow {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(250, 112, 154, 0.1), transparent);
+            animation: rotate 8s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .ai-insight {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--color-ai);
+            position: relative;
+            z-index: 1;
+        }
+
+        .ai-insight-title {
+            font-weight: 700;
+            color: var(--color-ai);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .ai-insight-content {
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        .ai-confidence {
+            display: inline-block;
+            background: rgba(250, 112, 154, 0.2);
+            color: var(--color-ai);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        /* Charts */
+        .chart-card {
+            position: relative;
+        }
+
+        .sales-chart { grid-area: sales-chart; }
+        .traffic-chart { grid-area: traffic-chart; }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        .chart-overlay {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        /* Zone Analytics */
+        .zones-card {
+            grid-area: zones;
+        }
+
+        .zones-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .zone-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .zone-item:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .zone-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-info);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .zone-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin: 0.5rem 0;
+            font-weight: 500;
+        }
+
+        .zone-occupancy {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .zone-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-top: 0.75rem;
+            overflow: hidden;
+        }
+
+        .zone-fill {
+            height: 100%;
+            background: var(--gradient-info);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        /* Heatmap */
+        .heatmap-card {
+            grid-area: heatmap;
+        }
+
+        .heatmap-visual {
+            height: 200px;
+            background: linear-gradient(45deg, 
+                rgba(17, 153, 142, 0.8) 0%,
+                rgba(103, 126, 234, 0.6) 25%,
+                rgba(245, 87, 108, 0.8) 50%,
+                rgba(250, 112, 154, 0.6) 75%,
+                rgba(76, 172, 254, 0.4) 100%);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .heat-point {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            filter: blur(20px);
+            animation: heatPulse 3s ease-in-out infinite alternate;
+        }
+
+        .heat-point.hot {
+            background: rgba(245, 87, 108, 0.8);
+        }
+
+        .heat-point.warm {
+            background: rgba(250, 112, 154, 0.6);
+        }
+
+        .heat-point.cool {
+            background: rgba(76, 172, 254, 0.4);
+        }
+
+        @keyframes heatPulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.2); opacity: 0.4; }
+        }
+
+        .heatmap-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .heat-stat {
+            text-align: center;
+        }
+
+        .heat-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .heat-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Predictions */
+        .predictions-card {
+            grid-area: predictions;
+        }
+
+        .prediction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            border-left: 3px solid var(--color-info);
+        }
+
+        .prediction-content {
+            flex: 1;
+        }
+
+        .prediction-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .prediction-detail {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .prediction-confidence {
+            background: rgba(76, 172, 254, 0.2);
+            color: var(--color-info);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Performance */
+        .performance-card {
+            grid-area: performance;
+        }
+
+        .performance-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+
+        .performance-metric {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .performance-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .performance-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Analytics */
+        .analytics-card {
+            grid-area: analytics;
+        }
+
+        .analytics-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .analytics-tab {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .analytics-tab.active {
+            background: var(--gradient-primary);
+            border-color: transparent;
+        }
+
+        /* Recommendations */
+        .recommendations-card {
+            grid-area: recommendations;
+            background: linear-gradient(135deg, rgba(103, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border: 1px solid rgba(103, 126, 234, 0.3);
+        }
+
+        .recommendation-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.25rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--color-primary);
+        }
+
+        .recommendation-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .recommendation-content {
+            flex: 1;
+        }
+
+        .recommendation-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .recommendation-detail {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .recommendation-impact {
+            display: inline-block;
+            background: rgba(103, 126, 234, 0.2);
+            color: var(--color-primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+                grid-template-areas:
+                    "kpi1 kpi2 kpi3"
+                    "ai-insights ai-insights ai-insights"
+                    "sales-chart sales-chart traffic-chart"
+                    "zones zones heatmap"
+                    "predictions performance performance"
+                    "analytics analytics recommendations";
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                grid-template-areas:
+                    "kpi1"
+                    "kpi2"
+                    "kpi3"
+                    "ai-insights"
+                    "sales-chart"
+                    "traffic-chart"
+                    "zones"
+                    "heatmap"
+                    "predictions"
+                    "performance"
+                    "analytics"
+                    "recommendations";
+            }
+            
+            .header-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .performance-grid,
+            .zones-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Animation utilities */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .counter-animation {
+            animation: countUp 2s ease-out;
+        }
+
+        @keyframes countUp {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header fade-in">
+            <div class="header-left">
+                <h1 class="store-title">Omnia GuimarãesShopping</h1>
+                <p class="store-subtitle">Executive Intelligence Dashboard • AI-Powered Retail Analytics</p>
+            </div>
+            
+            <div class="header-stats">
+                <div class="header-stat">
+                    <div class="header-stat-value counter-animation">€9,247</div>
+                    <div class="header-stat-label">Today's Revenue</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value counter-animation">5,743</div>
+                    <div class="header-stat-label">Visitors</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value counter-animation">12.4%</div>
+                    <div class="header-stat-label">Conversion</div>
+                </div>
+                <div class="live-status">
+                    <div class="pulse-dot"></div>
+                    <span>Live Intelligence Active</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- KPI Cards -->
+            <div class="card kpi-card kpi1 fade-in">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <svg class="card-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.51-1.31c-.562-.649-1.413-1.076-2.353-1.253V5z" clip-rule="evenodd"/>
+                        </svg>
+                        Revenue Velocity
+                    </h3>
+                </div>
+                <div class="kpi-value counter-animation">€348</div>
+                <div class="kpi-label">Per Hour Average</div>
+                <div class="kpi-change positive">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    +23% vs yesterday
+                </div>
+            </div>
+
+            <div class="card kpi-card kpi2 fade-in">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <svg class="card-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
+                        </svg>
+                        Current Occupancy
+                    </h3>
+                </div>
+                <div class="kpi-value counter-animation">487</div>
+                <div class="kpi-label">People In Store</div>
+                <div class="kpi-change positive">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    +45 last hour
+                </div>
+            </div>
+
+            <div class="card kpi-card kpi3 fade-in">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <svg class="card-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                        </svg>
+                        AI Confidence
+                    </h3>
+                </div>
+                <div class="kpi-value counter-animation">94%</div>
+                <div class="kpi-label">Prediction Accuracy</div>
+                <div class="kpi-change positive">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    Model improving
+                </div>
+            </div>
+
+            <!-- AI Insights -->
+            <div class="card ai-insights fade-in">
+                <div class="ai-glow"></div>
+                <div class="card-header" style="position: relative; z-index: 1;">
+                    <h3 class="card-title">
+                        <svg class="card-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+                        </svg>
+                        AI Intelligence Engine
+                    </h3>
+                    <span class="card-subtitle">OpenAI GPT-4 Powered</span>
+                </div>
+                
+                <div style="position: relative; z-index: 1;">
+                    <div class="ai-insight">
+                        <div class="ai-insight-title">
+                            🎯 Revenue Optimization Alert
+                        </div>
+                        <div class="ai-insight-content">
+                            Peak traffic detected (+23% above forecast). AI recommends adding 2 staff members in next 30 minutes for optimal conversion. Potential additional revenue: €1,247
+                        </div>
+                        <span class="ai-confidence">87% Confidence</span>
+                    </div>
+                    
+                    <div class="ai-insight">
+                        <div class="ai-insight-title">
+                            💎 Product Placement Insight
+                        </div>
+                        <div class="ai-insight-content">
+                            Zone 3 shows 31% higher engagement for jewelry displays. Moving "PAR DE BRINCOS EM PRATA" collection here could increase sales by €2,100 weekly.
+                        </div>
+                        <span class="ai-confidence">94% Confidence</span>
+                    </div>
+                    
+                    <div class="ai-insight">
+                        <div class="ai-insight-title">
+                            📈 Predictive Inventory
+                        </div>
+                        <div class="ai-insight-content">
+                            Tomorrow's weather forecast (sunny, 24°C) + historical patterns suggest 67% increase in summer jewelry demand. Recommend restocking Zone 2 displays.
+                        </div>
+                        <span class="ai-confidence">91% Confidence</span>
+                    </div>
+                    
+                    <div class="ai-insight">
+                        <div class="ai-insight-title">
+                            🏃‍♀️ Customer Flow Optimization
+                        </div>
+                        <div class="ai-insight-content">
+                            Analysis of 105 Zone 3→1 transitions shows premium product interest. Strategic placement of cross-sell items could boost transaction value by €23 average.
+                        </div>
+                        <span class="ai-confidence">89% Confidence</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sales Chart -->
+            <div class="card chart-card sales-chart fade-in">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <svg class="card-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        Sales Performance
+                    </h3>
+                    <span class="card-subtitle">Real-time API Data</span>
+                </div>
+                <div class="chart-container">
+                    <canvas id="salesChart"></canvas>
+                    <div class="chart-overlay">
+                        🚀 Peak predicted: 4-5pm
+                    </div>
+                </div>
+            </div>
+
+            <!-- Traffic Chart -->
+            <div class="card chart-card traffic-chart fade-in">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <svg class="card-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
+                        </svg>
+                        Customer Traffic
+                    </h3>
+                    <span class="card-subtitle">Milesight Sensors</span>
+                </div>
+                <div class="chart-container">
+                    <canvas id="trafficChart"></canvas>
+                    <div class="chart-overlay">
+                        👥 Conversion: 12.4%
+                    </div>
+                </div>
+            </div>
+
+            <!-- Zone Analytics -->
+            <div class="card zones-card fade-in">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <svg class="card-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 01-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 1a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-2 0V6.414l-2.293 2.293a1 1 0 11-1.414-1.414L13.586 5H12zm-9 7a1 1 0 012 0v1.586l2.293-2.293a1 1 0 111.414 1.414L6.414 15H8a1 1 0 010 2H4a1 1 0 01-1-1v-4zm13-1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 010-2h1.586l-2.293-2.293a1 1 0 111.414-1.414L15.586 13H14a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        Zone Performance Intelligence
+                    </h3>
+                    <span class="card-subtitle">Real-time Occupancy & Engagement</span>
+                </div>
+                <div class="zones-grid">
+                    <div class="zone-item">
+                        <div class="zone-number">89</div>
+                        <div class="zone-label">Zone 1 • Entrance</div>
+                        <div class="zone-occupancy">35% Capacity</div>
+                        <div class="zone-bar">
+                            <div class="zone-fill" style="width: 35%"></div>
+                        </div>
+                    </div>
+                    <div class="zone-item">
+                        <div class="zone-number">156</div>
+                        <div class="zone-label">Zone 2 • Main Area</div>
+                        <div class="zone-occupancy">62% Capacity</div>
+                        <div class="zone-bar">
+                            <div class="zone-fill" style="width: 62%"></div>
+                        </div>
+                    </div>
+                    <div class="zone-item">
+                        <div class="zone-number">198</div>
+                        <div class="zone-label">Zone 3 • Premium</div>
+                        <div class="zone-occupancy">79% Capacity</div>
+                        <div class="zone-bar">
+                            <div class="zone-fill" style="width: 79%"></div>
+                        </div>
+                    </div>
+                    <div class="zone-item">
+                        <div class="zone-number">44</div>
+                        <div class="zone-label">Zone 4 • Checkout</div>
+                        <div class="zone-occupancy">18% Capacity</div>
+                        <div class="zone-bar">
+                            <div class="zone-fill" style="width: 18%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Heatmap -->
+            <div class="card heatmap-card fade-in">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <svg class="card-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293L14 1.586v12.828l2.293 2.293A1 1 0 0018 16V6a1 1 0 00-.293-.707z" clip-rule="evenodd"/>
+                        </svg>
+                        Customer Heat Map
+                    </h3>
+                    <span class="card-subtitle">Activity Density Analysis</span>
+                </div>
+                <div class="heatmap-visual">
+                    <div class="heat-point hot" style="top: 20%; left: 30%;"></div>
+                    <div class="heat-point hot" style="top: 60%; left: 70%;"></div>
+                    <div class="heat-point warm" style="top: 40%; right: 25%;"></div>
+                    <div class="heat-point warm" style="bottom: 30%; left: 40%;"></div>
+                    <div class="heat-point cool" style="top: 70%; left: 15%;"></div>
+                    <div class="heat-point cool" style="bottom: 20%; right: 15%;"></div>
+                </div>
+                <div class="heatmap-stats">
+                    <div class="heat-stat">
+                        <div class="heat-stat-value" style="color: var(--color-warning);">5</div>
+                        <div class="heat-stat-label">Hot Spots</div>
+                    </div>
+                    <div class="heat-stat">
+                        <div class="heat-stat-value" style="color: var(--color-ai);">2</div>
+                        <div class="heat-stat-label">Dead Zones</div>
+                    </div>
+                    <div class="heat-stat">
+                        <div class="heat-stat-value" style="color: var(--color-success);">87%</div>
+                        <div class="heat-stat-label">Space Efficiency</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Predictions -->
+            <div class="card predictions-card fade-in">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <svg class="card-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                        </svg>
+                        AI Predictions
+                    </h3>
+                    <span class="card-subtitle">Next 4 Hours Forecast</span>
+                </div>
+                
+                <div class="prediction-item">
+                    <div class="prediction-content">
+                        <div class="prediction-title">Peak Traffic Window</div>
+                        <div class="prediction-detail">Expected 620+ visitors between 3-5pm</div>
+                    </div>
+                    <div class="prediction-confidence">91% Confident</div>
+                </div>
+                
+                <div class="prediction-item">
+                    <div class="prediction-content">
+                        <div class="prediction-title">Revenue Opportunity</div>
+                        <div class="prediction-detail">€1,847 potential with optimal staffing</div>
+                    </div>
+                    <div class="prediction-confidence">87% Confident</div>
+                </div>
+                
+                <div class="prediction-item">
+                    <div class="prediction-content">
+                        <div class="prediction-title">Inventory Alert</div>
+                        <div class="prediction-detail">Silver jewelry stock critical by 4pm</div>
+                    </div>
+                    <div class="prediction-confidence">94% Confident</div>
+                </div>
+                
+                <div class="prediction-item">
+                    <div class="prediction-content">
+                        <div class="prediction-title">Conversion Boost</div>
+                        <div class="prediction-detail">+2.3% with strategic product placement</div>
+                    </div>
+                    <div class="prediction-confidence">89% Confident</div>
+                </div>
+            </div>
+
+            <!-- Performance Metrics -->
+            <div class="card performance-card fade-in">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <svg class="card-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        Key Performance Indicators
+                    </h3>
+                    <span class="card-subtitle">Today vs Yesterday</span>
+                </div>
+                <div class="performance-grid">
+                    <div class="performance-metric">
+                        <div class="performance-value" style="color: var(--color-success);">€34.87</div>
+                        <div class="performance-label">Avg Transaction</div>
+                    </div>
+                    <div class="performance-metric">
+                        <div class="performance-value" style="color: var(--color-info);">4.2min</div>
+                        <div class="performance-label">Avg Dwell Time</div>
+                    </div>
+                    <div class="performance-metric">
+                        <div class="performance-value" style="color: var(--color-ai);">71%</div>
+                        <div class="performance-label">Return Visitors</div>
+                    </div>
+                    <div class="performance-metric">
+                        <div class="performance-value" style="color: var(--color-warning);">3.8</div>
+                        <div class="performance-label">Items per Sale</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics -->
+            <div class="card analytics-card fade-in">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <svg class="card-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        Business Intelligence
+                    </h3>
+                </div>
+                <div class="analytics-tabs">
+                    <div class="analytics-tab active">Revenue</div>
+                    <div class="analytics-tab">Traffic</div>
+                    <div class="analytics-tab">Products</div>
+                    <div class="analytics-tab">Staff</div>
+                </div>
+                <div style="height: 120px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.02); border-radius: 8px;">
+                    <div style="text-align: center; color: var(--text-muted);">
+                        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📊</div>
+                        <div>Advanced analytics visualization</div>
+                        <div style="font-size: 0.875rem;">Interactive charts and deep-dive insights</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="card recommendations-card fade-in">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <svg class="card-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+                        </svg>
+                        Smart Recommendations
+                    </h3>
+                    <span class="card-subtitle">AI-Generated Action Items</span>
+                </div>
+                
+                <div class="recommendation-item">
+                    <div class="recommendation-icon">
+                        <svg width="16" height="16" fill="white" viewBox="0 0 20 20">
+                            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
+                        </svg>
+                    </div>
+                    <div class="recommendation-content">
+                        <div class="recommendation-title">Add Staff Now</div>
+                        <div class="recommendation-detail">Peak traffic incoming. Add 2 associates to Zones 2-3 for optimal conversion during 3-5pm window.</div>
+                        <div class="recommendation-impact">+€1,247 Revenue Potential</div>
+                    </div>
+                </div>
+                
+                <div class="recommendation-item">
+                    <div class="recommendation-icon">
+                        <svg width="16" height="16" fill="white" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 01-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 1a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-2 0V6.414l-2.293 2.293a1 1 0 11-1.414-1.414L13.586 5H12z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <div class="recommendation-content">
+                        <div class="recommendation-title">Optimize Zone 4</div>
+                        <div class="recommendation-detail">Checkout area underutilized. Install impulse displays and promotional items near payment terminals.</div>
+                        <div class="recommendation-impact">+€340 Weekly Revenue</div>
+                    </div>
+                </div>
+                
+                <div class="recommendation-item">
+                    <div class="recommendation-icon">
+                        <svg width="16" height="16" fill="white" viewBox="0 0 20 20">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div class="recommendation-content">
+                        <div class="recommendation-title">Restock Alert</div>
+                        <div class="recommendation-detail">Silver jewelry collection trending. Restock premium items in Zone 3 before tomorrow's predicted surge.</div>
+                        <div class="recommendation-impact">Prevent €2,100 Lost Sales</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize charts
+        document.addEventListener('DOMContentLoaded', function() {
+            initSalesChart();
+            initTrafficChart();
+            animateCounters();
+            startRealTimeUpdates();
+        });
+
+        function initSalesChart() {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['9AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM', '5PM', '6PM'],
+                    datasets: [{
+                        label: 'Revenue',
+                        data: [245, 389, 567, 823, 1156, 1487, 1789, 2234, 1892, 1456],
+                        borderColor: 'rgba(103, 126, 234, 1)',
+                        backgroundColor: 'rgba(103, 126, 234, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: 'rgba(103, 126, 234, 1)',
+                        pointBorderColor: 'white',
+                        pointBorderWidth: 2,
+                        pointRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.8)'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                callback: function(value) {
+                                    return '€' + value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function initTrafficChart() {
+            const ctx = document.getElementById('trafficChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['9AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM', '5PM', '6PM'],
+                    datasets: [{
+                        label: 'Visitors',
+                        data: [67, 89, 134, 187, 234, 298, 367, 423, 389, 312],
+                        backgroundColor: 'rgba(76, 172, 254, 0.8)',
+                        borderColor: 'rgba(76, 172, 254, 1)',
+                        borderWidth: 2,
+                        borderRadius: 6,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.8)'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.8)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function animateCounters() {
+            const counters = document.querySelectorAll('.counter-animation');
+            counters.forEach(counter => {
+                counter.style.transform = 'scale(0.8)';
+                counter.style.opacity = '0';
+                
+                setTimeout(() => {
+                    counter.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                    counter.style.transform = 'scale(1)';
+                    counter.style.opacity = '1';
+                }, Math.random() * 500);
+            });
+        }
+
+        function startRealTimeUpdates() {
+            // Simulate real-time data updates
+            setInterval(() => {
+                updateOccupancy();
+                updateZoneCounts();
+                updateRevenue();
+            }, 5000);
+        }
+
+        function updateOccupancy() {
+            const occupancyElement = document.querySelector('.kpi2 .kpi-value');
+            const current = parseInt(occupancyElement.textContent);
+            const change = Math.floor(Math.random() * 10) - 5;
+            const newValue = Math.max(400, Math.min(600, current + change));
+            
+            occupancyElement.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                occupancyElement.textContent = newValue;
+                occupancyElement.style.transform = 'scale(1)';
+            }, 150);
+        }
+
+        function updateZoneCounts() {
+            document.querySelectorAll('.zone-number').forEach((el, index) => {
+                const current = parseInt(el.textContent);
+                const change = Math.floor(Math.random() * 6) - 3;
+                const newValue = Math.max(0, current + change);
+                
+                el.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    el.textContent = newValue;
+                    el.style.transform = 'scale(1)';
+                    
+                    // Update capacity bar
+                    const maxCapacity = [120, 250, 280, 100][index];
+                    const percentage = (newValue / maxCapacity) * 100;
+                    const bar = el.parentElement.querySelector('.zone-fill');
+                    const capacityEl = el.parentElement.querySelector('.zone-occupancy');
+                    
+                    bar.style.width = Math.min(100, percentage) + '%';
+                    capacityEl.textContent = Math.round(percentage) + '% Capacity';
+                }, 150);
+            });
+        }
+
+        function updateRevenue() {
+            const revenueElement = document.querySelector('.kpi1 .kpi-value');
+            const current = parseInt(revenueElement.textContent.replace('€', ''));
+            const increase = Math.floor(Math.random() * 15) + 5;
+            const newValue = current + increase;
+            
+            revenueElement.style.transform = 'scale(1.1)';
+            revenueElement.style.color = 'var(--color-success)';
+            
+            setTimeout(() => {
+                revenueElement.textContent = '€' + newValue;
+                revenueElement.style.transform = 'scale(1)';
+                revenueElement.style.color = '';
+            }, 150);
+        }
+
+        // Analytics tab switching
+        document.querySelectorAll('.analytics-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.analytics-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Add entrance animation
+        setTimeout(() => {
+            document.querySelectorAll('.fade-in').forEach((el, index) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        }, 100);
+    </script>
+</body>
+</html>

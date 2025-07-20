@@ -1,0 +1,80 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "regions": ["iad1"],
+  
+  "git": {
+    "deploymentEnabled": {
+      "main": true,
+      "staging": true,
+      "develop": true
+    }
+  },
+  
+  "functions": {
+    "app/api/sensors/[...route]/route.ts": {
+      "maxDuration": 30
+    },
+    "app/api/analytics/[...route]/route.ts": {
+      "maxDuration": 30
+    }
+  },
+  
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "s-maxage=0"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    }
+  ],
+  
+  "rewrites": [
+    {
+      "source": "/api/python/:path*",
+      "destination": "https://your-python-api.vercel.app/api/:path*"
+    }
+  ],
+  
+  "redirects": [
+    {
+      "source": "/dashboard",
+      "destination": "/app/dashboard",
+      "permanent": false
+    }
+  ],
+  
+  "github": {
+    "enabled": true,
+    "autoAlias": true,
+    "silent": true
+  },
+  
+  "outputDirectory": ".next"
+}

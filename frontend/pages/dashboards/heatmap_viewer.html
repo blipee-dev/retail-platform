@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omnia GuimarãesShopping - Heatmap Visualizations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border-left: 4px solid #3498db;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .visualization-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .viz-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .viz-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .viz-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .viz-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            border: 2px solid #ecf0f1;
+        }
+        
+        .viz-description {
+            margin-top: 15px;
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+        
+        .comparison-section {
+            margin-top: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .comparison-section h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-size: 2rem;
+        }
+        
+        .comparison-img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            border: 2px solid #ecf0f1;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border-top: 4px solid #e74c3c;
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .feature-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .feature-description {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .footer p {
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+        
+        .tech-stack {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .tech-item {
+            background: #3498db;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .visualization-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏪 Omnia GuimarãesShopping</h1>
+            <p>Live Analytics Dashboard - Milesight Sensor Data Visualization</p>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-value">15,686</div>
+                    <div class="stat-label">Spatial Heat Points</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">24</div>
+                    <div class="stat-label">Hours of Data</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">Visualization Types</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">4</div>
+                    <div class="stat-label">Data Categories</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="visualization-grid">
+            <div class="viz-card">
+                <h3>🗺️ Spatial Activity Heatmap</h3>
+                <img src="spatial_heatmap.png" alt="Spatial Heatmap" loading="lazy">
+                <div class="viz-description">
+                    <strong>15,686 heat points</strong> showing customer activity across the store layout. 
+                    Red areas indicate high activity zones, while blue areas show lower traffic regions. 
+                    Grid resolution: 171 x 191 points covering the entire store floor plan.
+                </div>
+            </div>
+            
+            <div class="viz-card">
+                <h3>📊 Temporal Activity Heatmap</h3>
+                <img src="temporal_heatmap.png" alt="Temporal Heatmap" loading="lazy">
+                <div class="viz-description">
+                    <strong>24-hour activity trends</strong> showing peak and low activity periods. 
+                    Heat values range from 7,055 to 26,390 intensity units. 
+                    Peak activity identified with annotations showing optimal staffing times.
+                </div>
+            </div>
+            
+            <div class="viz-card">
+                <h3>👥 People Flow Analysis</h3>
+                <img src="people_flow.png" alt="People Flow" loading="lazy">
+                <div class="viz-description">
+                    <strong>Real-time traffic patterns</strong> showing hourly in/out counts and net flow. 
+                    Green indicates entries, red indicates exits. 
+                    Bar chart shows net occupancy changes throughout the day.
+                </div>
+            </div>
+            
+            <div class="viz-card">
+                <h3>🏪 Regional Activity Analysis</h3>
+                <img src="regional_activity.png" alt="Regional Activity" loading="lazy">
+                <div class="viz-description">
+                    <strong>Zone-based performance</strong> tracking activity in 4 configurable store regions. 
+                    Line chart shows trends over time, pie chart shows current distribution. 
+                    Helps identify most popular departments and zones.
+                </div>
+            </div>
+            
+            <div class="viz-card">
+                <h3>📈 Live Dashboard Summary</h3>
+                <img src="dashboard_summary.png" alt="Dashboard Summary" loading="lazy">
+                <div class="viz-description">
+                    <strong>Real-time metrics</strong> including current occupancy, total visitors, and system status. 
+                    Mini-charts show recent trends. 
+                    Complete operational overview for store management.
+                </div>
+            </div>
+        </div>
+        
+        <div class="comparison-section">
+            <h2>🔍 Complete Analytics Suite</h2>
+            <img src="heatmap_comparison.png" alt="Heatmap Comparison" class="comparison-img" loading="lazy">
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <div class="feature-title">Real-time Data</div>
+                    <div class="feature-description">Live sensor data from Milesight cameras with automatic updates</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">Multiple Data Types</div>
+                    <div class="feature-description">People counting, regional analysis, temporal and spatial heatmaps</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <div class="feature-title">Configuration Driven</div>
+                    <div class="feature-description">Zero code changes needed - just update configuration files</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <div class="feature-title">Business Insights</div>
+                    <div class="feature-description">Traffic patterns, peak hours, zone performance, and layout optimization</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p><strong>Generated:</strong> July 18, 2025 | <strong>Data Source:</strong> Milesight IP Camera (93.108.96.96:21001)</p>
+            <p><strong>System:</strong> Configuration-driven connector with real-time analytics</p>
+            <div class="tech-stack">
+                <span class="tech-item">Python</span>
+                <span class="tech-item">Milesight API</span>
+                <span class="tech-item">Matplotlib</span>
+                <span class="tech-item">Real-time Data</span>
+                <span class="tech-item">15,686 Heat Points</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - blipee OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #0EA5E9 100%);
+            --gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            --gradient-blue: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-green: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            
+            --purple: #8B5CF6;
+            --blue: #0EA5E9;
+            --green: #10B981;
+            --yellow: #F59E0B;
+            --red: #EF4444;
+            --dark: #0F172A;
+            --darker: #020617;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--darker);
+            color: var(--white);
+            min-height: 100vh;
+        }
+
+        /* Two Column Layout */
+        .settings-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Left Navigation Sidebar */
+        .settings-sidebar {
+            width: 280px;
+            background: rgba(15, 23, 42, 0.95);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .settings-logo {
+            font-size: 1.75rem;
+            font-weight: 400;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 3rem;
+            display: block;
+            text-decoration: none;
+        }
+
+        .settings-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .settings-nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .settings-nav-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 0.75rem;
+        }
+
+        .settings-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 0.9375rem;
+        }
+
+        .settings-nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        .settings-nav-item.active {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--purple);
+            font-weight: 500;
+        }
+
+        .settings-nav-icon {
+            width: 20px;
+            height: 20px;
+            opacity: 0.8;
+        }
+
+        /* Main Content Area */
+        .settings-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem 3rem;
+            max-width: 1000px;
+        }
+
+        .settings-header {
+            margin-bottom: 3rem;
+        }
+
+        .settings-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .settings-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+        }
+
+        /* Settings Sections */
+        .settings-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .settings-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Form Cards */
+        .settings-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .settings-card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .settings-card-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 0.9375rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--purple);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        /* Toggle Switch */
+        .toggle-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .toggle-item:last-child {
+            border-bottom: none;
+        }
+
+        .toggle-content {
+            flex: 1;
+            margin-right: 1rem;
+        }
+
+        .toggle-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .toggle-description {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            transition: 0.3s;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            width: 18px;
+            height: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--purple);
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9375rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Activity Log Styles */
+        .activity-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--green);
+        }
+
+        .activity-icon.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--yellow);
+        }
+
+        .activity-icon.info {
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--blue);
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-description {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .activity-time {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Save Bar */
+        .save-bar {
+            position: fixed;
+            bottom: 0;
+            left: 280px;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem 3rem;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 100;
+        }
+
+        .save-bar.active {
+            display: flex;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.25rem;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        .save-bar-message {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .save-bar-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .settings-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .settings-content {
+                margin-left: 0;
+                padding: 1.5rem;
+            }
+
+            .save-bar {
+                left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="settings-layout">
+        <!-- Settings Sidebar -->
+        <aside class="settings-sidebar">
+            <a href="dashboard.html" class="settings-logo">blipee</a>
+            
+            <nav class="settings-nav">
+                <!-- Account Section -->
+                <div class="settings-nav-section">
+                    <div class="settings-nav-title">Account</div>
+                    <button class="settings-nav-item active" onclick="showSection('profile')">
+                        <svg class="settings-nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>Profile</span>
+                    </button>
+                    <button class="settings-nav-item" onclick="showSection('preferences')">
+                        <svg class="settings-nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>Preferences</span>
+                    </button>
+                    <button class="settings-nav-item" onclick="showSection('notifications')">
+                        <svg class="settings-nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+                        </svg>
+                        <span>Notifications</span>
+                    </button>
+                </div>
+
+                <!-- Organization Section -->
+                <div class="settings-nav-section">
+                    <div class="settings-nav-title">Organization</div>
+                    <button class="settings-nav-item" onclick="showSection('company')">
+                        <svg class="settings-nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm3 5a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1zm0 3a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>Company Details</span>
+                    </button>
+                    <button class="settings-nav-item" onclick="showSection('team')">
+                        <svg class="settings-nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                        </svg>
+                        <span>Team Management</span>
+                    </button>
+                    <button class="settings-nav-item" onclick="showSection('stores')">
+                        <svg class="settings-nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10.496 2.132a1 1 0 00-.992 0l-7 4A1 1 0 003 8v7a1 1 0 100 2h14a1 1 0 100-2V8a1 1 0 00.496-1.868l-7-4zM6 9a1 1 0 00-1 1v3a1 1 0 102 0v-3a1 1 0 00-1-1zm3 1a1 1 0 012 0v3a1 1 0 11-2 0v-3zm5-1a1 1 0 00-1 1v3a1 1 0 102 0v-3a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>Store Settings</span>
+                    </button>
+                    <button class="settings-nav-item" onclick="showSection('billing')">
+                        <svg class="settings-nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>Billing & Plans</span>
+                    </button>
+                </div>
+
+                <!-- Platform Section -->
+                <div class="settings-nav-section">
+                    <div class="settings-nav-title">Platform</div>
+                    <button class="settings-nav-item" onclick="showSection('integrations')">
+                        <svg class="settings-nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>Integrations</span>
+                    </button>
+                    <button class="settings-nav-item" onclick="showSection('security')">
+                        <svg class="settings-nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>Security</span>
+                    </button>
+                    <button class="settings-nav-item" onclick="showSection('api')">
+                        <svg class="settings-nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>API & Webhooks</span>
+                    </button>
+                    <button class="settings-nav-item" onclick="showSection('activity')">
+                        <svg class="settings-nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>Activity Logs</span>
+                    </button>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="settings-content">
+            <!-- Profile Section -->
+            <section id="profile-section" class="settings-section active">
+                <div class="settings-header">
+                    <h1 class="settings-title">Profile Settings</h1>
+                    <p class="settings-description">Manage your personal information and account preferences</p>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Personal Information</h2>
+                    <form>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">First Name</label>
+                                <input type="text" class="form-input" value="John" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" class="form-input" value="Doe" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-input" value="john.doe@acmeretail.com" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" class="form-input" value="+1 (555) 123-4567" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Bio</label>
+                            <textarea class="form-textarea" rows="3" placeholder="Tell us about yourself...">Retail operations manager with 10+ years of experience in multi-store management and analytics.</textarea>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Profile Photo</h2>
+                    <p class="settings-card-description">Upload a profile photo to personalize your account</p>
+                    <div style="display: flex; align-items: center; gap: 2rem;">
+                        <div style="width: 100px; height: 100px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 600;">JD</div>
+                        <div>
+                            <button class="btn btn-primary">Upload New Photo</button>
+                            <button class="btn btn-secondary" style="margin-left: 1rem;">Remove Photo</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Preferences Section -->
+            <section id="preferences-section" class="settings-section">
+                <div class="settings-header">
+                    <h1 class="settings-title">Preferences</h1>
+                    <p class="settings-description">Customize your platform experience</p>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Display Settings</h2>
+                    <div class="toggle-item">
+                        <div class="toggle-content">
+                            <div class="toggle-title">Dark Mode</div>
+                            <div class="toggle-description">Use dark theme across the platform</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="showSaveBar()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-content">
+                            <div class="toggle-title">Compact View</div>
+                            <div class="toggle-description">Show more information in less space</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" onchange="showSaveBar()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-content">
+                            <div class="toggle-title">Animations</div>
+                            <div class="toggle-description">Enable smooth transitions and animations</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="showSaveBar()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Regional Settings</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Language</label>
+                            <select class="form-select" onchange="showSaveBar()">
+                                <option>English (US)</option>
+                                <option>Spanish</option>
+                                <option>French</option>
+                                <option>Portuguese</option>
+                                <option>German</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Timezone</label>
+                            <select class="form-select" onchange="showSaveBar()">
+                                <option>Eastern Time (ET)</option>
+                                <option>Central Time (CT)</option>
+                                <option>Mountain Time (MT)</option>
+                                <option>Pacific Time (PT)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Date Format</label>
+                            <select class="form-select" onchange="showSaveBar()">
+                                <option>MM/DD/YYYY</option>
+                                <option>DD/MM/YYYY</option>
+                                <option>YYYY-MM-DD</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Time Format</label>
+                            <select class="form-select" onchange="showSaveBar()">
+                                <option>12 Hour (AM/PM)</option>
+                                <option>24 Hour</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Dashboard Preferences</h2>
+                    <div class="toggle-item">
+                        <div class="toggle-content">
+                            <div class="toggle-title">Auto-refresh Data</div>
+                            <div class="toggle-description">Automatically update dashboard metrics every 30 seconds</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="showSaveBar()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-content">
+                            <div class="toggle-title">Show Welcome Tips</div>
+                            <div class="toggle-description">Display helpful tips and onboarding guides</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="showSaveBar()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Activity Logs Section -->
+            <section id="activity-section" class="settings-section">
+                <div class="settings-header">
+                    <h1 class="settings-title">Activity Logs</h1>
+                    <p class="settings-description">View and manage system activity records</p>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Log Configuration</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Retention Period</label>
+                            <select class="form-select" onchange="showSaveBar()">
+                                <option>7 days</option>
+                                <option selected>30 days</option>
+                                <option>90 days</option>
+                                <option>180 days</option>
+                                <option>1 year</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Log Level</label>
+                            <select class="form-select" onchange="showSaveBar()">
+                                <option>Errors Only</option>
+                                <option>Warnings & Errors</option>
+                                <option selected>Info, Warnings & Errors</option>
+                                <option>Debug (All Events)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-content">
+                            <div class="toggle-title">Export Logs Daily</div>
+                            <div class="toggle-description">Automatically export logs to backup storage</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" onchange="showSaveBar()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Recent Activity</h2>
+                    <div class="activity-item">
+                        <div class="activity-icon success">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">Settings Updated</div>
+                            <div class="activity-description">John Doe updated company timezone settings</div>
+                        </div>
+                        <div class="activity-time">2 minutes ago</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon info">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6z"/>
+                            </svg>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">New Team Member</div>
+                            <div class="activity-description">Sarah Miller joined as Store Manager</div>
+                        </div>
+                        <div class="activity-time">1 hour ago</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon warning">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">API Rate Limit Warning</div>
+                            <div class="activity-description">Approaching daily API call limit (85% used)</div>
+                        </div>
+                        <div class="activity-time">3 hours ago</div>
+                    </div>
+                    <button class="btn btn-secondary" style="width: 100%; margin-top: 1rem;">View All Activity</button>
+                </div>
+            </section>
+
+            <!-- Notifications Section -->
+            <section id="notifications-section" class="settings-section">
+                <div class="settings-header">
+                    <h1 class="settings-title">Notification Settings</h1>
+                    <p class="settings-description">Configure how and when you receive notifications</p>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Email Notifications</h2>
+                    <div class="toggle-item">
+                        <div class="toggle-content">
+                            <div class="toggle-title">Daily Summary</div>
+                            <div class="toggle-description">Receive a daily overview of all stores performance</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="showSaveBar()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-content">
+                            <div class="toggle-title">Weekly Reports</div>
+                            <div class="toggle-description">Comprehensive weekly analytics and insights</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="showSaveBar()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-content">
+                            <div class="toggle-title">Real-time Alerts</div>
+                            <div class="toggle-description">Instant notifications for critical events</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="showSaveBar()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Alert Thresholds</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Low Stock Alert (%)</label>
+                            <input type="number" class="form-input" value="15" min="5" max="50" onchange="showSaveBar()" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">High Traffic Alert (visitors/hour)</label>
+                            <input type="number" class="form-input" value="500" min="100" max="5000" onchange="showSaveBar()" />
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Conversion Rate Drop (%)</label>
+                            <input type="number" class="form-input" value="20" min="5" max="50" onchange="showSaveBar()" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">System Error Threshold</label>
+                            <input type="number" class="form-input" value="5" min="1" max="100" onchange="showSaveBar()" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Notification Channels</h2>
+                    <div class="toggle-item">
+                        <div class="toggle-content">
+                            <div class="toggle-title">Email</div>
+                            <div class="toggle-description">Send notifications to john.doe@acmeretail.com</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="showSaveBar()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-content">
+                            <div class="toggle-title">SMS</div>
+                            <div class="toggle-description">Send text messages to +1 (555) 123-4567</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" onchange="showSaveBar()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-content">
+                            <div class="toggle-title">Push Notifications</div>
+                            <div class="toggle-description">Browser and mobile app notifications</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="showSaveBar()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Company Section -->
+            <section id="company-section" class="settings-section">
+                <div class="settings-header">
+                    <h1 class="settings-title">Company Details</h1>
+                    <p class="settings-description">Manage your organization information and branding</p>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Company Information</h2>
+                    <form>
+                        <div class="form-group">
+                            <label class="form-label">Company Name</label>
+                            <input type="text" class="form-input" value="Acme Retail Corporation" onchange="showSaveBar()" />
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Business Registration Number</label>
+                                <input type="text" class="form-input" value="US-123-456-789" onchange="showSaveBar()" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Tax ID</label>
+                                <input type="text" class="form-input" value="98-7654321" onchange="showSaveBar()" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Headquarters Address</label>
+                            <textarea class="form-textarea" rows="3" onchange="showSaveBar()">123 Business Street
+New York, NY 10001
+United States</textarea>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Industry</label>
+                                <select class="form-select" onchange="showSaveBar()">
+                                    <option selected>Retail - General Merchandise</option>
+                                    <option>Retail - Fashion & Apparel</option>
+                                    <option>Retail - Electronics</option>
+                                    <option>Retail - Grocery</option>
+                                    <option>Retail - Home & Garden</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Company Size</label>
+                                <select class="form-select" onchange="showSaveBar()">
+                                    <option>1-10 employees</option>
+                                    <option>11-50 employees</option>
+                                    <option selected>51-200 employees</option>
+                                    <option>201-500 employees</option>
+                                    <option>500+ employees</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Branding</h2>
+                    <div class="form-group">
+                        <label class="form-label">Company Logo</label>
+                        <div style="display: flex; align-items: center; gap: 2rem; margin-top: 1rem;">
+                            <div style="width: 120px; height: 120px; background: rgba(255, 255, 255, 0.1); border: 2px dashed rgba(255, 255, 255, 0.3); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">
+                                <span style="color: rgba(255, 255, 255, 0.5);">No logo</span>
+                            </div>
+                            <div>
+                                <button class="btn btn-primary">Upload Logo</button>
+                                <p style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); margin-top: 0.5rem;">PNG, JPG up to 5MB</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Brand Colors</label>
+                        <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                            <div>
+                                <label style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.6);">Primary</label>
+                                <input type="color" value="#8B5CF6" style="width: 60px; height: 40px; border: none; border-radius: 0.25rem; cursor: pointer;" onchange="showSaveBar()">
+                            </div>
+                            <div>
+                                <label style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.6);">Secondary</label>
+                                <input type="color" value="#0EA5E9" style="width: 60px; height: 40px; border: none; border-radius: 0.25rem; cursor: pointer;" onchange="showSaveBar()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Team Section -->
+            <section id="team-section" class="settings-section">
+                <div class="settings-header">
+                    <h1 class="settings-title">Team Management</h1>
+                    <p class="settings-description">Manage team members and their permissions</p>
+                </div>
+
+                <div class="settings-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2 class="settings-card-title" style="margin-bottom: 0;">Team Members</h2>
+                        <button class="btn btn-primary" onclick="showInviteModal()">Invite Member</button>
+                    </div>
+                    
+                    <!-- Team member list -->
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.5rem;">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div style="width: 48px; height: 48px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">JD</div>
+                                <div>
+                                    <div style="font-weight: 500;">John Doe</div>
+                                    <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">john.doe@acmeretail.com</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <span style="padding: 0.25rem 0.75rem; background: rgba(139, 92, 246, 0.1); color: var(--purple); border-radius: 9999px; font-size: 0.75rem; font-weight: 500;">Owner</span>
+                                <button class="btn btn-secondary" style="padding: 0.5rem;">⋯</button>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.5rem;">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div style="width: 48px; height: 48px; background: var(--gradient-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">SM</div>
+                                <div>
+                                    <div style="font-weight: 500;">Sarah Miller</div>
+                                    <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">sarah.miller@acmeretail.com</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <span style="padding: 0.25rem 0.75rem; background: rgba(14, 165, 233, 0.1); color: var(--blue); border-radius: 9999px; font-size: 0.75rem; font-weight: 500;">Admin</span>
+                                <button class="btn btn-secondary" style="padding: 0.5rem;">⋯</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Roles & Permissions</h2>
+                    <p class="settings-card-description">Configure what each role can access and modify</p>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <div style="border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.5rem; overflow: hidden;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: rgba(255, 255, 255, 0.05);">
+                                        <th style="padding: 0.75rem; text-align: left; font-weight: 500; font-size: 0.875rem;">Permission</th>
+                                        <th style="padding: 0.75rem; text-align: center; font-weight: 500; font-size: 0.875rem;">Owner</th>
+                                        <th style="padding: 0.75rem; text-align: center; font-weight: 500; font-size: 0.875rem;">Admin</th>
+                                        <th style="padding: 0.75rem; text-align: center; font-weight: 500; font-size: 0.875rem;">Manager</th>
+                                        <th style="padding: 0.75rem; text-align: center; font-weight: 500; font-size: 0.875rem;">Viewer</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                                        <td style="padding: 0.75rem; font-size: 0.875rem;">View Analytics</td>
+                                        <td style="padding: 0.75rem; text-align: center;">✓</td>
+                                        <td style="padding: 0.75rem; text-align: center;">✓</td>
+                                        <td style="padding: 0.75rem; text-align: center;">✓</td>
+                                        <td style="padding: 0.75rem; text-align: center;">✓</td>
+                                    </tr>
+                                    <tr style="border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                                        <td style="padding: 0.75rem; font-size: 0.875rem;">Manage Stores</td>
+                                        <td style="padding: 0.75rem; text-align: center;">✓</td>
+                                        <td style="padding: 0.75rem; text-align: center;">✓</td>
+                                        <td style="padding: 0.75rem; text-align: center;">✓</td>
+                                        <td style="padding: 0.75rem; text-align: center;">-</td>
+                                    </tr>
+                                    <tr style="border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                                        <td style="padding: 0.75rem; font-size: 0.875rem;">Manage Team</td>
+                                        <td style="padding: 0.75rem; text-align: center;">✓</td>
+                                        <td style="padding: 0.75rem; text-align: center;">✓</td>
+                                        <td style="padding: 0.75rem; text-align: center;">-</td>
+                                        <td style="padding: 0.75rem; text-align: center;">-</td>
+                                    </tr>
+                                    <tr style="border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                                        <td style="padding: 0.75rem; font-size: 0.875rem;">Billing & Payments</td>
+                                        <td style="padding: 0.75rem; text-align: center;">✓</td>
+                                        <td style="padding: 0.75rem; text-align: center;">-</td>
+                                        <td style="padding: 0.75rem; text-align: center;">-</td>
+                                        <td style="padding: 0.75rem; text-align: center;">-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stores Section -->
+            <section id="stores-section" class="settings-section">
+                <div class="settings-header">
+                    <h1 class="settings-title">Store Settings</h1>
+                    <p class="settings-description">Configure default settings for all stores</p>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Default Store Configuration</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Default Store Type</label>
+                            <select class="form-select" onchange="showSaveBar()">
+                                <option>Retail Store</option>
+                                <option>Supermarket</option>
+                                <option>Department Store</option>
+                                <option>Shopping Mall</option>
+                                <option>Warehouse</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Store ID Format</label>
+                            <input type="text" class="form-input" value="STR-{YYYY}-{0000}" onchange="showSaveBar()" />
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Default Operating Hours</label>
+                            <select class="form-select" onchange="showSaveBar()">
+                                <option>Standard (9 AM - 9 PM)</option>
+                                <option>Extended (8 AM - 10 PM)</option>
+                                <option>24 Hours</option>
+                                <option>Custom</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Time Zone Detection</label>
+                            <select class="form-select" onchange="showSaveBar()">
+                                <option>Auto-detect from location</option>
+                                <option>Use company default</option>
+                                <option>Manual selection</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Analytics & Tracking</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Data Retention Period</label>
+                            <select class="form-select" onchange="showSaveBar()">
+                                <option>90 days</option>
+                                <option>180 days</option>
+                                <option selected>1 year</option>
+                                <option>2 years</option>
+                                <option>Unlimited</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Heatmap Resolution</label>
+                            <select class="form-select" onchange="showSaveBar()">
+                                <option>Low (Fast)</option>
+                                <option selected>Medium (Balanced)</option>
+                                <option>High (Detailed)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-content">
+                            <div class="toggle-title">Enable People Counting</div>
+                            <div class="toggle-description">Track visitor count and demographics</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="showSaveBar()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-content">
+                            <div class="toggle-title">Queue Analytics</div>
+                            <div class="toggle-description">Monitor checkout queue lengths and wait times</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="showSaveBar()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Camera Settings</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Default Camera System</label>
+                            <select class="form-select" onchange="showSaveBar()">
+                                <option>Axis Communications</option>
+                                <option>Hikvision</option>
+                                <option>Dahua</option>
+                                <option>Milestone</option>
+                                <option>Custom RTSP</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Video Quality</label>
+                            <select class="form-select" onchange="showSaveBar()">
+                                <option>720p HD</option>
+                                <option selected>1080p Full HD</option>
+                                <option>4K Ultra HD</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Frame Rate</label>
+                            <select class="form-select" onchange="showSaveBar()">
+                                <option>15 FPS</option>
+                                <option selected>30 FPS</option>
+                                <option>60 FPS</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Video Retention</label>
+                            <input type="number" class="form-input" value="30" min="7" max="90" onchange="showSaveBar()" />
+                            <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">days</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Billing Section -->
+            <section id="billing-section" class="settings-section">
+                <div class="settings-header">
+                    <h1 class="settings-title">Billing & Plans</h1>
+                    <p class="settings-description">Manage your subscription and payment methods</p>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Current Plan</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; background: var(--gradient-primary); border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                        <div>
+                            <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Enterprise Plan</h3>
+                            <p style="opacity: 0.9;">Unlimited stores • Unlimited users • Priority support</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 2rem; font-weight: 700;">$299</div>
+                            <div style="opacity: 0.9;">/month</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary">Change Plan</button>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Usage This Month</h2>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                        <div style="padding: 1.5rem; background: rgba(255, 255, 255, 0.05); border-radius: 0.5rem; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--purple);">12</div>
+                            <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">Active Stores</div>
+                        </div>
+                        <div style="padding: 1.5rem; background: rgba(255, 255, 255, 0.05); border-radius: 0.5rem; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--blue);">48</div>
+                            <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">Team Members</div>
+                        </div>
+                        <div style="padding: 1.5rem; background: rgba(255, 255, 255, 0.05); border-radius: 0.5rem; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--green);">2.4TB</div>
+                            <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">Data Processed</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Payment Method</h2>
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="width: 48px; height: 32px; background: white; border-radius: 0.25rem; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--dark);">VISA</div>
+                            <div>
+                                <div>Visa ending in 4242</div>
+                                <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">Expires 12/2025</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary">Update</button>
+                    </div>
+                    <button class="btn btn-primary" style="margin-top: 1rem;">Add Payment Method</button>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Billing History</h2>
+                    <div style="border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.5rem; overflow: hidden;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: rgba(255, 255, 255, 0.05);">
+                                    <th style="padding: 0.75rem; text-align: left; font-weight: 500;">Date</th>
+                                    <th style="padding: 0.75rem; text-align: left; font-weight: 500;">Description</th>
+                                    <th style="padding: 0.75rem; text-align: right; font-weight: 500;">Amount</th>
+                                    <th style="padding: 0.75rem; text-align: center; font-weight: 500;">Invoice</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                                    <td style="padding: 0.75rem;">Jul 1, 2024</td>
+                                    <td style="padding: 0.75rem;">Enterprise Plan - Monthly</td>
+                                    <td style="padding: 0.75rem; text-align: right;">$299.00</td>
+                                    <td style="padding: 0.75rem; text-align: center;"><a href="#" style="color: var(--blue);">Download</a></td>
+                                </tr>
+                                <tr style="border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                                    <td style="padding: 0.75rem;">Jun 1, 2024</td>
+                                    <td style="padding: 0.75rem;">Enterprise Plan - Monthly</td>
+                                    <td style="padding: 0.75rem; text-align: right;">$299.00</td>
+                                    <td style="padding: 0.75rem; text-align: center;"><a href="#" style="color: var(--blue);">Download</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Integrations Section -->
+            <section id="integrations-section" class="settings-section">
+                <div class="settings-header">
+                    <h1 class="settings-title">Integrations</h1>
+                    <p class="settings-description">Connect third-party services to extend functionality</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+                    <!-- POS Integrations -->
+                    <div class="settings-card" style="cursor: pointer;" onclick="configureIntegration('square')">
+                        <div style="display: flex; align-items: start; gap: 1rem;">
+                            <div style="width: 48px; height: 48px; background: #00D924; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">S</div>
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Square POS</h3>
+                                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); margin-bottom: 1rem;">Sync transactions and inventory data</p>
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--green);">
+                                    <span style="width: 8px; height: 8px; background: var(--green); border-radius: 50%;"></span>
+                                    Connected
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-card" style="cursor: pointer;" onclick="configureIntegration('stripe')">
+                        <div style="display: flex; align-items: start; gap: 1rem;">
+                            <div style="width: 48px; height: 48px; background: #635BFF; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">S</div>
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Stripe</h3>
+                                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); margin-bottom: 1rem;">Payment processing and analytics</p>
+                                <button class="btn btn-primary" style="font-size: 0.875rem; padding: 0.5rem 1rem;">Connect</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-card" style="cursor: pointer;" onclick="configureIntegration('shopify')">
+                        <div style="display: flex; align-items: start; gap: 1rem;">
+                            <div style="width: 48px; height: 48px; background: #96BF48; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">S</div>
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Shopify</h3>
+                                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); margin-bottom: 1rem;">E-commerce and inventory sync</p>
+                                <button class="btn btn-primary" style="font-size: 0.875rem; padding: 0.5rem 1rem;">Connect</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Communication -->
+                    <div class="settings-card" style="cursor: pointer;" onclick="configureIntegration('slack')">
+                        <div style="display: flex; align-items: start; gap: 1rem;">
+                            <div style="width: 48px; height: 48px; background: #4A154B; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">S</div>
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Slack</h3>
+                                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); margin-bottom: 1rem;">Team notifications and alerts</p>
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--green);">
+                                    <span style="width: 8px; height: 8px; background: var(--green); border-radius: 50%;"></span>
+                                    Connected
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analytics -->
+                    <div class="settings-card" style="cursor: pointer;" onclick="configureIntegration('ga')">
+                        <div style="display: flex; align-items: start; gap: 1rem;">
+                            <div style="width: 48px; height: 48px; background: #F9AB00; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">GA</div>
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Google Analytics</h3>
+                                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); margin-bottom: 1rem;">Website traffic analytics</p>
+                                <button class="btn btn-primary" style="font-size: 0.875rem; padding: 0.5rem 1rem;">Connect</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accounting -->
+                    <div class="settings-card" style="cursor: pointer;" onclick="configureIntegration('quickbooks')">
+                        <div style="display: flex; align-items: start; gap: 1rem;">
+                            <div style="width: 48px; height: 48px; background: #2CA01C; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">QB</div>
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 1.125rem; margin-bottom: 0.5rem;">QuickBooks</h3>
+                                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); margin-bottom: 1rem;">Accounting and financial reporting</p>
+                                <button class="btn btn-primary" style="font-size: 0.875rem; padding: 0.5rem 1rem;">Connect</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Security Section -->
+            <section id="security-section" class="settings-section">
+                <div class="settings-header">
+                    <h1 class="settings-title">Security</h1>
+                    <p class="settings-description">Manage account security and access controls</p>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Two-Factor Authentication</h2>
+                    <p class="settings-card-description">Add an extra layer of security to your account</p>
+                    <div style="display: flex; align-items: center; gap: 2rem; margin-top: 1.5rem;">
+                        <div style="padding: 2rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.5rem; text-align: center;">
+                            <svg width="48" height="48" fill="currentColor" viewBox="0 0 20 20" style="margin-bottom: 1rem;">
+                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                            </svg>
+                            <div style="font-weight: 500; margin-bottom: 0.5rem;">Not Enabled</div>
+                            <button class="btn btn-primary">Enable 2FA</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Password Policy</h2>
+                    <div class="form-group">
+                        <label class="form-label">Minimum Password Length</label>
+                        <input type="number" class="form-input" value="12" min="8" max="32" onchange="showSaveBar()" />
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-content">
+                            <div class="toggle-title">Require Uppercase Letters</div>
+                            <div class="toggle-description">Passwords must contain at least one uppercase letter</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="showSaveBar()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-content">
+                            <div class="toggle-title">Require Numbers</div>
+                            <div class="toggle-description">Passwords must contain at least one number</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="showSaveBar()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="toggle-content">
+                            <div class="toggle-title">Require Special Characters</div>
+                            <div class="toggle-description">Passwords must contain at least one special character</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="showSaveBar()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Active Sessions</h2>
+                    <p class="settings-card-description">Devices currently logged into your account</p>
+                    <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.5rem;">
+                            <div>
+                                <div style="font-weight: 500;">Chrome on Windows</div>
+                                <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">New York, NY • Current session</div>
+                            </div>
+                            <span style="font-size: 0.875rem; color: var(--green);">Active</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.5rem;">
+                            <div>
+                                <div style="font-weight: 500;">Safari on iPhone</div>
+                                <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">San Francisco, CA • 2 days ago</div>
+                            </div>
+                            <button class="btn btn-secondary" style="font-size: 0.875rem; padding: 0.5rem 1rem;">Revoke</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- API Section -->
+            <section id="api-section" class="settings-section">
+                <div class="settings-header">
+                    <h1 class="settings-title">API & Webhooks</h1>
+                    <p class="settings-description">Manage API access and webhook configurations</p>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">API Keys</h2>
+                    <p class="settings-card-description">Create and manage API keys for programmatic access</p>
+                    <div style="display: flex; justify-content: flex-end; margin-bottom: 1.5rem;">
+                        <button class="btn btn-primary" onclick="showAPIKeyModal()">Create New Key</button>
+                    </div>
+                    <div style="border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.5rem; overflow: hidden;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: rgba(255, 255, 255, 0.05);">
+                                    <th style="padding: 0.75rem; text-align: left; font-weight: 500;">Name</th>
+                                    <th style="padding: 0.75rem; text-align: left; font-weight: 500;">Key</th>
+                                    <th style="padding: 0.75rem; text-align: left; font-weight: 500;">Created</th>
+                                    <th style="padding: 0.75rem; text-align: left; font-weight: 500;">Last Used</th>
+                                    <th style="padding: 0.75rem; text-align: center; font-weight: 500;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                                    <td style="padding: 0.75rem;">Production API</td>
+                                    <td style="padding: 0.75rem; font-family: monospace; font-size: 0.875rem;">sk_live_...abc123</td>
+                                    <td style="padding: 0.75rem;">Jun 15, 2024</td>
+                                    <td style="padding: 0.75rem;">2 hours ago</td>
+                                    <td style="padding: 0.75rem; text-align: center;">
+                                        <button class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">Revoke</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">Webhooks</h2>
+                    <p class="settings-card-description">Configure webhooks to receive real-time event notifications</p>
+                    <div style="display: flex; justify-content: flex-end; margin-bottom: 1.5rem;">
+                        <button class="btn btn-primary" onclick="showWebhookModal()">Add Webhook</button>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: center; padding: 3rem; background: rgba(255, 255, 255, 0.03); border: 1px dashed rgba(255, 255, 255, 0.2); border-radius: 0.5rem;">
+                        <div style="text-align: center;">
+                            <svg width="48" height="48" fill="currentColor" viewBox="0 0 20 20" style="opacity: 0.5; margin-bottom: 1rem;">
+                                <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                            <p style="color: rgba(255, 255, 255, 0.6);">No webhooks configured</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <h2 class="settings-card-title">API Usage</h2>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                        <div>
+                            <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); margin-bottom: 0.5rem;">Requests Today</div>
+                            <div style="font-size: 2rem; font-weight: 700;">8,542</div>
+                            <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">of 100,000 limit</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); margin-bottom: 0.5rem;">Average Response Time</div>
+                            <div style="font-size: 2rem; font-weight: 700;">124ms</div>
+                            <div style="font-size: 0.875rem; color: var(--green);">↓ 12% from yesterday</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Save Bar -->
+        <div class="save-bar" id="saveBar">
+            <div class="save-bar-message">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+                <span>You have unsaved changes</span>
+            </div>
+            <div class="save-bar-actions">
+                <button class="btn btn-secondary" onclick="discardChanges()">Discard</button>
+                <button class="btn btn-primary" onclick="saveChanges()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Invite Team Member Modal -->
+    <div class="modal-overlay" id="inviteModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Invite Team Member</h2>
+                <button class="modal-close" onclick="closeModal('inviteModal')">×</button>
+            </div>
+            <form>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" placeholder="colleague@company.com" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Role</label>
+                    <select class="form-select">
+                        <option>Viewer</option>
+                        <option>Manager</option>
+                        <option>Admin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Store Access</label>
+                    <select class="form-select">
+                        <option>All Stores</option>
+                        <option>Selected Stores...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Personal Message (Optional)</label>
+                    <textarea class="form-textarea" rows="3" placeholder="Welcome to the team!"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('inviteModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Send Invitation</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- API Key Modal -->
+    <div class="modal-overlay" id="apiKeyModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Create API Key</h2>
+                <button class="modal-close" onclick="closeModal('apiKeyModal')">×</button>
+            </div>
+            <form>
+                <div class="form-group">
+                    <label class="form-label">Key Name</label>
+                    <input type="text" class="form-input" placeholder="e.g., Production Server" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Permissions</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" checked>
+                            <span>Read Analytics Data</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" checked>
+                            <span>Read Store Information</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox">
+                            <span>Write Store Settings</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox">
+                            <span>Manage Team Members</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Expiration</label>
+                    <select class="form-select">
+                        <option>Never</option>
+                        <option>30 days</option>
+                        <option>90 days</option>
+                        <option>1 year</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('apiKeyModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Key</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Webhook Modal -->
+    <div class="modal-overlay" id="webhookModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Webhook</h2>
+                <button class="modal-close" onclick="closeModal('webhookModal')">×</button>
+            </div>
+            <form>
+                <div class="form-group">
+                    <label class="form-label">Webhook URL</label>
+                    <input type="url" class="form-input" placeholder="https://api.example.com/webhook" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Events</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" checked>
+                            <span>Store Created/Updated</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" checked>
+                            <span>Alert Triggered</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox">
+                            <span>Report Generated</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox">
+                            <span>Team Member Changes</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Secret (Optional)</label>
+                    <input type="text" class="form-input" placeholder="Webhook signing secret" />
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('webhookModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Webhook</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Show/hide sections
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.settings-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active from all nav items
+            document.querySelectorAll('.settings-nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName + '-section').classList.add('active');
+            
+            // Mark nav item as active
+            event.target.closest('.settings-nav-item').classList.add('active');
+        }
+
+        // Show save bar when changes are made
+        function showSaveBar() {
+            document.getElementById('saveBar').classList.add('active');
+        }
+
+        // Hide save bar
+        function hideSaveBar() {
+            document.getElementById('saveBar').classList.remove('active');
+        }
+
+        // Save changes
+        function saveChanges() {
+            // Simulate saving
+            hideSaveBar();
+            // Show success message
+            alert('Settings saved successfully!');
+        }
+
+        // Discard changes
+        function discardChanges() {
+            // Reset form values
+            hideSaveBar();
+            // Reload to reset values
+            location.reload();
+        }
+
+        // Modal functions
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Specific modal triggers
+        function showInviteModal() {
+            showModal('inviteModal');
+        }
+
+        function showAPIKeyModal() {
+            showModal('apiKeyModal');
+        }
+
+        function showWebhookModal() {
+            showModal('webhookModal');
+        }
+
+        // Integration configuration
+        function configureIntegration(integration) {
+            // In a real app, this would open integration-specific config
+            alert(`Configure ${integration} integration`);
+        }
+
+        // Close modals on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) {
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+
+        // Prevent form submission for demo
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Form submitted! (Demo mode)');
+                // Close modal if in modal
+                const modal = this.closest('.modal-overlay');
+                if (modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

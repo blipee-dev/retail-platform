@@ -1,0 +1,63 @@
+{
+  "connector": {
+    "name": "Milesight Store Entrance Camera",
+    "type": "milesight",
+    "store": "Main Store - Entrance",
+    "description": "Basic people counting at store entrance",
+    
+    "connection": {
+      "host": "192.168.1.100",
+      "port": 80,
+      "auth": {
+        "type": "basic",
+        "username": "admin",
+        "password": "ms1234"
+      }
+    },
+    
+    "endpoints": {
+      "people_counting": {
+        "params": {
+          "type": 0,
+          "comment": "0=All, 1=In, 2=Out, 3=Capacity, 4=Sum"
+        }
+      },
+      "real_time_status": {
+        "enabled": true,
+        "polling_interval": 30
+      }
+    },
+    
+    "data_mapping": {
+      "timestamp_format": "%Y/%m/%d %H:%M:%S",
+      "supports_real_time_status": true,
+      "line_count": 4,
+      "fields": [
+        {"source": "StartTime", "target": "start_time", "type": "timestamp"},
+        {"source": "EndTime", "target": "end_time", "type": "timestamp"},
+        {"source": "Line1 - In", "target": "line1_in", "type": "integer"},
+        {"source": "Line2 - In", "target": "line2_in", "type": "integer"},
+        {"source": "Line3 - In", "target": "line3_in", "type": "integer"},
+        {"source": "Line4 - In", "target": "line4_in", "type": "integer"},
+        {"source": "Line1 - Out", "target": "line1_out", "type": "integer"},
+        {"source": "Line2 - Out", "target": "line2_out", "type": "integer"},
+        {"source": "Line3 - Out", "target": "line3_out", "type": "integer"},
+        {"source": "Line4 - Out", "target": "line4_out", "type": "integer"}
+      ]
+    },
+    
+    "collection_settings": {
+      "retry_attempts": 3,
+      "timeout": 30,
+      "polling_interval": 300,
+      "batch_size_hours": 1
+    },
+    
+    "features": {
+      "auto_export": false,
+      "alarm_notifications": true,
+      "capacity_monitoring": true,
+      "line_crossing_detection": true
+    }
+  }
+}

@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - blipee OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Gradient System */
+            --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #0EA5E9 100%);
+            --gradient-mesh: radial-gradient(at 40% 20%, hsla(280,100%,74%,0.3) 0px, transparent 50%),
+                            radial-gradient(at 80% 0%, hsla(189,100%,56%,0.2) 0px, transparent 50%),
+                            radial-gradient(at 0% 50%, hsla(355,100%,93%,0.2) 0px, transparent 50%);
+            
+            /* Colors */
+            --purple: #8B5CF6;
+            --blue: #0EA5E9;
+            --green: #10B981;
+            --dark: #0F172A;
+            --darker: #020617;
+            --white: #FFFFFF;
+            
+            /* Glassmorphism */
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--darker);
+            color: var(--white);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Background */
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: var(--darker);
+            overflow: hidden;
+        }
+
+        .bg-gradient-mesh {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: var(--gradient-mesh);
+            opacity: 0.3;
+            animation: meshAnimation 30s ease infinite;
+        }
+
+        @keyframes meshAnimation {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-20px, -20px) rotate(120deg); }
+            66% { transform: translate(20px, -10px) rotate(240deg); }
+        }
+
+        /* Navigation */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1.5rem 2rem;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 400;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--white);
+        }
+
+        /* Main Content */
+        .content-container {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.125rem;
+        }
+
+        .last-updated {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Privacy Badge */
+        .privacy-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            margin-top: 1rem;
+            color: var(--green);
+        }
+
+        /* Content Sections */
+        .content-section {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--white);
+        }
+
+        .section-subtitle {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .content-text {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .content-list {
+            list-style: none;
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .content-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .content-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--purple);
+            font-weight: bold;
+        }
+
+        /* Data Table */
+        .data-table {
+            width: 100%;
+            margin: 1.5rem 0;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .data-table th {
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .data-table td {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            margin-top: 3rem;
+        }
+
+        .contact-link {
+            color: var(--purple);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .contact-link:hover {
+            color: var(--blue);
+        }
+
+        /* Table of Contents */
+        .toc {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .toc-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-list li {
+            margin-bottom: 0.75rem;
+        }
+
+        .toc-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .toc-link:hover {
+            color: var(--purple);
+            padding-left: 0.5rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .content-section {
+                padding: 1.5rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .data-table {
+                font-size: 0.875rem;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-container">
+        <div class="bg-gradient-mesh"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="ai-landing.html" class="logo">blipee OS</a>
+            <div class="nav-links">
+                <a href="ai-landing.html" class="nav-link">Home</a>
+                <a href="pricing.html" class="nav-link">Pricing</a>
+                <a href="signin.html" class="nav-link">Sign In</a>
+                <a href="signup.html" class="nav-link">Start Free Trial</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="content-container">
+        <!-- Header -->
+        <div class="page-header">
+            <h1 class="page-title">Privacy Policy</h1>
+            <p class="page-subtitle">Your privacy is critically important to us</p>
+            <div class="privacy-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                GDPR Compliant • SOC 2 Certified
+            </div>
+            <p class="last-updated">Last updated: January 1, 2024</p>
+        </div>
+
+        <!-- Table of Contents -->
+        <div class="content-section toc">
+            <h2 class="toc-title">Table of Contents</h2>
+            <ul class="toc-list">
+                <li><a href="#introduction" class="toc-link">1. Introduction</a></li>
+                <li><a href="#information" class="toc-link">2. Information We Collect</a></li>
+                <li><a href="#how-we-use" class="toc-link">3. How We Use Your Information</a></li>
+                <li><a href="#sharing" class="toc-link">4. Information Sharing</a></li>
+                <li><a href="#security" class="toc-link">5. Data Security</a></li>
+                <li><a href="#retention" class="toc-link">6. Data Retention</a></li>
+                <li><a href="#rights" class="toc-link">7. Your Rights</a></li>
+                <li><a href="#cookies" class="toc-link">8. Cookies and Tracking</a></li>
+                <li><a href="#international" class="toc-link">9. International Data Transfers</a></li>
+                <li><a href="#contact" class="toc-link">10. Contact Information</a></li>
+            </ul>
+        </div>
+
+        <!-- Content Sections -->
+        <div class="content-section" id="introduction">
+            <h2 class="section-title">1. Introduction</h2>
+            <p class="content-text">
+                blipee OS ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our retail intelligence platform.
+            </p>
+            <p class="content-text">
+                We comply with applicable data protection laws, including the General Data Protection Regulation (GDPR) for European Union residents and the California Consumer Privacy Act (CCPA) for California residents.
+            </p>
+        </div>
+
+        <div class="content-section" id="information">
+            <h2 class="section-title">2. Information We Collect</h2>
+            
+            <h3 class="section-subtitle">2.1 Information You Provide</h3>
+            <ul class="content-list">
+                <li>Account information (name, email, company details)</li>
+                <li>Payment and billing information</li>
+                <li>Communications with our support team</li>
+                <li>Feedback and survey responses</li>
+            </ul>
+
+            <h3 class="section-subtitle">2.2 Information Collected Automatically</h3>
+            <ul class="content-list">
+                <li>Usage data and analytics</li>
+                <li>Device and browser information</li>
+                <li>IP address and location data</li>
+                <li>Cookies and similar tracking technologies</li>
+            </ul>
+
+            <h3 class="section-subtitle">2.3 Retail Analytics Data</h3>
+            <p class="content-text">
+                Our platform processes anonymized customer traffic data from your retail locations. This includes:
+            </p>
+            <ul class="content-list">
+                <li>Foot traffic patterns and counts</li>
+                <li>Dwell time and heat map data</li>
+                <li>Zone performance metrics</li>
+                <li>Aggregated behavioral insights</li>
+            </ul>
+            <p class="content-text">
+                <strong>Important:</strong> We do not collect or store personally identifiable information about your customers. All analytics data is anonymized and aggregated.
+            </p>
+        </div>
+
+        <div class="content-section" id="how-we-use">
+            <h2 class="section-title">3. How We Use Your Information</h2>
+            <p class="content-text">
+                We use the information we collect to:
+            </p>
+            <ul class="content-list">
+                <li>Provide and maintain our Service</li>
+                <li>Process transactions and send billing information</li>
+                <li>Send administrative information and updates</li>
+                <li>Respond to customer service requests</li>
+                <li>Send marketing communications (with your consent)</li>
+                <li>Monitor and analyze usage patterns</li>
+                <li>Detect and prevent fraud or security issues</li>
+                <li>Comply with legal obligations</li>
+            </ul>
+        </div>
+
+        <div class="content-section" id="sharing">
+            <h2 class="section-title">4. Information Sharing</h2>
+            <p class="content-text">
+                We do not sell, trade, or rent your personal information. We may share your information only in the following circumstances:
+            </p>
+            <ul class="content-list">
+                <li><strong>Service Providers:</strong> With trusted third parties who assist in operating our platform</li>
+                <li><strong>Legal Requirements:</strong> When required by law or to protect our rights</li>
+                <li><strong>Business Transfers:</strong> In connection with a merger or acquisition</li>
+                <li><strong>With Your Consent:</strong> When you explicitly agree to sharing</li>
+            </ul>
+        </div>
+
+        <div class="content-section" id="security">
+            <h2 class="section-title">5. Data Security</h2>
+            <p class="content-text">
+                We implement industry-standard security measures to protect your data:
+            </p>
+            <ul class="content-list">
+                <li>256-bit SSL encryption for all data in transit</li>
+                <li>Encryption at rest for sensitive data</li>
+                <li>Regular security audits and penetration testing</li>
+                <li>SOC 2 Type II certification</li>
+                <li>Access controls and authentication measures</li>
+                <li>Regular employee security training</li>
+            </ul>
+        </div>
+
+        <div class="content-section" id="retention">
+            <h2 class="section-title">6. Data Retention</h2>
+            <p class="content-text">
+                We retain your information for as long as necessary to provide our services and comply with legal obligations:
+            </p>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Data Type</th>
+                        <th>Retention Period</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Account Information</td>
+                        <td>Duration of account + 90 days</td>
+                    </tr>
+                    <tr>
+                        <td>Analytics Data</td>
+                        <td>24 months (configurable)</td>
+                    </tr>
+                    <tr>
+                        <td>Billing Records</td>
+                        <td>7 years (legal requirement)</td>
+                    </tr>
+                    <tr>
+                        <td>Support Communications</td>
+                        <td>3 years</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="content-section" id="rights">
+            <h2 class="section-title">7. Your Rights</h2>
+            <p class="content-text">
+                Depending on your location, you may have the following rights:
+            </p>
+            
+            <h3 class="section-subtitle">7.1 GDPR Rights (EU Residents)</h3>
+            <ul class="content-list">
+                <li><strong>Access:</strong> Request a copy of your personal data</li>
+                <li><strong>Rectification:</strong> Correct inaccurate data</li>
+                <li><strong>Erasure:</strong> Request deletion of your data</li>
+                <li><strong>Portability:</strong> Receive your data in a portable format</li>
+                <li><strong>Object:</strong> Opt out of certain processing activities</li>
+                <li><strong>Restrict:</strong> Limit how we use your data</li>
+            </ul>
+
+            <h3 class="section-subtitle">7.2 CCPA Rights (California Residents)</h3>
+            <ul class="content-list">
+                <li>Know what personal information we collect</li>
+                <li>Request deletion of your information</li>
+                <li>Opt out of the sale of personal information (we don't sell data)</li>
+                <li>Non-discrimination for exercising your rights</li>
+            </ul>
+        </div>
+
+        <div class="content-section" id="cookies">
+            <h2 class="section-title">8. Cookies and Tracking</h2>
+            <p class="content-text">
+                We use cookies and similar technologies to:
+            </p>
+            <ul class="content-list">
+                <li>Maintain your session and preferences</li>
+                <li>Analyze platform usage and performance</li>
+                <li>Provide personalized experiences</li>
+                <li>Prevent fraud and enhance security</li>
+            </ul>
+            <p class="content-text">
+                You can control cookies through your browser settings. Note that disabling cookies may affect platform functionality.
+            </p>
+        </div>
+
+        <div class="content-section" id="international">
+            <h2 class="section-title">9. International Data Transfers</h2>
+            <p class="content-text">
+                Your information may be transferred to and processed in countries other than your own. We ensure appropriate safeguards are in place:
+            </p>
+            <ul class="content-list">
+                <li>Standard Contractual Clauses for EU data transfers</li>
+                <li>Privacy Shield certification (where applicable)</li>
+                <li>Adequate data protection agreements</li>
+            </ul>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="content-section contact-section" id="contact">
+            <h2 class="section-title">10. Contact Information</h2>
+            <p class="content-text">
+                For privacy-related questions or to exercise your rights, please contact our Data Protection Officer:
+            </p>
+            <p class="content-text">
+                Email: <a href="mailto:privacy@blipee.com" class="contact-link">privacy@blipee.com</a><br>
+                Phone: +1 (555) 123-4567<br>
+                Address: blipee OS, Inc.<br>
+                Attn: Data Protection Officer<br>
+                123 Intelligence Street<br>
+                San Francisco, CA 94105<br>
+                United States
+            </p>
+            <p class="content-text">
+                <strong>EU Representative:</strong><br>
+                blipee Europe GmbH<br>
+                Friedrichstraße 123<br>
+                10117 Berlin, Germany<br>
+                Email: <a href="mailto:eu-privacy@blipee.com" class="contact-link">eu-privacy@blipee.com</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

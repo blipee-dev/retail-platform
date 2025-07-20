@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Stores - blipee OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #0EA5E9 100%);
+            --gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            --gradient-blue: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-green: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            
+            --purple: #8B5CF6;
+            --blue: #0EA5E9;
+            --green: #10B981;
+            --yellow: #F59E0B;
+            --red: #EF4444;
+            --dark: #0F172A;
+            --darker: #020617;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--darker);
+            color: var(--white);
+            min-height: 100vh;
+        }
+
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            grid-template-rows: 70px 1fr;
+            grid-template-areas: 
+                "header header"
+                "sidebar main";
+            height: 100vh;
+            transition: grid-template-columns 0.3s ease;
+        }
+        
+        .dashboard-layout.sidebar-collapsed {
+            grid-template-columns: 70px 1fr;
+        }
+
+        /* Header */
+        .header {
+            grid-area: header;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 400;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            white-space: nowrap;
+            letter-spacing: -0.02em;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
+        }
+
+        .breadcrumb-separator {
+            opacity: 0.4;
+        }
+
+        .breadcrumb-item {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .breadcrumb-item:hover {
+            color: white;
+        }
+
+        .breadcrumb-item.active {
+            color: white;
+        }
+
+        /* Header Actions */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            grid-area: sidebar;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 1rem;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-collapsed .sidebar {
+            padding: 2rem 0.5rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+        
+        .nav-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 1rem 1rem 1rem 1rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        
+        .sidebar-collapsed .nav-link {
+            padding: 0.75rem;
+        }
+        
+        .sidebar-collapsed .nav-link span {
+            display: none;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        /* Sidebar Bottom */
+        .sidebar-bottom {
+            margin-top: auto;
+        }
+
+        /* Sidebar Footer */
+        .sidebar-footer {
+            padding: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            grid-area: main;
+            padding: 2rem;
+            overflow-y: auto;
+            background: var(--darker);
+        }
+
+        /* Common Buttons */
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-icon:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* User Profile */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* User Dropdown */
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            min-width: 200px;
+            display: none;
+            z-index: 1000;
+        }
+
+        .user-dropdown.active {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border-radius: 0.375rem;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 0.5rem 0;
+        }
+
+        /* Collapse Button */
+        .collapse-btn {
+            position: absolute;
+            bottom: 1rem;
+            right: -12px;
+            width: 24px;
+            height: 24px;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .collapse-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* Additional styles for sidebar controls */
+        .sidebar-controls {
+            padding: 0;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .control-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            padding: 0;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        /* Language Selector */
+        .language-selector {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.75rem;
+            width: auto;
+            text-align: center;
+        }
+        
+        .language-selector option {
+            background: var(--dark);
+            color: white;
+        }
+
+        /* Sidebar Toggle */
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* Header Logo */
+        .header-logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Store Switcher */
+        .store-switcher {
+            position: relative;
+        }
+
+        .store-dropdown-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .store-dropdown-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Sites specific styles */
+        .sites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .site-card {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            height: 100%;
+        }
+
+        .site-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .site-card:hover .card {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .site-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .site-info h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .site-location {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .site-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            flex-shrink: 0;
+        }
+
+        .site-status.online {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--green);
+        }
+
+        .site-status.warning {
+            background: rgba(251, 146, 60, 0.2);
+            color: #FB923C;
+        }
+
+        .site-status.offline {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--red);
+        }
+
+        .site-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .site-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-height: 40px;
+            cursor: pointer;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .action-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Summary Stats */
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .summary-card:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .summary-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-label {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Add Store Card */
+        .add-site-card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 280px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .add-site-card:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(15, 23, 42, 0.7);
+            color: white;
+        }
+
+        .add-site-content {
+            text-align: center;
+        }
+
+        .add-site-content svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 1rem;
+            color: var(--purple);
+        }
+
+        .add-site-content p {
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+                grid-template-areas: 
+                    "header"
+                    "main";
+            }
+            
+            .sidebar {
+                display: none;
+            }
+
+            .header {
+                padding: 0 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .sites-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .summary-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .summary-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+                <div class="header-logo">blipee</div>
+            </div>
+            <div class="header-actions">
+                <a href="add-site.html" class="btn btn-primary">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+                    </svg>
+                    Add Site
+                </a>
+                
+                <div class="user-profile" onclick="toggleUserMenu(event)">
+                    <div class="user-avatar">JD</div>
+                    <div class="user-info">
+                        <span class="user-name">John Doe</span>
+                        <span class="user-role">Administrator</span>
+                    </div>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="profile.html" class="dropdown-item">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                            </svg>
+                            My Profile
+                        </a>
+                        <a href="settings.html" class="dropdown-item">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                            </svg>
+                            Settings
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="logout.html" class="dropdown-item">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path>
+                            </svg>
+                            Sign Out
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="sites.html" class="nav-link active">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                            </svg>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="analytics.html" class="nav-link">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span>Analytics</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="reports.html" class="nav-link">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm2-3a1 1 0 011 1v5a1 1 0 11-2 0v-5a1 1 0 011-1zm4-1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Reports</span>
+                        </a>
+                    </li>
+                    <li class="nav-divider"></li>
+                    <li class="nav-item">
+                        <a href="settings.html" class="nav-link">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Sidebar Bottom -->
+            <div class="sidebar-bottom">
+                <!-- Sidebar Controls -->
+                <div class="sidebar-controls">
+                    <div class="control-item">
+                        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+                            <svg class="theme-icon-dark" width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                            </svg>
+                            <svg class="theme-icon-light" width="20" height="20" fill="currentColor" viewBox="0 0 20 20" style="display:none;">
+                                <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="control-item">
+                        <select class="language-selector" onchange="changeLanguage(this.value)">
+                            <option value="en">EN</option>
+                            <option value="es">ES</option>
+                            <option value="fr">FR</option>
+                            <option value="pt">PT</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="sidebar-footer">
+                    <div class="sidebar-footer-content" style="text-align: center;">
+                        <div class="powered-by" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.5rem; font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">
+                            <span class="powered-text">Powered by</span>
+                            <span class="powered-logo" style="font-weight: 600; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">blipee</span>
+                        </div>
+                        <div class="version-info" style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; font-size: 0.625rem; color: rgba(255, 255, 255, 0.4);">
+                            <span>v2.1.0</span>
+                            <span>•</span>
+                            <span>Build 4512</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collapse Button -->
+            <button class="collapse-btn" onclick="toggleSidebar()">
+                <svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                </svg>
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Page Header -->
+            <div style="margin-bottom: 2rem;">
+                <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; color: white;">All Stores</h1>
+                <p style="color: rgba(255, 255, 255, 0.6); font-size: 1rem;">Manage and monitor your retail locations across all regions</p>
+            </div>
+
+            <!-- Summary Stats -->
+            <div class="summary-stats">
+                <div class="summary-card">
+                    <div class="summary-value">12</div>
+                    <div class="summary-label">Total Stores</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value">9</div>
+                    <div class="summary-label">Online</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value">2</div>
+                    <div class="summary-label">Warnings</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value">1</div>
+                    <div class="summary-label">Offline</div>
+                </div>
+            </div>
+
+            <!-- Sites Grid -->
+            <div class="sites-grid">
+                <!-- Site Card 1 -->
+                <a href="dashboard.html" class="site-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="site-header">
+                                <div class="site-info">
+                                    <h3>Downtown Store</h3>
+                                    <div class="site-location">
+                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>New York, NY</span>
+                                    </div>
+                                </div>
+                                <span class="site-status online">ONLINE</span>
+                            </div>
+                            
+                            <div class="site-metrics">
+                                <div class="metric">
+                                    <div class="metric-value">542</div>
+                                    <div class="metric-label">Visitors Today</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">$19.4K</div>
+                                    <div class="metric-label">Revenue Today</div>
+                                </div>
+                            </div>
+                            
+                            <div class="site-actions">
+                                <span class="action-btn" onclick="event.preventDefault(); window.location.href='dashboard.html'">
+                                    <svg fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+                                    </svg>
+                                    Dashboard
+                                </span>
+                                <span class="action-btn" onclick="event.preventDefault(); window.location.href='store-settings.html'">
+                                    <svg fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    Settings
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Site Card 2 -->
+                <a href="dashboard.html" class="site-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="site-header">
+                                <div class="site-info">
+                                    <h3>Mall Location</h3>
+                                    <div class="site-location">
+                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>Los Angeles, CA</span>
+                                    </div>
+                                </div>
+                                <span class="site-status online">ONLINE</span>
+                            </div>
+                            
+                            <div class="site-metrics">
+                                <div class="metric">
+                                    <div class="metric-value">389</div>
+                                    <div class="metric-label">Visitors Today</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">$7.9K</div>
+                                    <div class="metric-label">Revenue Today</div>
+                                </div>
+                            </div>
+                            
+                            <div class="site-actions">
+                                <span class="action-btn" onclick="event.preventDefault(); window.location.href='dashboard.html'">
+                                    <svg fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+                                    </svg>
+                                    Dashboard
+                                </span>
+                                <span class="action-btn" onclick="event.preventDefault(); window.location.href='store-settings.html'">
+                                    <svg fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    Settings
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Site Card 3 -->
+                <a href="dashboard.html" class="site-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="site-header">
+                                <div class="site-info">
+                                    <h3>Airport Shop</h3>
+                                    <div class="site-location">
+                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>Chicago, IL</span>
+                                    </div>
+                                </div>
+                                <span class="site-status warning">LOW TRAFFIC</span>
+                            </div>
+                            
+                            <div class="site-metrics">
+                                <div class="metric">
+                                    <div class="metric-value">156</div>
+                                    <div class="metric-label">Visitors Today</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">$5.3K</div>
+                                    <div class="metric-label">Revenue Today</div>
+                                </div>
+                            </div>
+                            
+                            <div class="site-actions">
+                                <span class="action-btn" onclick="event.preventDefault(); window.location.href='dashboard.html'">
+                                    <svg fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+                                    </svg>
+                                    Dashboard
+                                </span>
+                                <span class="action-btn" onclick="event.preventDefault(); window.location.href='store-settings.html'">
+                                    <svg fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    Settings
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Site Card 4 -->
+                <a href="dashboard.html" class="site-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="site-header">
+                                <div class="site-info">
+                                    <h3>Suburb Store</h3>
+                                    <div class="site-location">
+                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>Houston, TX</span>
+                                    </div>
+                                </div>
+                                <span class="site-status offline">OFFLINE</span>
+                            </div>
+                            
+                            <div class="site-metrics">
+                                <div class="metric">
+                                    <div class="metric-value">0</div>
+                                    <div class="metric-label">Visitors Today</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">$0</div>
+                                    <div class="metric-label">Revenue Today</div>
+                                </div>
+                            </div>
+                            
+                            <div class="site-actions">
+                                <span class="action-btn" onclick="event.preventDefault(); window.location.href='dashboard.html'">
+                                    <svg fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+                                    </svg>
+                                    Dashboard
+                                </span>
+                                <span class="action-btn" onclick="event.preventDefault(); window.location.href='store-settings.html'">
+                                    <svg fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    Settings
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Add Store Card -->
+                <a href="add-site.html" class="add-site-card">
+                    <div class="add-site-content">
+                        <svg fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+                        </svg>
+                        <p>Add New Store</p>
+                    </div>
+                </a>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // User dropdown functionality
+        function toggleUserMenu(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('userDropdown');
+            const userProfile = event.target.closest('.user-profile');
+            
+            if (!userProfile && dropdown.classList.contains('active')) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // Sidebar toggle
+        function toggleSidebar() {
+            const layout = document.querySelector('.dashboard-layout');
+            layout.classList.toggle('sidebar-collapsed');
+            
+            const collapseBtn = document.querySelector('.collapse-btn');
+            const icon = collapseBtn.querySelector('svg');
+            
+            if (layout.classList.contains('sidebar-collapsed')) {
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Theme toggle functionality
+        function toggleTheme() {
+            const isDark = document.body.classList.toggle('light-theme');
+            document.querySelector('.theme-icon-dark').style.display = isDark ? 'none' : 'block';
+            document.querySelector('.theme-icon-light').style.display = isDark ? 'block' : 'none';
+        }
+
+        // Language change functionality
+        function changeLanguage(lang) {
+            console.log('Language changed to:', lang);
+        }
+    </script>
+</body>
+</html>

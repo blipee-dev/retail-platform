@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Style Demo - blipee OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dark-theme.css">
+    <link rel="stylesheet" href="linear-enhancements.css">
+    <style>
+        :root {
+            /* Design System Tokens */
+            --color-primary-50: #eff6ff;
+            --color-primary-500: #3b82f6;
+            --color-primary-600: #2563eb;
+            
+            --color-gray-50: #f9fafb;
+            --color-gray-100: white;
+            --color-gray-200: #e5e7eb;
+            --color-gray-300: #d1d5db;
+            --color-gray-500: #6b7280;
+            --color-gray-600: #4b5563;
+            --color-gray-700: #374151;
+            --color-gray-800: #1f2937;
+            --color-gray-900: #111827;
+            
+            --color-success-500: #10b981;
+            --color-warning-500: #f59e0b;
+            --color-error-500: #ef4444;
+            
+            --shadow-base: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            
+            --radius-base: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            
+            --spacing-1: 0.25rem;
+            --spacing-2: 0.5rem;
+            --spacing-3: 0.75rem;
+            --spacing-4: 1rem;
+            --spacing-6: 1.5rem;
+            --spacing-8: 2rem;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--linear-bg-secondary);
+        }
+
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .demo-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .demo-section {
+            margin-bottom: 3rem;
+        }
+
+        .demo-section h2 {
+            margin-bottom: 1.5rem;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 400px;
+            margin: 0 auto 2rem;
+        }
+
+        .search-container .kbd {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .status-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 2rem;
+        }
+
+        .notification {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+        }
+
+        .notification-info {
+            background: var(--linear-blue-light);
+            color: var(--linear-blue);
+            border: 1px solid var(--linear-blue);
+            border-opacity: 0.2;
+        }
+
+        .notification-success {
+            background: var(--linear-success-bg);
+            color: var(--linear-success);
+            border: 1px solid var(--linear-success);
+            border-opacity: 0.2;
+        }
+
+        .notification-warning {
+            background: var(--linear-warning-bg);
+            color: var(--linear-warning);
+            border: 1px solid var(--linear-warning);
+            border-opacity: 0.2;
+        }
+
+        .notification-error {
+            background: var(--linear-error-bg);
+            color: var(--linear-error);
+            border: 1px solid var(--linear-error);
+            border-opacity: 0.2;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <!-- Header -->
+        <div class="demo-header">
+            <h1>Linear Style Components</h1>
+            <p style="color: var(--linear-text-secondary)">Clean, modern, and beautiful UI components inspired by Linear</p>
+            
+            <!-- Search Demo -->
+            <div class="search-container">
+                <input type="search" class="input" placeholder="Search or press ⌘K..." style="width: 100%; padding-right: 3rem;">
+                <kbd class="kbd">⌘K</kbd>
+            </div>
+        </div>
+
+        <!-- Buttons Section -->
+        <div class="demo-section">
+            <h2>Buttons</h2>
+            <div class="button-group">
+                <button class="btn-primary">Primary Button</button>
+                <button class="btn-secondary">Secondary Button</button>
+                <button class="btn-primary" disabled style="opacity: 0.5; cursor: not-allowed;">Disabled</button>
+            </div>
+        </div>
+
+        <!-- Cards Section -->
+        <div class="demo-section">
+            <h2>Cards & Metrics</h2>
+            <div class="metric-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Total Revenue</div>
+                    <div class="kpi-value">$45,231</div>
+                    <div style="color: var(--linear-success); font-size: 0.875rem; margin-top: 0.5rem;">
+                        ↑ 12% from last month
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Active Users</div>
+                    <div class="kpi-value">1,234</div>
+                    <div style="color: var(--linear-text-secondary); font-size: 0.875rem; margin-top: 0.5rem;">
+                        → No change
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Conversion Rate</div>
+                    <div class="kpi-value">3.45%</div>
+                    <div style="color: var(--linear-error); font-size: 0.875rem; margin-top: 0.5rem;">
+                        ↓ 5% from last month
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Badges -->
+        <div class="demo-section">
+            <h2>Status & Badges</h2>
+            <div class="status-group">
+                <span class="badge badge-success">Active</span>
+                <span class="badge badge-warning">Pending</span>
+                <span class="badge badge-error">Failed</span>
+                <span class="badge" style="background: var(--linear-bg-secondary); color: var(--linear-text-secondary); border: 1px solid var(--linear-border);">Draft</span>
+            </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="demo-section">
+            <h2>Notifications</h2>
+            <div class="notification notification-info">
+                <span>ℹ️</span>
+                <span>This is an informational message with Linear styling</span>
+            </div>
+            <div class="notification notification-success">
+                <span>✓</span>
+                <span>Operation completed successfully</span>
+            </div>
+            <div class="notification notification-warning">
+                <span>⚠️</span>
+                <span>Warning: This action requires your attention</span>
+            </div>
+            <div class="notification notification-error">
+                <span>✕</span>
+                <span>Error: Something went wrong</span>
+            </div>
+        </div>
+
+        <!-- Form Elements -->
+        <div class="demo-section">
+            <h2>Form Elements</h2>
+            <div class="demo-grid">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--linear-text-secondary); font-size: 0.875rem;">Text Input</label>
+                    <input type="text" class="input" placeholder="Enter text..." style="width: 100%;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--linear-text-secondary); font-size: 0.875rem;">Select</label>
+                    <select class="select" style="width: 100%;">
+                        <option>Option 1</option>
+                        <option>Option 2</option>
+                        <option>Option 3</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--linear-text-secondary); font-size: 0.875rem;">Textarea</label>
+                    <textarea class="textarea" placeholder="Enter description..." style="width: 100%; min-height: 80px;"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="demo-section">
+            <h2>Data Table</h2>
+            <div class="card" style="padding: 0; overflow: hidden;">
+                <div class="table-container">
+                    <table class="table" style="width: 100%; margin: 0;">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Progress</th>
+                                <th>Updated</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Project Alpha</td>
+                                <td><span class="badge badge-success">Active</span></td>
+                                <td>75%</td>
+                                <td>2 hours ago</td>
+                            </tr>
+                            <tr>
+                                <td>Project Beta</td>
+                                <td><span class="badge badge-warning">Pending</span></td>
+                                <td>40%</td>
+                                <td>1 day ago</td>
+                            </tr>
+                            <tr>
+                                <td>Project Gamma</td>
+                                <td><span class="badge badge-error">Failed</span></td>
+                                <td>10%</td>
+                                <td>3 days ago</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Keyboard Shortcuts -->
+        <div class="demo-section">
+            <h2>Keyboard Shortcuts</h2>
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <span>Search</span>
+                    <kbd class="kbd">⌘K</kbd>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <span>Create New</span>
+                    <kbd class="kbd">⌘N</kbd>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>Settings</span>
+                    <kbd class="kbd">⌘,</kbd>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <button id="theme-toggle" class="theme-toggle" onclick="DarkMode.toggle()" aria-label="Toggle dark mode">
+        🌙
+    </button>
+
+    <!-- Language Selector -->
+    <div class="locale-selector-container">
+        <select id="locale-selector" class="locale-selector" onchange="i18n.setLocale(this.value)">
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="pt">Português</option>
+        </select>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="linear-interactions.js"></script>
+</body>
+</html>

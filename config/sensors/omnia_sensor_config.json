@@ -1,0 +1,74 @@
+{
+  "connector": {
+    "name": "OML01-Omnia Guimar\u00e3esShopping",
+    "type": "milesight",
+    "store": "Omnia Guimar\u00e3esShopping",
+    "description": "People counting camera at Omnia Guimar\u00e3es Shopping",
+    "connection": {
+      "host": "93.108.96.96",
+      "port": 21001,
+      "auth": {
+        "type": "basic",
+        "username": "admin",
+        "password": "grnl.2024"
+      }
+    },
+    "endpoints": {
+      "people_counting": {
+        "params": {
+          "type": 0,
+          "report_type": 0,
+          "linetype": 31,
+          "statistics_type": 3
+        }
+      }
+    },
+    "data_mapping": {
+      "timestamp_format": "%Y/%m/%d %H:%M:%S",
+      "supports_real_time_status": true,
+      "line_count": 4,
+      "fields": [
+        {
+          "source": "StartTime",
+          "target": "start_time",
+          "type": "timestamp"
+        },
+        {
+          "source": "EndTime",
+          "target": "end_time",
+          "type": "timestamp"
+        },
+        {
+          "source": "Line1 - In",
+          "target": "line1_in",
+          "type": "integer"
+        },
+        {
+          "source": "Line2 - In",
+          "target": "line2_in",
+          "type": "integer"
+        },
+        {
+          "source": "Line3 - In",
+          "target": "line3_in",
+          "type": "integer"
+        },
+        {
+          "source": "Line4 - In",
+          "target": "line4_in",
+          "type": "integer"
+        },
+        {
+          "source": "Line4 - Out",
+          "target": "line4_out",
+          "type": "integer"
+        }
+      ]
+    },
+    "collection_settings": {
+      "retry_attempts": 3,
+      "timeout": 30,
+      "polling_interval": 300
+    }
+  }
+}

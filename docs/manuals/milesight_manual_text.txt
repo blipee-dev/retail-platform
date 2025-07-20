@@ -1,0 +1,2171 @@
+
+
+--- Page 1 ---
+blank
+Fisheye Network Camera User Manual
+Milesight Fisheye Network
+Camera User Manual Version: V2.0
+Date: 2022-01-18
+
+--- Page 2 ---
+Chapter 1. Introduction .......................................................................................................................4
+1.1 Copyright Statement ................................................................................................................4
+1.2 Industry Canada ICES-003 Compliance ..................................................................................4
+1.3 Safety Instruction .....................................................................................................................4
+1.4 EU Conformity Statement .......................................................................................................5
+Chapter 2. Product Description ..........................................................................................................6
+2.1 Product Overview ....................................................................................................................6
+2.2 Key Features ............................................................................................................................6
+2.3 Hardware Overview .................................................................................................................7
+2.4 How to Connect to Alarm Interface ........................................................................................8
+2.5 How to Connect the Water-proof Connector ..........................................................................8
+2.6 System Requirements ...............................................................................................................9
+Chapter 3. Network Connection .......................................................................................................10
+3.1 Setting the Camera over the LAN .........................................................................................10
+3.1.1 Connect the Camera to the PC Directly .....................................................................10
+3.1.2 Connect via a Switch or a Router ..............................................................................10
+3.2 Dynamic IP Connection .........................................................................................................10
+Chapter 4. Accessing the Network Camera ....................................................................................12
+4.1 Assigning An IP Address ......................................................................................................12
+4.1.1 Assigning An IP Address Using Smart Tools ............................................................12
+4.1.2 Assign An IP Address via Browser ............................................................................17
+4.2 Accessing from the Web Browser .........................................................................................19
+4.2.1 Access with Plugin .....................................................................................................20
+4.2.2 Access without Plugin ................................................................................................22
+4.3 Accessing from Milesight VMS (Video Management Software) .........................................23
+Chapter 5. System Operation Guide ................................................................................................25
+5.1 Live Video .............................................................................................................................25
+5.1.1 Operations on Live View Page ...................................................................................26
+5.1.2 Set / Call a Preset / Patrol / Pattern ............................................................................32
+5.2 Playback .................................................................................................................................35
+5.3 Local Settings .........................................................................................................................38
+5.4 Basic Settings .........................................................................................................................39
+
+--- Page 3 ---
+Contents
+5.4.1 Video ...........................................................................................................................39
+5.4.2 Image ...........................................................................................................................42
+5.4.3 Audio ...........................................................................................................................54
+5.4.4 Network .......................................................................................................................56
+5.4.5 Date&Time ..................................................................................................................73
+5.5 Advanced Settings .................................................................................................................74
+5.5.1 Storage .........................................................................................................................74
+5.5.2 Security ........................................................................................................................79
+5.5.3 SIP ..............................................................................................................................85
+5.5.4 Fisheye ........................................................................................................................88
+Logs.....................................................................................................................................90
+5.6 Event .......................................................................................................................................91
+5.6.1 Basic Event .................................................................................................................91
+5.6.2 VCA Event ................................................................................................................105
+5.6.3 People Counting ........................................................................................................120
+5.6.4 Heat Map ...................................................................................................................128
+5.7 System ..................................................................................................................................135
+5.8 Maintenance .........................................................................................................................137
+5.8.1 System Maintenance .................................................................................................137
+5.8.2 Auto Reboot ..............................................................................................................141
+Chapter 6. Services..........................................................................................................................142
+
+--- Page 4 ---
+Chapter 1. Introduction
+Thank you for purchasing our product. If there is any questions or requests, please do not hesitate to
+contact your dealer.
+This Manual explains how to use and manage Milesight network cameras  on your network. Previous
+experience of networking will be of use when using the products. Please read this manual carefully
+before operation and retain it for future reference.
+This manual may contain several technically incorrect places or printing errors, and the content is
+subject to change without notice. The updates will be added into the new version of this manual. We
+will readily improve or update the products or procedures described in the manual.
+1.1 Copyright Statement
+This manual may not be reproduced  in any form or by any means to create any derivative such
+as translation, transformation, or adaptation without the prior written permission of Milesight
+Technology Co., Ltd(Hereinafter referred to as Milesight).
+Milesight reserves the right to change this manual and the specifications without prior notice. The
+latest specifications and user documentation for all Milesight products are available on our official
+website www.milesight.com
+1.2 Industry Canada ICES-003 Compliance
+This Class B digital apparatus complies with Canadian ICES-003.
+Cet appareil numerique de la classe B est conforme a la norme NMB-003 du Canada.
+1.3 Safety Instruction
+These instructions are intended to ensure that user can use the product correctly to avoid danger or
+property loss. The precaution measures are divided into “Warnings” and “Cautions”
+Warnings: Serious injury or death may be caused if any of these warnings is neglected.
+•This installation must be conducted by a qualified service person and should strictly comply
+with the electrical safety regulations of the local region
+
+--- Page 5 ---
+Milesight Fisheye Network Camera User Manual  | 1 - Introduction  | 5
+•To avoid risk of fire and electric shock, do keep the product away from rain and moisture before
+installed.
+•Do not touch components such as heat sinks, power regulators, and processors, which may be
+hot
+•Source with DC/AC 12V or PoE
+•Please make sure the plug is firmly inserted into the power socket
+•When the product is installed on a wall or ceiling, the device should be firmly fixed
+•If the product does not work properly, please contact your dealer. Never attempt to disassemble
+the camera by yourself
+Cautions: Injury or equipment damage may be caused if any of these cautions are neglected.
+•Make sure that the power supply voltage is correct before using the camera
+•Do not store or install the device in extremely hot or cold temperatures, dusty or damp locations,
+and do not expose it to high electromagnetic radiation
+•Only use components and parts recommended by manufacturer
+•Do not drop the camera or subject it to physical shock
+•To prevent heat accumulation, do not block air circulation around the camera
+•Laser beams may damage image sensors. The surface of image sensors should not be exposed to
+where a laser beam equipment is used
+•Use a blower to remove dust from the lens cover
+•Use a soft, dry cloth to clean the surface of the camera. Stubborn stains can be removed using a
+soft cloth dampened with a small quantity of detergent solution, then wipe dry
+•Do not use volatile solvents such as alcohol, benzene or thinners as they may damage the
+surface finishes
+•Save the package to ensure availability of shipping containers for future transportation
+1.4 EU Conformity Statement
+2012/19/EU (WEEE directive): Products marked with this symbol cannot be disposed of as unsorted
+municipal waste in the European Union. For proper recycling, return this product to your local
+supplier upon the purchase of equivalent new equipment, or dispose of it at designated collection
+points. For more information see:www.recyclethis.info.
+2006/66/EC (battery directive): This product contains a battery that cannot be disposed of as
+unsorted municipal waste in the European Union. See the product documentation for specific
+battery information. The battery is marked with this symbol, which may include lettering to indicate
+cadmium (Cd), lead (Pb), or mercury(Hg). For proper recycling, return the battery to your supplier or
+to a designated collection point. For more information see:www.recyclethis.info.
+
+--- Page 6 ---
+Chapter 2. Product Description
+2.1 Product Overview
+Milesight  provides a consistent range of cost-effective and reliable network cameras to fully meet
+your requirements. Based on embedded Linux operating system, Milesight network cameras  could
+be easily accessed and managed either locally or remotely with great reliability. With built-in high-
+performance DSP video processing modules, the cameras pride on low power consumption and
+high stability. They support state-of-the-art H.265/ H.264/ MJPEG video compression algorithm
+and industry-leading HD dual-stream technology to achieve the highest level of video image quality
+under the limited network resources. It is fully functional, supporting for flexible and comprehensive
+alarm linkage mechanism, day and night auto switch and privacy masking, etc.
+In practical applications, Milesight network cameras  could either work independently in the LAN,
+or be networked to form a powerful safety monitoring system. It is widely used in fields such as
+finance, education, industrial production, civil defense, health care for security’s sake.
+2.2 Key Features
+•70% ~80% bandwidth saved by 10-level adjustable H.265+
+•Up to 25fps@4000×3000
+•Support AI Video Analytics
+•Support Hardware Dewarping and Software Dewarping
+•Support Heat Map function
+•Support Auto Tracking function
+•11 display modes to meet various needs
+•Equipped with Audio I/O and Alarm I/O
+•IK10-rated vandal-proof metal cover, and IP67-rated weather-proof housing
+•Streamlined design, exquisite appearance
+•Easy to blend in with the installation environment
+•Based on Linux OS with high reliability
+•Support ONVIF Profile G & Q & S & T
+•Support Plugin-Free mode
+•Support activation and set-up of the security questions for cameras(V4x.7.0.69 or above)
+•ICR filter with auto switch, true day/night
+•UPnP protocol for the easy management of cameras
+•Support Milesight DDNS
+•Motion Detection, Privacy Masking, Network Fault Detection and ROI
+•FTP upload, SMTP upload, SD card record and SIP function
+•G.711/AAC audio compression capability
+
+--- Page 7 ---
+Milesight Fisheye Network Camera User Manual  | 2 - Product Description  | 7
+•Three-privilege levels of users for flexible management
+•Micro SD/SDHC/SDXC card local storage support, expand the edge storage
+2.3 Hardware Overview
+1. 5MP Fisheye Network Camera
+2. 12MP (AI) Fisheye Network Camera
+
+
+--- Page 8 ---
+Milesight Fisheye Network Camera User Manual  | 2 - Product Description  | 8
+Note:
+•DC 12V and PoE are available for power supply.
+•Built-in SD card slot can be seen after rotating open the cover, removing the 3 screws and open
+the front panel.
+2.4 How to Connect to Alarm Interface
+External interface of camera is as the following, you can refer to the picture to install the external
+alarm device:
+•PIN1: Alarm Output NC/NO 24V DC 1A
+•PIN2: Alarm Output NC/NO 24V DC 1A
+•PIN3: Alarm Input NC/NO ≤12V
+•PIN4: Alarm Input NC/NO ≤12V
+2.5 How to Connect the Water-proof Connector
+
+--- Page 9 ---
+Milesight Fisheye Network Camera User Manual  | 2 - Product Description  | 9
+Step1: Get the network cable through the screw nut, rubber ring and the screw bolt.
+Step2: Insert the rubber ring into the screw bolt.
+Step3: Connect the screw nut to the screw bolt.
+Step4: Place the O-Ring on the network port connector.
+Step5: Connect the RJ45 to the network port connector, and tighten the screw bolt and the connector.
+2.6 System Requirements
+Operating System: Windows XP/Vista/7/8/10/Server 2000/Server 2008
+CPU: 1.66GHz or higher
+RAM: 1G or higher
+Graphic memory: 128MB or more
+Internet protocol: TCP/IP (IPv4/IPv6)
+Web Browsers: Internet Explorer 8.0 and above version, Mozilla Firefox, Google Chrome and
+Safari.
+
+--- Page 10 ---
+Chapter 3. Network Connection
+3.1 Setting the Camera over the LAN
+Connecting the camera to a switch or a router is the most common connection method. The camera
+must be assigned an IP address that is compatible with its LAN.
+3.1.1 Connect the Camera to the PC Directly
+In this method, only the computer connected to the camera will be able to view the camera. The
+camera must be assigned a compatible IP address to the computer. Details are shown as the following
+figure.
+3.1.2 Connect via a Switch or a Router
+Refer to the following figure to set network camera over the LAN via the switch or router.
+3.2 Dynamic IP Connection
+Connecting the network camera via a router
+
+--- Page 11 ---
+Milesight Fisheye Network Camera User Manual  | 3 - Network Connection  | 11
+Step1: Connect the network camera to a router;
+Step2: On the camera, assign a LAN IP address, the Subnet mask and the Gateway;
+Step3: On the router, set port forwarding. E.g. 80, 8000 and 554 ports. The steps for port forwarding
+vary depending on different routers. Please look up the router's user manual for assistance with port
+forwarding;
+Step4: Apply a domain name from a domain name provider;
+Step5: Configure the DDNS settings in the setting interface of the router;
+Step6: Visit the camera via the domain name.
+
+
+--- Page 12 ---
+Chapter 4. Accessing the Network Camera
+The camera must be assigned an IP address to be accessible.
+4.1 Assigning An IP Address
+The Network Camera must be assigned an IP address to be accessible. The default IP address of
+Milesight network cameras  is 192.168.5.190.
+You can either change the IP address of the camera via Smart Tools or browser. Please connect the
+camera in the same LAN of your computer.
+4.1.1 Assigning An IP Address Using Smart Tools
+Smart Tools is a software tool which can automatically detect multiple online Milesight network
+cameras in the LAN, set IP addresses, and manage firmware upgrades. It’s recommended to use
+when assigning IP addresses for multiple cameras.
+Step1: Install Smart Tools (The software could be downloaded from our website);
+Step2: Start Smart Tools, click the IPC Tools page, then enter the device information, such as IP
+address, MAC address, Status, Port number, Netmask, and Gateway, then all related Milesight
+network cameras  in the same network that will be displayed. Details are shown as the figure below;
+
+--- Page 13 ---
+Milesight Fisheye Network Camera User Manual  | 4 - Accessing the Network Camera  | 13
+Step3: Select a camera or multiple cameras according to the MAC addresses;
+Select single camera:
+Select multiple cameras:
+
+--- Page 14 ---
+Milesight Fisheye Network Camera User Manual  | 4 - Accessing the Network Camera  | 14
+Step4: If the selected camera shows "Active" in the status bar, you can directly type the User Name
+and Password (Camera with version lower than 4x.7.0.69 is using admin/ ms1234 by default), change
+the IP address or other network values, and then click “Modify” button;
+
+
+--- Page 15 ---
+Milesight Fisheye Network Camera User Manual  | 4 - Accessing the Network Camera  | 15
+If the selected camera shows "Inactive" in the status bar (Camera with version V4x.7.0.69 or
+above), click 
+  to set the password when using it for the first time. You can also set the
+security questions when activating the camera in case that you forget the password(You can reset
+the password by answering three security questions correctly). Click ‘Save’ and it will show that the
+activation was successful.
+Note:
+•Password must be 8 to 32 characters long, contain at least one number and one letter.
+•You need to upgrade Smart Tools version to V2.4.0.1 or above to activate the camera.
+After activation, you can change the IP address or other network values, and then click “Modify”
+button.
+
+--- Page 16 ---
+Milesight Fisheye Network Camera User Manual  | 4 - Accessing the Network Camera  | 16
+Step6: By double clicking the selected camera or the browser of interested camera, you can access
+the camera via web browser directly. The Internet Explorer window will pop up.
+More usage of Smart Tools, please refer to the Smart Tools User Manual .
+
+--- Page 17 ---
+Milesight Fisheye Network Camera User Manual  | 4 - Accessing the Network Camera  | 17
+4.1.2 Assign An IP Address via Browser
+If the network segment of the computer and that of the camera are different, please follow the steps
+to change the IP address:
+Step1: Change the IP address of computer to 192.168.5.0 segment, here are two ways as below:
+a. Start→Control  Panel→Network  and Internet Connection→Network  Connection→Local  Area
+Connection, and double click it;
+b. Click “Advanced”, and then click “IP settings”# “IP address”# “Add”. In the pop-up window,
+enter an IP address that in the same segment with Milesight network cameras  ( e.g. 192.168.5.61, but
+please note that this IP address shall not conflict with the IP address on the existing network);
+
+--- Page 18 ---
+Milesight Fisheye Network Camera User Manual  | 4 - Accessing the Network Camera  | 18
+Step2: Start the browser. In the address bar, enter the default IP address of the
+camera:http://192.168.5.190 ;
+Step3: If the camera’s firmware version is lower than V4x.7.0.69, it will directly display the login
+page, enter the user name and password when the LOGIN page appears;
+•Default user name: admin
+•Default password: ms1234
+
+--- Page 19 ---
+Milesight Fisheye Network Camera User Manual  | 4 - Accessing the Network Camera  | 19
+If the camera’s firmware version is V4x.7.0.69 or above, you need to set the password first
+when using it for the first time. And you can also set three security questions for your device
+after activation. Then, you can log in the device with You can log in to the camera with the
+username(admin) and a custom password.
+Note:
+•Password must be 8 to 32 characters long, contain at least one number and one letter.
+•You can click the “forget password” in login page to reset the password by answering three
+security questions when you forget the password, if you set the security questions in advance.
+Step4: After login, please select “Configuration” → “Basic Settings” → “Network” → “TCP/IP”.
+The Network Settings page appears (Shown as below Figure);
+Step5: Change the IP address or other network values. Then click “Save” button;
+Step6: The change of default IP address is completed.
+4.2 Accessing from the Web Browser
+The camera can be used with the most standard operating systems and browsers. The recommended
+browsers are Internet Explorer, Firefox, Chrome, Microsoft Edge, Safari.
+
+--- Page 20 ---
+Milesight Fisheye Network Camera User Manual  | 4 - Accessing the Network Camera  | 20
+4.2.1 Access with Plugin
+Currently you can only access the camera with plugin via Internet Explorer.
+Access over IE Browser
+Before using the browser to get access to your camera, you need to install the MsActiveX  firstly.
+You can refer the steps as follows:
+Step1: Launch the IE browser and enter the IP address of the camera;
+Step2: Enter the User Name and Password and click “Login”;
+Step3: At the first time to log in the device, the browser will prompt to install Controls, please click
+“Click here to download and install controls manually” as shown in the figure below;
+Note: During installing the controls, please keep the browsers close.
+Step4: Follow the prompts to install the Controls, when it`s finished, it will pop out a window as
+shown in the figure below. Please click “Finish” and refresh the browser, then you will see the video.
+If IE9 or higher version browser is used, it is suggested that the Milesight network cameras  web link
+should be added as a trusted site. See the instructions as follows:
+Step1: Start the IE9 or higher version browser, and select “Tools”→“Internet Options”;
+
+--- Page 21 ---
+Milesight Fisheye Network Camera User Manual  | 4 - Accessing the Network Camera  | 21
+Step2: Select “Security” to “Trusted”;
+
+
+--- Page 22 ---
+Milesight Fisheye Network Camera User Manual  | 4 - Accessing the Network Camera  | 22
+Step3: Enter the IP address of the camera in the blank and click “Add”;
+Step4: Enter the IP address. After logging on network camera’s web GUI successfully, user is
+allowed to view live video as follows.
+4.2.2 Access without Plugin
+As browser security becomes more and more important, some browsers don’t support installing
+plugin. In order to normally preview the video on the browser, The camera was upgraded to support
+Plugin-Free Mode. In Plugin-Free Mode, you can preview the video on the browser without plugin.
+Currently Plugin-Free Mode is supported in Firefox & Google Chrome & Safari & Edge browser for
+
+--- Page 23 ---
+Milesight Fisheye Network Camera User Manual  | 4 - Accessing the Network Camera  | 23
+Windows system, MAC system, iOS system and Android system. Both H.265&H.264 video codec
+are supported in Plugin-Free Mode for camera, and it will play the secondary stream by default.
+Note:
+•You need to upgrade camera to V4x.7.0.70 or above to use Plugin-Free Mode.
+•For the firmware which below V4x.7.0.74, please upgrade the Network Camera to V4x.7.0.74
+or above (Please upgrade the browser to the latest version).
+•For V4x.7.0.74 or above, you can enjoy Plugin-Free Mode without any configuration about the
+browser (Please upgrade the browser to the latest version).
+You can preview the video without plugin by selecting Plugin-Free Mode in Live View interface.
+It supports previewing the video in Live View and other setting interfaces.
+4.3 Accessing from Milesight VMS (Video Management
+Software)
+Milesight VMS(ONVIF compatible) is a handy and reliable application designed to work with
+network cameras in order to provide video surveillance, recording settings and event management
+functions. The interface of Milesight VMS is very easy to use, intuitive, with easy access to the most
+common activities, such as viewing live video, searching through recordings and exporting videos
+and snapshots. It's able to be integrated with other devices through ONVIF. It is designed to work on
+
+--- Page 24 ---
+Milesight Fisheye Network Camera User Manual  | 4 - Accessing the Network Camera  | 24
+Windows XP/ 7/ 8/ Vista/ Server 2000/ Server 2008. The software could be downloaded from our
+website www.milesight.com .
+Please install Milesight VMS; then launch the program to add the camera to the channel list. For
+detailed information about how to use the software, please refer to user manual of Milesight VMS.
+
+
+--- Page 25 ---
+Chapter 5. System Operation Guide
+5.1 Live Video
+After logging in the network camera web GUI successfully, user is allowed to view live video as
+follows.
+Live view interface (Multi-Channel Mode):
+Live view interface (Bundle-Stream Mode):
+
+
+--- Page 26 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 26
+5.1.1 Operations on Live View Page
+Display Control
+Display Control allows you to select install type, display mode, window screen and channel of live
+view.
+Table 1. Description of Display Control buttons
+Item Parameter Description
+On-board DewarpingClick to select on-board dewarping mode.
+Dewarping
+Rule
+Client-side DewarpingClick to select client-side dewarping mode.
+Ceiling MountingClick to select ceiling mounting.
+Wall MountingClick to select wall mounting. Installation
+Flat MountingClick to select flat mounting.
+1OSelect live view of original fisheye view.
+1PSelect live view of 360° panoramic view. Display
+2PSelect live view of two 180° panoramic views.
+
+--- Page 27 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 27
+Item Parameter Description
+4RSelect live view of four regional views.
+1O3RSelect live view of one original fisheye view and three regional
+views.
+1P3R
+(Only for Hardware Dewarping)Select live view of one 360° panoramic view and three regional
+views.
+1O1P3R
+(Only for Multi-Channel Mode
+of Hardware Dewarping)Select live view of one original fisheye view, one 360°
+panoramic view and three regional views.
+1P1R
+(Only for Software Dewarping)Select live view of one 360° panoramic view and one regional
+view.
+1P4R
+(Only for Software Dewarping)Select live view of one 360° panoramic view and four regional
+views.
+1P6R
+(Only for Software Dewarping)Select live view of one 360° panoramic view and six regional
+views.
+1O8R
+(Only for Software Dewarping)Select live view of one original fisheye view and eight regional
+views.
+
+--- Page 28 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 28
+Item Parameter Description
+Channel
+(Only for Multi-Channel Mode)Click to play this channel on any window of live view.
+/
+/
+Window Layout
+(Only for Multi-Channel Mode)Click to set window layout to “1*1”/ “2*2”/ “1+4”.
+Window SizeClick to display images at a window size.
+Real SizeClick to display images at a real size.Window
+Full ScreenClick to display images at full-screen.
+Note:
+•Original fisheye view: the whole wide-angle view of the fisheye camera is displayed.
+•Panoramic view: the round fisheye image is transformed to rectangular image by certain
+calibration methods.
+•Regional view: the close-up view of defined area in the original fisheye view or panoramic
+view.
+•Select the Installation, Display mode and the most appropriate Window Layout in sequence.
+Live View Window
+Display live video on the window.
+Tool Bar
+Table 2. Description of Tool Bar buttons
+No. Parameter Description
+1
+/
+Start/Stop all live view
+
+--- Page 29 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 29
+No. Parameter Description
+2
+CaptureClick to capture the current image and save to the configured path. The
+default path is
+C:VMS\+-1\ IMAGE-MANUAL
+3
+/
+Start RecordingClick to start recording video and save to the configured path. The default
+path is C:VMS\+-1\MS_Record. Click again to stop recording
+4
+Saving Path SettingsSet the saving path for captured images and video recordings of
+operating on the live view
+5
+Enable Digital ZoomWhen enabled, you can zoom in in a specific area of video image with
+your mouse wheel
+Note: For the -PA model in the AI series, Enable Digital Zoom is not
+supported for the panoramic view of 1P3R mode.
+Brightness: Adjust the Brightness of the scene
+Contrast: Adjust the color and light contrast
+Saturation: Adjust the Saturation of the image. Higher Saturation makes
+colors appear more "pure" while lower one appears more “wash-out”
+Sharpness: Adjust the Sharpness of image. Higher Sharpness sharps
+the pixel boundary and makes the image looks “more clear”
+2D DNR/3D DNR: Adjust the noise reduction level6
+Image ConfigDefault: Restore brightness, contrast and saturation to default settings
+Note: It will capture images and record videos of first channel by default, you can also capture
+images and record videos of specified channel manually.
+PTZ Control
+PTZ Control allows you to use pan/tilt/zoom/preset/patrol function of PTZ, and set PTZ speed.
+Table 3. Description of PTZ Control buttons
+
+--- Page 30 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 30
+No. Parameter Description
+PTZ ControlNavigation key is used to control the direction. The rotation key is used
+for auto-rotation.
+1
+PTZ SpeedTo adjust the speed of pan/tilt movements, from 1 to 10
+2
+ Click to zoom in and zoom out
+3
+ Click to focus near or far of the lens.
+Lighting For 30s:  Click to open/ close the White LED for lighting 30s.
+3D Positioning:  Click to enable/ disable 3D positioning.
+One-touch Patrol: Click to carry out the patrol.
+Auto Home: Click to enable Auto Home.4
+Auto Tracking: With this option enabled, the camera can perform the
+digital Pan/Tilt/Zoom to track the moving objects automatically.
+Note:
+•Auto Tracking is only supported in regional views .
+•Auto Tracking is only supported in ceiling mounting mode of on-
+board dewarping mode .
+5
+PresetEnable to set 255 preset positions for each regional view channel
+6
+PatrolEnable to set 8 patrol paths for each regional view channel
+
+--- Page 31 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 31
+Other
+Table 4. Description of other buttons/icons
+No. Parameter Description
+1
+(Only for Bundle-
+Stream Mode)Choose Primary Stream/Secondary Stream to show on the current
+video window
+2
+TCP: More reliable connection;
+UDP: More instantaneous connection, but if you cannot get the live view
+successfully, please turn into TCP connection.
+HTTP: Faster and safer connection especially in Internet environment.
+3
+Least Delay : The most instantaneous mode in the three modes;
+Balanced : A balanced mode between Least Delay and Best Fluency,
+maintains the fluency while keeps an acceptable delay;
+Best Fluency : The most fluent mode in the three modes.
+4
+ Configuration:  Click to access the configuration page.
+5
+RecordingWhen recording, the icon will turn red.
+6
+AlarmWhen an alarm of Smart Event was triggered, the icon appears
+7
+AlarmWhen an alarm of Motion Detection was triggered, the icon appears
+8
+AlarmExcept for the two kinds of alarms above, when other alarms were
+triggered, the icon appears
+9
+ Click to select system language
+
+--- Page 32 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 32
+5.1.2 Set / Call a Preset / Patrol / Pattern
+A preset is a predefined image position. You can click the call button from the preset list to quickly
+go to the desired image position.
+Set a preset:
+Step1: In the PTZ control panel, select a preset number from the preset list, and you can also
+customize the preset name displayed on the screen. The patrol name displayed on the screen will also
+be customized if you customize preset name and set a patrol as shown below;
+
+
+--- Page 33 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 33
+Step2: Use the PTZ control buttons to move the lens to the interested position;
+Step3: Click 
+  to save the setting of the current preset;
+Step4: Click 
+  to delete the chosen preset.
+Note: Up to 300 presets can be configured (for each regional view channel).
+Calling a preset:
+Select a defined preset form the preset list and click 
+  to call the preset.
+
+--- Page 34 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 34
+Set / Call a patrol
+A patrol is a memorized series of preset function. It can be configured and called on the patrol setting
+list. You can customize up to 8 patrols and it can be configured with 48 presets. Before configuring
+the patrol, you should make sure that the presets you want to add to the patrol have been defined.
+Set a patrol:
+Step1: In the PTZ control panel, click 
+  to enter the patrol settings interface;
+Step2: Select a patrol number, the setting icon will appear 
+ , click it;
+Step3: Click 
+  to add presets to this patrol, as shown in Figure;
+Step4: Configure the preset number, patrol speed and patrol time;
+Table 5. Description of Patrol Settings
+Name Description
+Patrol Speed The speed of moving from one preset to another.
+Patrol Time The duration staying on one patrol point.
+
+--- Page 35 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 35
+Step5: Click
+ to save the patrol settings.
+Note:
+•Patrol Speed only works in Patrol mode.
+•Patrol Time should be 0~120s.
+Call a patrol:
+In the PTZ control panel, select a defined patrol from the patrol list, and click 
+  to call the patrol,
+as shown below.
+Note: The three buttons behind the Patrol list means: Play, Set and Delete.
+5.2 Playback
+This section explains how to view the recorded video files stored in SD cards or NAS.
+Step1:Click Playback  on the menu bar to enter playback interface;
+Step2: Click the date button, choose the date when date window pops up;
+
+--- Page 36 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 36
+Note:
+•The date with bright red means current date; one with a dark red number and white background
+means weekend day; one with a dark red number and blue background means that the date is
+selected now.
+•It supports Plugin-free Playback function which allows to preview the playback without
+installing plugin in Firefox (Version 65 and above) & Google Chrome (Version 69 and above).
+You need to configure the browser properties before using this function. Please refer to Access without Plugin for
+more browser configuration.
+Step3: Click 
+  to play the video files found on this date.
+The toolbar on the button of playback interface can be used to control playing progress.
+Table 6.  Description of the buttons
+Button Operation
+Play
+Pause
+Stop
+Speed Down
+
+--- Page 37 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 37
+Button Operation
+Speed Up
+/
+Audio On/Off
+Search
+Go To
+/
+Time Narrow/Expand
+/
+Start/Stop Recording
+Snapshot
+/
+Zoom On/Off
+Full Screen
+Note:
+Drag the progress bar with the mouse to locate the exact playback point. You can also input the
+time and click 
+  to locate the playback point in the Set Playback Time  filed. You can also click
+/
+to zoom out/in the progress bar.
+Step4: If the recording contains the original fisheye view(1O), it supports client-side dewarping
+based on the original view in the playback interface. Click 
+  to play the video files, then you can
+select different installation modes and display modes as shown below. It also supports PTZ function
+for panoramic view and regional views.
+
+--- Page 38 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 38
+5.3 Local Settings
+Record File Length and storage path can be customized in this setting page.
+
+
+--- Page 39 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 39
+5.4 Basic Settings
+5.4.1 Video
+Stream parameters can be set in this module, adapting to different network environments and
+demands. You can set the stream parameters separately for different channels base on display mode
+in live view (up to 5 channels).
+Multi-Channel Mode (General):
+Multi-Channel Mode (Event):
+Bundle-Stream Mode (General):
+
+--- Page 40 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 40
+Bundle-Stream Mode (Event):
+Table 7.  Description of the buttons
+Parameters Function Introduction
+Channel
+(Only for Multi-Channel Mode)The number of channels are variable according to the selected display mode.
+1O and 1P display one channel.
+2P displays two channels.
+4R, 1O3R and 1P3R display four channels.
+1O1P3R displays five channels.
+Display Mode 1O/1P/2P/4R/1O3R/1P3R are available
+
+--- Page 41 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 41
+Parameters Function Introduction
+Stream Type
+(Only for Multi-Channel Mode)Primary Stream/Secondary Stream are available.
+Record Stream TypeGeneral & Event are available only for Primary Stream of Bundle-Stream Mode and
+Channel 01 of Multi-Channel Mode. General refers to continuously recording video,
+while Event includes events that can trigger alarms, such as Motion, Exception,
+Audio Alarm and so on.
+This item can separately set different bit rate and frame rate for different Recording
+Stream Types. If user chooses Event, video will be recorded according to the
+configuration of video stream type when an event happens, thereby greatly reducing
+the recording storage space.
+Video Codec H.265/H.264 are available.
+Frame SizeFor Multi-Channel Mode:
+4000*3000, 3000*3000, 2560*2560, 1920*1920, 1280*1280,1280*960, 1024*1024,
+720*720, 320*320, are available frame size for original fisheye view in 1O.
+2560*2560, 2560*640, 1920*1920, 1920*480, 1280*1280 are available frame size
+for original fisheye view in 1O3R and 1O1P3R.
+3000*752, 2560*, 2560*640, 1920*480, 1280*320, 960*240 are available frame size
+for 360° panoramic view in 1P, 1P3R and 1O1P3R.
+2560*640, 1920*480 are available frame size for 360° panoramic view in 1O1P3R
+3000*1680, 2688*1520, 2592*1460, 1920*1080, 1280*720 are available frame size
+for two 180° panoramic views in 2P.
+1920*1080, 1280*720, 640*480 are available frame size for regional view.
+For Bundle Stream Mode:
+4000*3000, 3000*3000, 2560*2560, 2592*1944, 1944*1944, 1920*1920, 1536*1536,
+1280*1280 are available frame size for 1O.
+3000*752, 2592*648, 2560*640, 1920*480, 1280*320 are available frame size for
+1P.
+3000*1680, 2688*1520, 2592*1460, 1920*1080, 1280*720 are available frame size
+for 2P.
+4000*3000, 3840*2160, 3072*1728,2592*1944, 2304*1296 are available frame size
+for 4R, 1O3R and 1P3R.
+Note: For the -PA model in the AI series, it supports up to 3000*3000 of Frame
+Size.
+
+--- Page 42 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 42
+Parameters Function Introduction
+Maximum Frame RateMaximum refresh frame rate of per second
+it is variable according to the display mode selected.
+Bit RateSet the bitrate to 32~16384 Kbps. The higher value corresponds to the
+higher video quality, and the higher bandwidth is required as well.
+Smart StreamSmart Stream mode remarkably reduces the bandwidth and the data storage
+requirements for network cameras while ensuring the high quality of images, and it is
+a 10-level adjustable codec.
+It is optional to turn On/Off Smart Stream mode.
+Level: Level 1~10 are available to meet your need.
+CBR: Constant Bitrate. The rate of CBR output is constant
+Bit Rate Control
+VBR: Variable Bitrate. VBR files vary the amount of output data per time segment
+Image Quality Low/Medium/High are available, this item is optional only if you select VBR.
+Profile The option is for H.264, Main/High/Base can be selected according to your needs.
+I-frame IntervalSet the I-frame interval to 1~120, 50 for the default. The number must be a multiple
+of the number of frames.
+5.4.2 Image
+Display information, enhancement of image and Day/Night setting can be set in this module. OSD
+(On Screen Display) content and video time can be displayed to rich the image information.
+Display
+
+--- Page 43 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 43
+Table 8.  Description of the buttons
+Parameters Function Introduction
+Power Line Frequency 60Hz flicker for 30fps camera model and 50Hz flicker for 25fps camera model
+Day/Night ModeThere are several parameters such as Exposure Level, Maximum Exposure Time
+and IR-CUT Interval, etc, associated with this mode
+Night Mode:  Shown in live view based on Night Mode settings
+Day Mode:  Shown in live view based on Day Mode settings
+Auto Mode:  Shown in live view based on environment, set the sensitivity for
+switching Day Mode to Night Mode, or Night Mode to Day Mode
+Customize: Shown in live view based on your own settings’ time to start/end Night
+Mode
+Day To Night ValueThis is the sensitivity for switching Day Mode  to Night Mode . When IR Light Sensor
+Current Value is lower than this value, it will switch Day Mode to Night Mode
+Night To Day ValueThis is the sensitivity for switching Night Mode  to Day Mode . When IR Light Sensor
+Current Value is higher than this value, it will switch Night Mode to Day Mode
+IR Light Sensor Value The current value of the IR light sensor
+
+--- Page 44 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 44
+Parameters Function Introduction
+Smart IR ModeWith the combination of the High Beam and Low Beam, The IR LEDs technology
+has been upgraded to provide better image clarity and quality regardless of the
+object distance.
+Customize mode is available.
+Support to set the strength of the IR to Auto Mode  or Customize  to achieve the
+best effect.
+Near view level Adjust the light strength of Low-Beams LED light level from 0 to 100.
+Far view level Adjust the light strength of High-Beams LED light level from 0 to 100.
+IR Strength Value The current value of Low-Beams LED and High-Beams LED light value
+Day/Night Switch RefocusWith this option enabled, the camera will refocus when switching between day mode
+and night mode.
+Outdoor/Indoor Mode Select indoor or outdoor mode to meet your needs
+Corridor ModeThere are three options available, you can select one to meet your need
+Off: Keep the image in normal direction
+Clockwise  90°: Rotate the image by 90° clockwise
+Anticlockwise 90°: Rotate the image by 90° anticlockwise
+Image RotationThere are four options available, you can select one to meet your need
+Off: Keep the image in normal direction
+Rotating 180°:  Upside down the image
+Flip Horizontal:  Flip the image horizontally
+Flip vertical:  Flip the image vertically
+Enhancement
+
+--- Page 45 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 45
+Table 9.  Description of the buttons
+Parameters Function Introduction
+IR Balance ModeThere is an option to turn On/Off the IR LED.
+IR Balance Mode would avoid the problem of overexposure and darkness, and the
+IR LED will change according to the actual illumination.
+White BalanceTo restore white objects, removed color distortion caused by the light of the
+environment
+Auto White Balance: This option will automatically enable the White Balance
+function
+Manual White Balance: This option is only for H.265 series. Set Red Gain Level
+and Blue Gain Level manually.
+Incandescent Lamp: Select this option when light is similar with incandescent lamp
+Warm Light Lamp: Select this option when light is similar with warm light lamp
+Natural Light : Select this option when there is no other light but natural light
+Fluorescent Lamp:  Select this option when light is similar with Fluorescent Lamp
+Schedule mode:  Select this option that you can customize the schedule to enable/
+disable above modes
+Reduce Motion BlurEnable this function to reduce the motion blur of objects effectively.
+You can adjust the deblur level from 1 to 100.
+
+--- Page 46 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 46
+Parameters Function Introduction
+Defog ModeBetter image effect in foggy weather.
+Note: Defog Mode is not supported for the -PA model in the AI series.
+Exposure ModeAuto Mode, Manual Mode and Schedule Mode are available.
+Auto Mode:  The camera will adjust the brightness according to the light
+environment automatically;
+Manual Mode:  The camera will adjust the brightness according to the value you
+set, you can set the exposure time from 1~1/100000s, the higher the value is, the
+brighter the image is;
+Schedule Mode:  You can customize the schedule to enable/disable Auto Mode and
+Manual Mode.
+Single Mode Set single mode for BLC/WDR/HLC.
+Day/Night ModeSupport BLC/WDR/HLC on Day Enhancement Mode/Night Enhancement Mode
+separately.
+Schedule Mode Set schedule mode for BLC/WDR/HLC.
+BLC RegionOff, Customize, and Centre are available (in single mode, only enable when WDR is
+disable)
+Off: Calculate the full range of view and offer appropriate light compensation
+Customize:  This option enables you to customize inclusive or exclusive region
+manually
+Centre: This option will automatically add an inclusive region in the middle of the
+window and give the necessary light compensation
+Wide Dynamic RangeThis function which can capture and display both bright and dark areas in the same
+frame enables details of objects in both bright and dark areas to be visible.
+Off: Disable WDR function
+On: Enable the WDR, there are Low/High/Auto  three levels
+Customize:  Customize the schedule to enable/disable the WDR function and set the
+levels with Low/High/Auto
+Wide Dynamic Level Set WDR with Low/High/Auto level
+
+--- Page 47 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 47
+Parameters Function Introduction
+Anti-flicker LevelReduce flickers that appear on screen in some lighting conditions and there are 10
+levels of anti-flicker adjustments
+High Light CompensationThis function is only for H.265 series to adjust the brightness to a normal range when
+the light is strong, refers to Figure 4-4-11
+Off: Disable HLC function
+General Mode:  Enable the general mode of HLC, and there is a setting for HLC
+Level
+Enhanced Mode:  Enable the enhanced mode of HLC, and there is a setting for HLC
+Level
+HLC Level Select level for HLC
+Day Enhancement Mode BLC/WDR/HLC are available.
+Night Enhancement Mode BLC/WDR/HLC are available.
+Schedule Setting Customize the schedule to enable/disable BLC/WDR/HLC  mode
+Note:
+•You can customize the schedule to enable/disable the difference White Balance modes.
+•You can customize the schedule to enable/disable the difference exposure modes.
+
+--- Page 48 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 48
+•You can customize the schedule to enable/disable BLC/WDR/HLC mode.
+•WDR/HLC has higher priority than exposure settings at the same time frame.
+•Defog Image.
+•HLC Image.
+
+--- Page 49 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 49
+Day/Night Mode
+Table 10. Description of the buttons
+Parameters Function Introduction
+Exposure Level Level 0~10 are available to meet your need
+Minimum ShutterMinimum Shutter is the same as Maximum Exposure Time. Set the minimum Shutter
+to 1~1/100000s
+Maximum ShutterMaximum Shutter is the same as Minimum Exposure Time. Set the maximum
+Shutter to 1~1/100000s
+IR-CUT Latency The interval time of switching one mode to another
+IR-CUT Turn on or turn off IR-CUT
+
+--- Page 50 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 50
+Parameters Function Introduction
+IR LED Turn on or turn off IR-LED
+Color Mode Select B/W or Color mode under Day/Night mode
+Schedule ModeHere you can customize your special demands for different time, then the Day mode
+and Night mode will switch automatically according to your settings
+On Screen Display(OSD)
+Table 11.  Description of the buttons
+Parameters Function Introduction
+Video Stream Enable to set OSD for primary stream and secondary stream
+Font Size Smallest/Small/Medium/Large/Largest/Auto are available for title and date
+Font Color Enable to set different color for title and date
+
+--- Page 51 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 51
+Parameters Function Introduction
+Background ColorEnable to set different colors for display information background on screen
+You can set different colors for font and background of image , then the image OSD
+will show as below:
+Show Video Title Check the checkbox to show video title
+Video Title Customize the OSD content
+Text Position OSD display position on the image
+Show Timestamp Check the checkbox to display date on the image
+Date Position Date display position on the image
+
+--- Page 52 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 52
+Parameters Function Introduction
+Date Format The format of date
+Copy to Other Streams Copy the settings to other streams
+Privacy Mask
+Privacy mask enables to cover certain areas on the live video to prevent certain spots in the
+surveillance area from being viewed and recorded.
+You can set 24 mask areas at most.
+Table 12.  Description of the buttons
+Parameters Function Introduction
+Enable Check the checkbox to enable the Privacy Mask function
+Clear All Clear all areas you drew before
+TypeSelect the color to use for the privacy areas, there are eight colors available: White,
+Black, Blue, Yellow, Green, Brown, Red and Violet
+
+--- Page 53 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 53
+Note:
+•You can only set the Privacy Mask area on Fisheye View channel.
+•For the -PA model in the AI series, it only supports black color for Privacy Mask.
+ROI
+Region of interest(often abbreviate ROI), is a selected subset of samples within a dataset identified
+for a particular purpose. Users can select up to 8 key regions of a scene to transmit through separate
+streams for targeted preview and recording.
+By using Milesight  ROI technology, more than 50% of bit rate can be saved and therefore less
+bandwidth demanded and the storage usage reduced. So according to this, you can set a small bit rate
+for high resolution.
+Table 13. Description of the buttons
+Parameters Function Introduction
+Enable Check the checkbox to enable the ROI function
+Clear All Clear all areas you drew before
+Video Stream Choose the Video Stream
+
+--- Page 54 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 54
+Note:
+•You can set a low bit rate. For example, you can set a bit rate with 512Kbps and a resolution
+with 1080P, then you can see the image quality of ROI is more clear and fluent than the other
+region.
+•You can set the ROI area separately for different channels base on display mode in live view.
+•For the -PA model in the AI series, ROI function cannot be enabled when the resolution is
+higher than 8MP.
+5.4.3 Audio
+This audio function allows you to hear the sound from the camera or transmit your sound to the
+camera side. A two-way communication is also possible to be achieved with this feature. Alarm can
+be triggered when the audio input is above a certain alarm level you set, and configured audio can be
+played when an alarm occurs.
+
+
+--- Page 55 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 55
+Table 14.  Description of the buttons
+Parameters Function Introduction
+Enable Audio Check on the check box to enable audio feature
+Audio InputDenoise: Set it as On/Off. When you set the function on, the noise detected can be
+filtered
+Encoding: G.711-ULaw, G.711-ALaw, AAC LC, G.722 and G.726 are available
+Audio Bit Rate : The function is available only for AAC LC, and supports up to
+256kbps
+Sample Rate:  8KHz, 16KHz, 32KHz, 44.1KHz, and 48KHz are available
+Input Gain: Input audio gain level, 0-100
+Alarm Level: Alarm will be triggered if voice alarm is enabled and input gained volume
+is higher than the alarm level, 1-100
+Audio OutputAuto Gain Control: This function is only for H.265 series, improve the quality of audio
+Output Volume: Adjust volume of output
+You can upload up to 5 audio files manually to Flash or SD Card on the Audio web page and you can
+also edit the audio file’s name when upload.
+
+--- Page 56 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 56
+Note: Only support ‘.wav’ audio files with codec type PCM/PCMU/PCMA, 64kbps or 128 kbps
+and no more than 500k.
+5.4.4 Network
+TCP/IP
+Table 15.  Description of the buttons
+
+--- Page 57 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 57
+Parameters Function Introduction
+Get IPv4 Address
+AutomaticallyGet an IP address from the DHCP server automatically
+Use fixed IP addressIPv4 Address:  An address that used to identify a network camera on the network
+IPv4 Subnet Mask:  It is used to identify the subnet where the network camera is
+located
+IPv4 Default Gateway: The default router address
+Preferred DNS Server:  The DNS Server translates the domain name to IP address
+IPv6 Mode:  Choose different mode for IPv6: Manual/Route Advertisement/ DHCPv6
+IPv6 Address:  IPv6 Address used to identify a network camera on the network
+IPv6 Prefix: Define the prefix length of IPv6 address
+IPv6 Default Gateway: The default router IPv6 address
+MTU: Maximum Transmission Unit. The default value is 1500. You can customize
+the value from 1200 to 1500 as needed
+Note: The Test button is used to test if the IP is conflicting.
+
+--- Page 58 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 58
+HTTP
+Table 16. Description of the buttons
+Parameters Function Introduction
+HTTP Enable Start or stop using HTTP
+HTTP Port Web GUI login port, the default is 80, the same with ONVIF port
+HTTPS Enable Start or stop using HTTPS
+HTTPS Port Web GUI login port via HTTPS, the default is 443
+HTTP Settings Upload and set the SSL certificate.
+Table 17. HTTP URL are as below:
+
+--- Page 59 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 59
+Stream URL
+Main Stream http://username:password@IP:port/ipcam/mjpeg.cgi
+Secondary Stream http://username:password@IP:port/ipcam/mjpegcif.cgi
+RTSP
+Table 18.  Description of the buttons
+Parameters Function Introduction
+RTSP Port The port of RTSP, the default is 554
+Playback Port Playback Port The port of playback, the default is 555
+RTP PacketThere are Better Compatibility and Better Performance two options, if your camera’s
+image mess up, please switch this option
+Multicast Group Address Support multicast function
+QoS DSCP The valid value range of the DSCP is 0-63
+Table 19. RTSP URL for Bundle-Stream Mode are as below:
+Stream URL
+Main Stream rtsp://IP:RTSP Port/main
+Secondary Stream rtsp://IP:RTSP Port/sub
+
+--- Page 60 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 60
+Table 20. RTSP URL for Multi-Channel Mode are as below:
+Stream URL
+Channel 01 rtsp://IP:RTSP Port/main
+Channel 02 rtsp://IP:RTSP Port/sub
+Channel 03 rtsp://IP:RTSP Port/third
+Channel 04 rtsp://IP:RTSP Port/forth
+Channel 05 rtsp://IP:RTSP Port/fifth
+Note:
+•Get the format of RTSP URL by clicking “
+ ”on the right side of RTSP Port.
+•DSCP refers to the Differentiated Service Code Point; and the DSCP value is used in the IP
+header to indicate the priority of the data.
+•A reboot is required for the settings to take effect.
+UPnP
+Universal Plug and Play (UPnP) is a networking architecture that provides compatibility among
+networking equipment, software and other hardware devices. The UPnP protocol allows devices
+to connect seamlessly and to simplify the implementation of networks in the home and corporate
+environments. With the function enabled, you don’t need to configure the port mapping for each port,
+and the camera is connected to the Wide Area Network via the router.
+
+--- Page 61 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 61
+Table 21.  Description of the buttons
+Parameters Function Introduction
+Enable Check the checkbox to enable the UPnP function
+Enable Port Mapping Check the checkbox to enable the Port Mapping
+Name The name of the device detected online can be edited
+TypeAuto: Automatically obtain the corresponding HTTP and RTSP port, without any
+settings
+Manual: Need to manually set the appropriate HTTP port and RTSP Port. When
+choose Manual, you can customize the value of the port number by yourself
+DDNS
+DDNS allows you to access the camera via domain names instead of IP address. It manages to
+change IP address and update your domain information dynamically. You need to register an account
+from a provider.
+
+--- Page 62 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 62
+You can choose “ddns.milesight.com” as provider for DDNS. After enabling it, you can access the
+device via the URL “http://ddns.milesight.com/MAC address”.
+Table 22.  Description of the buttons
+Parameters Function Introduction
+Enable DDNS Check the checkbox to enable DDNS service
+ProviderGet support from DDNS provider: ddns.milesight.com, freedns.afraid.org,
+dyndns.org, www.no-ip.com, www.zoneedit.com. You can also customize the
+provider for DDNS.
+Hash A string used for verifying, only for "freedns.afraid.org"
+User name Account name from the DDNS provider, unavailable for "freedns.afraid.org"
+Password Account password, unavailable for "freedns.afraid.org"
+Host name DDNS name enabled in the account
+Note:
+•Please do the Port Forwarding of HTTP Port and RTSP Port before you use Milesight DDNS.
+•Make sure that the internal and the external port number of RTSP are the same.
+
+--- Page 63 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 63
+Email
+Alarm video files can be sent to specific mail account through SMTP server. You must configure the
+email settings correctly before using it.
+Table 23.  Description of the buttons
+Parameters Function Introduction
+Enable Check the checkbox to enable Email function
+User Name The sender's name. It is usually the same as the account name
+
+--- Page 64 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 64
+Parameters Function Introduction
+Sender Email Address Email address to send video files attached emails
+Password The password of the sender
+SMTP Server The SMTP server IP address or host name(e.g. smtp.gmail.com)
+SMTP PortThe default TCP/IP port for SMTP is 25(not secured). For SSL/TLS port, it
+depends on the mail you use
+Recipient Email Address1 Email address to receive video files
+Recipient Email Address2 Email address to receive video files
+EncryptionCheck the checkbox to enable SSL or TLS if it is required by the SMTP
+server.
+Alarm Snapshot  File NameDefault(YYYY-MM-DD) /MM-DD-YYYY/ DD-MM-YYYY/ Add prefix/
+Overwrite with the base file name/ Customize are available.
+Timing Snapshot File NameDefault(YYYY-MM-DD) /MM-DD-YYYY/ DD-MM-YYYY/ Add prefix/
+Overwrite with the base file name/ Customize are available.
+Note: You can refer to the following file name tip to customize the file name.
+FTP
+Alarm video files can be sent to specific FTP server. You must configure the FTP settings correctly
+before using it.
+
+--- Page 65 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 65
+Table 24.  Description of the buttons
+Parameters Function Introduction
+Server Address FTP server address
+Server Port The port of the FTP server. Generally it is 21
+User Name User name used to log in to the FTP sever
+Password User password
+
+--- Page 66 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 66
+Parameters Function Introduction
+Storage PathStorage Path where video and image will be uploaded to the FTP server.
+Four FTP storage path types are available, including Root Directory, Parent
+Directory, Child Directory and Customize.
+Parent DirectoryChoose IP Address/ Device Name/ Date as the folder name of Parent Directory, or
+customize the folder name.
+Child DirectoryChoose IP Address/ Device Name/ Date as the folder name of Child Directory, or
+customize the folder name.
+Multilevel Folder NameIf the storage path is more than two levels, enter Multilevel FTP storage path here
+manually.
+Alarm Action File Name Choose the default(YYYY-MM-DD) or customize the alarm action file name.
+Video File NameIf you choose to customize the alarm action file name, YYYY-MM-DD/ MM-DD-
+YYYY/ DD-MM-YYYY/ Add prefix are available.
+Image File NameIf you choose to customize the alarm action file name, YYYY-MM-DD/ MM-DD-
+YYYY/ DD-MM-YYYY/ Add prefix are available.
+Timing Snapshot File NameDefault(YYYY-MM-DD) /MM-DD-YYYY/ DD-MM-YYYY/ Add prefix/ Overwrite with
+the base file name are available.
+Note:
+•Parent Directory will be under Root Directory, and Child Directory will be under Parent
+Directory.
+•You can refer to the following file name tip to customize the file name.
+
+
+--- Page 67 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 67
+VLAN
+A virtual LAN (VLAN) is any broadcast domain that is partitioned and isolated in a computer
+network at the data link layer (OSI layer 2). LAN is an abbreviation of local area network. VLANs
+allow network administrators to group hosts together even if the hosts are not on the same network
+switch. This can greatly simplify network design and deployment, because VLAN membership can
+be configured through software. Without VLANs, grouping hosts according to their resource needs
+necessitates the labour of relocating nodes or rewiring data links.
+Note: How to set up VLAN in switches, please refers to your switches user manual.
+PPPoE
+This camera supports the PPPoE auto dial-up function. The camera gets a public IP address by ADSL
+dial-up after the camera is connected to a modem. You need to configure the PPPoE parameters of
+the network camera.
+Note:
+
+--- Page 68 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 68
+•The obtained IP address is dynamically assigned via PPPoE, so the IP address always changes
+after rebooting the camera. To solve the inconvenience of the dynamic IP, you need to get a
+domain name from the DDNS provider (e.g. DynDns.com).
+•The user name and password should be assigned by your ISP.
+SNMP
+You can set the SNMP function to get camera status, parameters and alarm related information and
+manage the camera remotely when it is connected to the network.
+Before setting the SNMP, please download the SNMP software and manage to receive the camera
+information via SNMP port. By setting the Trap Address, the camera can send the alarm event and
+exception messages to the surveillance center.
+Table 25. Description of the buttons
+
+--- Page 69 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 69
+Parameters Function Introduction
+SNMP v1/2/3The version of SNMP, please select the version of your SNMP software.
+SNMP v1: Provide no security
+SNMP v2: Require password for access
+SNMP v3: Provide encryption and the HTTPS protocol must be enabled
+Write Community Input the name of Write Community
+Read Community Input the name of Read Community
+Read Security Name Input the name of Read Security Community
+Level of Security There are three levels available: (auth, priv), (auth, no priv) and (no auth, no priv)
+Write Security Name Input the name of Write Security Community
+Level of Security There are three levels available: (auth, priv), (auth, no priv) and (no auth, no priv)
+SNMP Port The port of SNMP, the default is 161
+Note:
+•The settings of SNMP software should be the same as the settings you configure here;
+•A reboot is required for the settings to take effect.
+802.1x
+The IEEE 802.1X standard is supported by the network cameras, and when the feature is enabled, the
+camera data is secured and user authentication is needed when connecting the camera to the network
+protected by the IEEE 802.1X.
+
+--- Page 70 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 70
+Bonjour
+Bonjour is based on Apple's multicast DNS service. Bonjour devices can automatically broadcast
+their service information and listen to the service information of other devices.
+If you don't know the camera information, you can use the Bonjour service on the same LAN to
+search for network camera devices and then to access the devices.
+RTMP
+Real-Time Messaging Protocol (RTMP) was initially a proprietary protocol for streaming audio,
+video and data over the Internet, between a Flash player and a server. RTMP is a TCP-based protocol
+which maintains persistent connections and allows low-latency communication. It can realize the
+function of live broadcast so that customers can log in to the camera wherever there is a network.
+
+--- Page 71 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 71
+For more information, please refer to Troubleshooting-How to Use RTMP for Live Broadcast
+Note:
+•For YouTube live broadcast, if you use a newly created account to live broadcast, you need to
+wait for 24hrs to activate the account for using live function.
+•For RTMP, since G.711 is not available for YouTube, so you can only play video from
+Milesight network cameras  with H.264 video coding and AAC audio coding on YouTube.
+•Server Address in Network Camera RTMP interface needs to be filled with the format: rtmp://<
+Server URL >/< Stream key >, remember it needs ’/’to connect between < Server URL > and <
+Stream key >.
+More
+Here you can set more functions, like Push Message Settings and ONVIF Settings.
+Push Message Settings
+When enabling the Push Message function, you can click
+ to choose the types of Events'
+message which will be pushed to M-sight Pro  App as shown below:
+
+--- Page 72 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 72
+Note: There must be Opened Alarm Push of corresponding cameras in M-sight Pro  APP.
+ONVIF Settings
+Here you can choose whether to enable or disable camera ONVIF function. If camera ONVIF
+function is enabled, it can be searched out, added and connected by third-party software through
+ONVIF protocols. Generally, the default status of ONVIF function is enabled.
+
+
+--- Page 73 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 73
+5.4.5 Date&Time
+Current System Time
+Current date&time of the system
+Set the System Time
+Table 26.  Description of the buttons
+Parameters Function Introduction
+Time Zone Choose a time zone for your location
+Daylight Saving time Enable the daylight saving time
+NTP server Input the address of NTP server
+
+--- Page 74 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 74
+Parameters Function Introduction
+NTP Sync Regularly update your time according to the interval time
+Manual Set the system time manually
+Synchronize with
+computer timeSynchronize the time with your computer
+5.5 Advanced Settings
+5.5.1 Storage
+Before you start:
+To configure record settings, please make sure that you have the network storage device within the
+network or the SD card inserted in your camera.
+Choose the storage mode according to your needs.
+Storage Management
+SD Card:
+Table 27. Description of the buttons
+Parameters Function Introduction
+Format Format SD card, the files in SD card will be removed
+Mount/UnMount Mount/Dismount SD card
+
+--- Page 75 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 75
+Parameters Function Introduction
+Delete Enable cyclic storage, when the free disk space reach at a certain value, it will
+automatically delete the files at certain percentage according to your settings
+NAS:
+The network disk should be available within the network and properly configured to store the
+recorded files, etc.
+NAS (Network-Attached Storage), connecting the storage devices to the existing network, provides
+data and files services.
+Table 28. Description of the buttons
+Parameters Function Introduction
+Server Address IP address of NAS server
+File Path Input the NAS file path, e.g. “\path”.
+Mounting Type NFS and SMB/CIFS are available. And you can set the user name and
+password to guarantee the security if SMB/CIFS is selected
+Note: Up to 5 NAS disks can be connected to the camera.
+Record Settings
+
+--- Page 76 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 76
+Table 29. Description of the buttons
+Parameters Function Introduction
+Enable Recycle Storage Enable/Disable Recycle Storage, if you enable this option, it will delete the files
+when the free disk space reach a certain value.
+Pre-record Reserve the record time before alarm, 0~10 sec
+Schedule Settings Click the Edit button to edit record schedule
+Note: SD Card or NAS are available.
+Snapshot Settings
+
+--- Page 77 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 77
+Table 30.  Description of the buttons
+
+--- Page 78 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 78
+Parameters Function Introduction
+Snapshot SettingsEnable Timing Snapshot : Check the checkbox to enable the Timing
+Snapshot function
+Interval: Set the snapshots interval, input the number and choose the
+unit(millisecond, second, minute, hour, day)
+Note: The interval must be between 1 and 604800.
+Save Into Storage: Save the snapshots into SD card or NAS, and choose
+the file name to add time suffix or overwrite the base file name.
+Save Into NAS:  Save the snapshots into NAS, and choose the file name to
+add time suffix or overwrite the base file name
+Upload Via FTP: Upload the snapshots via FTP
+Upload Via SMTP: Upload the snapshots via SMTP
+Note: If you choose to add time suffix, every snapshot picture will be
+saved, but if you choose to overwrite the base file name, only one latest
+picture will be saved. When you choose add overwrite the base file name to
+SD Card or NAS, it will create a file named “Snapshot” to place the snapshot.
+Schedule Settings Click the Edit button to edit record schedule
+Explorer
+Files will be seen on this page when they are configured to save into SD card or NAS. You can set
+time schedule every day for recording videos and save video files to your desired location.
+Note: Files are visible once SD card is inserted. Don’t insert or pull out SD card when power on
+Video files are arranged by date. Set file type and start/end time to search out files. Each day files
+will be displayed under the corresponding date, from here you can copy and delete files etc. You can
+visit the files in SD card by ftp, for example, ftp://username:password@192.168.5.190(user name
+and password are the same as the camera account and the IP followed is the IP of your device.).
+
+--- Page 79 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 79
+5.5.2 Security
+User
+
+
+--- Page 80 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 80
+Table 31. Description of the buttons
+Parameters Function Introduction
+Manage PrivilegeAllow anonymous viewing: Check the checkbox to enable visit from whom doesn’t
+have account of the device
+
+--- Page 81 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 81
+Parameters Function Introduction
+Security QuestionClick “Edit” button to set three security questions for your camera. In case that
+you forget the password, you can click “Forget Password” button on login page to
+reset the password by answering three security questions correctly.
+There are twelve default questions below, you can also customize the security
+questions.
+
+
+--- Page 82 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 82
+Parameters Function Introduction
+Account ManagementClick “Add” button, it will display Account Management page. You can add an
+account to the camera by entering Admin Password, User Level, User Name, New
+Password, Confirm, and edit user privilege by clicking 
+ . The added account will
+be displayed in the account list.
+Admin Password: You can add an account only after you enter the correct admin
+password.
+User Level : Set the privilege for the account.
+User Name:  Input user name for creating an account.
+Password:  Input password for the account.
+Confirm: Confirm the password.
+You can edit and delete the account in the account list under the admin account.
+For the default admin account, you can only change the password, and it cannot
+be deleted.
+Note:
+•Support up to 20 users, including a default user and 19 custom added users.
+•The operator privilege is all checked by default.
+•For camera firmware version 4X.7.0.69 or above, it removes the default admin password and
+allows to set a password when logging in for the first time. It also supports set-up of the security
+questions for the devices. Users can reset the password by answering the correct security
+questions in case of forgetting the password, which is more convenient for users.
+Online User
+Here real-time status of user logging in camera will be shown.
+Table 32. Description of the buttons
+
+--- Page 83 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 83
+Parameters Function Introduction
+Refresh Click to get latest status of user accessing to camera.
+No.Record serial number of user logging in camera.
+Note:
+•There are at most 30 records shown at the list.
+•There is only one record if the same user logging on camera by the same IP
+address.
+User Name Name of user logging in camera.
+User Level Level of user logging in camera.
+IP Address Device IP address where user logging in camera web located.
+User Login Time Camera system time of user logging in camera.
+Access List
+Table 33. Description of the buttons
+
+--- Page 84 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 84
+Parameters Function Introduction
+General SettingsMaximum number of concurrent streaming:  Select the maximum number
+of concurrent streaming. Options include No Limit, 1~10
+IP access listRule: Single, Network and Range are available
+IP address: Input the address to get the access to the device
+Enable access list filtering Able to access or restrict access for some IP address
+Filter type Access or restrict access
+Security Service
+Table 34. Description of the buttons
+Parameters Function Introduction
+SSH Settings Secure Shell (SSH) has many functions: it can replace Telnet and also
+provides a secure channel for FTP, POP, even for PPP.
+Watermark
+
+
+--- Page 85 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 85
+Watermarking is an effective method to protect information security, realizing anti-counterfeiting
+traceability and copyright protection. Milesight network cameras  supports Watermark function to
+ensure information security.
+About
+User can view some open source software licenses about the camera by clicking the View Licenses
+button.
+5.5.3 SIP
+The Session Initiation Protocol(SIP) is a signaling communications protocol, widely used for
+controlling multimedia communication sessions such as voice and video calls over Internet Protocol
+(IP) networks. This page allows user to configure SIP related parameters. Milesight network cameras
+can be configured as SIP endpoint to call out when alarm triggered; or allow permitted number to call
+in to check the video if the video IP phone is used. To use this function, the settings in SIP page must
+be configured properly. There are two ways to get video through SIP, one is to dial the IP address
+directly, the other is account registration mode. the details are as follows:
+Method 1: IP Direct mode
+Dial on the camera’s IP address directly through SIP phone, so you can see the video.
+Note: SIP phone and the camera should in the same network segment.
+Method2 : Account registration mode
+•Before using the SIP, you need to register an account for the camera from the SIP server;
+•Register another user account for the SIP device from the same SIP server;
+•Call the camera User ID from the SIP device, you will get the video on the SIP device.
+SIP Settings
+
+--- Page 86 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 86
+Table 35.  Description of the buttons
+Parameters Function Introduction
+Unregistered/Registered SIP registration status. Display “Unregistered” or “Registered”
+Enable Start or stop using SIP
+Register Mode Choose to use Enable mode or Disable mode. Enable mode means to use SIP
+with register account. Disable mode refers to use SIP without register account,
+just use the IP address to call.
+User ID SIP ID
+User Name SIP account name
+Password SIP account password
+
+--- Page 87 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 87
+Parameters Function Introduction
+Server Address Server IP address
+Server Port Server port
+Connection Protocol UDP/TCP
+Video Stream Choose the video stream
+Max Call Duration The max call duration when use SIP
+Note: SIP supports Directly IP call.
+Alarm Phone List
+Table 36.  Description of the buttons
+Parameters Function Introduction
+Phone Type Phone Number(Call by phone number) & Direct IP Call(Check to accept peer
+to peer IP call).
+To Phone Number/IP Address Call by phone number or IP address.
+Remark Name Display name.
+Duration The time schedule to use SIP.
+White List
+
+--- Page 88 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 88
+Table 37. Description of the buttons
+Parameters Function Introduction
+Phone Type Phone Number(Call by phone number) & Direct IP Call
+Phone Number/ IP Address Including the phone number or IP address on the white list
+Enable White List Number Filter When enabled, only the designated phone number or IP address can visit
+5.5.4 Fisheye
+PTZ:
+Table 38. Description of the buttons
+Parameters Function Introduction
+Zoom StatusSupport to set display time of Zoom Status OSD.
+2 seconds/5 seconds/10 seconds/Always Open/Always Close are available.
+
+--- Page 89 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 89
+Parameters Function Introduction
+Preset StatusSupport to set display time of Preset Status OSD.
+2 seconds/5 seconds/10 seconds/Always Open/Always Close are available.
+Patrol StatusSupport to set display time of Patrol Status OSD.
+Always Open/Always Close are available.
+Auto Scan StatusSupport to set display time of Auto Scan Status OSD.
+Always Open/Always Close are available.
+General:
+Table 39. Description of the buttons
+Parameters Function Introduction
+Field of ViewSupport optional Field of View on fisheye camera.
+Normal: With this option enabled, all views will maintain the original viewing
+angle.
+Original View Larger:  With this option enabled, the original view(1O) will have
+a larger viewing angle, and the other views will maintain the original viewing
+angle.
+All View Larger : With this option enabled, all views will have a larger viewing
+angle.
+
+--- Page 90 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 90
+Parameters Function Introduction
+Transfer ModeSupport to choose Bundle-Stream Mode or Multi-Channel Mode to meet
+different needs.
+Bundle-Stream Mode: the Bundle-Stream Mode combines all the channels
+into one and sends to NVR or VMS, which is easy for compatibility.
+Multi-Channel Mode: the Multi-Channel Mode sends all the original channels
+to NVR or VMS, so the channels can be modified separately.
+Note: We recommend Bundle-Stream mode with Milesight  NVR.
+Logs
+The logs contain the information about the time and IP that has accessed the camera through web.
+Table 40. Description of the buttons
+Parameters Function Introduction
+Main Type There are five main log types: All Type, Event, Operation, Information,
+Exception , Event
+
+--- Page 91 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 91
+Parameters Function Introduction
+Sub Type On the premise of main type has been selected, select the sub type to
+narrow the range of logs
+Start Time The time log starts
+End Time The time log ends
+Log Export Export the logs
+Save Period Set the period of log saving, there are eight options to choose: Permanent
+and 30/60/120/180/240/300/360 Days
+Go Input the number of logs’ page
+5.6 Event
+5.6.1 Basic Event
+Motion Detection
+Step1: Check the checkbox to enable the motion detection;
+Note: Currently, the motion detection is only supported in 1O, 1P, and 4R of bundle-stream
+mode.
+Step2: Select the detection mode;
+Step3: Set motion region;
+
+--- Page 92 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 92
+Table 41. Description of the buttons
+Parameters Function Introduction
+Enable Motion Detection Check the checkbox to enable Motion Detection function
+Detection ModeNormal Mode and Advanced Mode are available for the option. When
+Advanced Mode is selected, users can configure up to 4 detection regions and
+sensitivity for each detection region.
+Onvif Motion ActiveCells SettingsNormal and Compatible are available for the option. If the setting of motion
+region of the third-party software is different from ours, please set this option to
+Compatible
+
+--- Page 93 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 93
+Parameters Function Introduction
+Enable Motion AnalysisWhen Motion Analysis is enabled, the moving region will turn yellow so that the
+user can know exactly where the motion occurred.
+Note: Only support when HTTP is selected in Live View.
+Select All Click the button, the motion in the area will be detected
+Clear All Click the button, the area drawn before will be removed
+Sensitivity Sensitivity level, 1~10
+Step4: Set motion detection schedule;
+Step5: Set alarm action;
+
+--- Page 94 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 94
+Table 42. Description of the buttons
+Parameters Function Introduction
+Save Into Storage Save alarm recording files into SD Card or NAS
+Upload Via FTP Upload the recording files via FTP
+Upload Via SMTP Upload the files via SMTP
+External OutputIf the camera equips with External Output, you can enable the action after
+configuring the trigger duration
+Play AudioIf the camera equips with Speaker, you can enable the action after configuring the
+audio speaker
+Play BuzzerIf the camera equips with Buzzer, you can check the checkbox to enable the
+function.
+Alarm to SIP Phone Support to call the SIP phone after enable the SIP function.
+HTTP NotificationSupport to pop up the alarm news to specified HTTP URL.
+Note:
+•Three HTTP notifications at most can be added to the same event.
+•HTTP Notification supports Basic & Digest authentication
+Note: The HTTP notification  function is just one way for camera to send messages to VMS
+Software. And it's the VMS that defines what the messages mean and decides what to do after
+
+--- Page 95 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 95
+receiving this kind of messages. So, we can use the HTTP Notification  function of our cameras only
+if the VMS supports this kind of message format.
+Here will take the Digifort as an example to introduce the HTTP Notification  function.
+The following are the detail steps of setting for HTTP Notification in Digifort VMS and our cameras.
+Step1: Enable Alarm, set Motion Region and detection Schedule;
+Step2: Check the HTTP Notification as Alarm Action, and fill the fields. Then save the alarm setting.
+You can add up to three HTTP notifications to the same event;
+HTTP User Name: admin (the user name of your camera)
+HTTP Password: ms1234 (the password of your camera)
+HTTP Notification URL:
+http://IP:8601/Interface/Cameras/MotionDetection/Notify?Camera=CameraName
+IP refers to the PC's IP where the Digifort installed.
+8601 is the port for Motion signal in Digifort.
+CameraName  is the camera name you set in Digifort VMS, like the picture shown below.
+
+--- Page 96 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 96
+Example:
+http://192.168.8.75:8601/Interface/Cameras/MotionDetection/Notify?Camera=annie ,
+this URL format is exactly supported by Digifort VMS, so we can set as above to our cameras
+and get it work well.
+Step3: choose use motion detection by external notification;
+Step4: If successful, you can see the device icon turns yellow in the Surveillance when the camera is
+under Motion Detection Alarm;
+
+--- Page 97 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 97
+So, it's the VMS Software which decides whether we can use this function successfully.
+Step5: Set alarm settings.
+Table 43. Description of the buttons
+Parameters Function Introduction
+Record Video Sections Six different periods are available(5, 10, 15, 20, 25, 30 sec)
+Snapshot The number of snapshot, 1~5
+Snapshot Interval This cannot be edited unless you choose more than 1 to Snapshot
+External Output Action TimeLength of time an alarm lasts, this cannot be edited unless you enable the
+External Output on the Alarm Action firstly.
+
+--- Page 98 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 98
+Parameters Function Introduction
+Audio Action SettingsSet the audio schedule to trigger different audio files and action times in
+different time, which is corresponded to alarm action.
+Play Audio Interval Auto/ 10 seconds/ 30 seconds/ 1 minute/ 5 minutes/ 10 minutes are available.
+Note:
+•You can customize the schedule of Audio Action.
+Audio Alarm
+Enable the Audio before using Audio Alarm function.
+
+--- Page 99 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 99
+
+
+--- Page 100 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 100
+Refer to the table in Motion Detection chapter for the meanings of the items, here will not repeat
+again.
+External Input
+
+--- Page 101 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 101
+
+
+--- Page 102 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 102
+Refer to the table in Motion Detection chapter for the meanings of the items, here will not repeat
+again.
+External Output
+Please set the Normal Status firstly, when the Current Status  is different with Normal Status , it
+will lead to the alarm.
+Exception
+
+--- Page 103 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 103
+Table 44. Description of the buttons
+Parameters Function Introduction
+Alarm TypeNetwork Disconnected , IP Address Conflicted , Record Failed, SD Card Full, SD
+Card Uninitialized, SD Card Error and No SD Card  are available
+Check the checkbox to enable the alarm type you selected
+
+--- Page 104 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 104
+Parameters Function Introduction
+Alarm ActionSave Into Storage: Save alarm recording files into SD Card
+Upload Via Email : Upload alarm recording files via email. This option is available for
+Record Failed, SD Card Full, SD Card Uninitialized, SD Card Error and No SD Card
+External Output:  If the camera equips with External Output, you can enable the
+action after configuring the trigger duration
+Play Audio: If the camera equips with Speaker, you can enable the action after
+configuring the audio speaker
+Alarm to SIP Phone: Support to call the SIP phone after enable the SIP function.
+HTTP Notification: Enable the HTTP Notification
+HTTP Notification URL: There are three types of HTTP Notification URL, including
+URL1, URL2 and URL3.
+•Enable: Check the checkbox to enable a kind of HTTP Notification URL.
+•Trigger Interval: Trigger Interval of camera pushing information to some third-
+party devices.
+•HTTP Method: There are two HTTP push methods, including Post and Get.
+•URL: Camera can use the API URL to send face detection information to
+back-end devices when the detected face is captured. The format of the
+API URL depends on the back-end devices, including server, port and other
+required formats. For example, if you want to send information to Milesight VMS
+Enterprise, the format of the API URL is as follows: http://VMS server IP: VMS
+Port/api/httpEvent
+Note: It supports HTTPS for HTTP Post.
+•User Name: Receiver name.
+•Password: Receiver Password.
+
+--- Page 105 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 105
+Parameters Function Introduction
+Alarm SettingRecord Video Sections: Six different periods are available(5, 10, 15, 20, 25, 30 sec)
+Snapshot: The number of snapshot, 1~5
+Snapshot Interval: This cannot be edited unless you choose more than 1 to
+Snapshot
+Email Triggered Interval: Auto / 10 seconds / 20 seconds / 40 seconds / 60
+seconds / 100 seconds / 5 minutes / 15 minutes / 30 minutes / 1 hour / 8 hours / 12
+hours / 24 hours are available. This cannot be set unless when you choose Record
+Failed, SD Card Full , SD Card Uninitialized , SD Card Error  or No SD Card  and
+check the Upload via Email checkbox of related Alarm type
+External Output Action Time : Length of time an alarm lasts, this cannot be edited
+unless when you enable the External Output on the Alarm Action firstly
+Audio Action Settings: Set the audio schedule to trigger different audio files and
+action times in different time, which is corresponded to alarm action
+Play Audio Interval: Auto/ 10 seconds/ 30 seconds/ 1 minute/ 5 minutes/ 10 minutes
+are available, this cannot be edited unless when you check the Play Audio checkbox
+firstly
+Note: Make sure to set up your email information in advance.
+5.6.2 VCA Event
+Smart Event uses Milesight VCA (Video Content Analysis) technology, which provides advanced,
+accurate smart video analysis for Milesight network cameras . Powered by AI chip,the new generation
+video analytics is capable of recognizing vast attributes of human, vehicle, and object pattern
+recognition models. As vehicle and human related events are very important in security monitoring,
+the filtering is supported to better optimize the efficiency.
+Note:
+•There are AI and non-AI cameras in Milesight network cameras .
+•Smart Event of fisheye camera only supports in 1O mode of Bundle-Stream mode and 1O,
+1O3R, 1O1P3R mode of Multi-Channel mode.
+•Image Rotation function is not supported for the -PA model in the AI series. When installing the
+camera, please make sure the image is displayed in a forward-facing position after dewarping.
+Region Entrance
+Region entrance helps to protect a special area from potential threat of suspicious person’s or object’s
+entrance. An alarm will be triggered when objects enter the selected regions by enabling region
+entrance.
+
+--- Page 106 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 106
+Step1: Enable region entrance detection and set detecting sensitivity;
+Step2: Set Entrance Detection region and object size limits;
+Table 45. Description of the buttons
+Parameters Function Introduction
+Minimum SizeDraw the screen or input pixel number to set the minimum size of the detected
+object. When the object is smaller than this size, it will not be detected. The default
+minimum size is 3*3.
+Maximum SizeDraw the screen or input pixel number to set the maximum size of the detected
+object. When the object is larger than this size, it will not be detected. The default
+maximum size is 320*240.
+Step3: Set detection schedule;
+Step4: Set alarm action;
+
+--- Page 107 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 107
+Step5: Set alarm settings. If you enable External Output and choose Constant External Output Action
+Time, when objects enter the selected regions, External Output Action alarm time will be always
+constant till the alarm is released.
+
+
+--- Page 108 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 108
+Region Exiting
+Region exiting is to make sure that any person or object won't exit the area that is being monitored.
+Any exit of people or objects will trigger an alarm.
+Step1: Enable region exiting detection and set detecting sensitivity;
+Step2: Set Exiting Detection region and object size limits.
+Step3: Set detection schedule;
+Step4: Set alarm action.
+
+--- Page 109 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 109
+Step5: Set alarm settings. If you enable External Output and choose Constant External Output Action
+Time, when objects exit the selected regions, External Output Action alarm time will be always
+constant till the alarm is released.
+
+
+--- Page 110 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 110
+Advanced Motion Detection
+Different from traditional motion detection, Milesight  advanced motion detection can filter out
+“noise” such as lighting changes, natural tree movements, etc. When an object moves in the selected
+area, it will trigger alarm.
+Step1: Enable region detection and set detecting sensitivity;
+Step2: Set Ignore Short-Lived Motion time. If you set the time, when the moving duration of an
+object is within the setting time, the alarm will not be triggered;
+Step3: Set Advanced Motion Detection region and object size limits;
+Step4: Set detection schedule;
+Step5: Set alarm action;
+
+--- Page 111 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 111
+Step6: Set alarm settings. If you enable External Output and choose Constant External Output Action
+Time, when object motion time is longer than the Ignore Short-Lived Motion time which you set
+in the selected regions, External Output Action alarm time will be always constant till the alarm is
+released.
+Note:
+
+--- Page 112 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 112
+•The sensitivity can be configured to detect various movement according to different
+requirements. When the level of sensitivity is low, slight movement won’t trigger the alarm.
+•Ignore Short-Lived Motion time is to avoid false alarm caused by instant object movement
+within time setting.
+Tamper Detection
+Tamper Detection is used to detect possible tampering like the camera being unfocused, obstructed or
+moved. This functionality alerts security staff immediately when any above-mentioned actions occur.
+Step1: Enable Tamper Detection and set detecting sensitivity;
+Step2: Set detection schedule;
+Step3: Set alarm action;
+
+--- Page 113 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 113
+Step4: Set alarm settings. If you enable External Output and choose Constant External Output Action
+Time, when possible tampering is detected, External Output Action alarm time will be always
+constant till the alarm is released.
+Note: The algorithm supports defocus detection in Tamper Detection function.
+
+--- Page 114 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 114
+Line Crossing
+Line Crossing detection is designed to work in most indoor and outdoor environment. An event will
+be triggered every time when the camera detects objects crossing a defined virtual line.
+Settings steps are shown as follows:
+Step1: Choose a line number;
+Step2: Enable Line Crossing Detection and define its direction;
+Step3: Set detecting sensitivity;
+Step4: Draw detection lines and set object size limits;
+
+--- Page 115 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 115
+Step5: Set detection schedule;
+Step6: Set alarm action.
+Step7: Set alarm settings. If you enable External Output and choose Constant External Output Action
+Time, when objects cross a defined virtual line, External Output Action alarm time will be always
+constant till the alarm is released.
+Note: Milesight network cameras  allows to set up to four lines at a time. There are three
+direction modes to choose for triggering alarm. “A→B” means when there is any object crossing
+the line from the “A” side to the “B” side, the alarm will be triggered. “B→A” vice versa. “A ↔ B”
+means that the alarm will be triggered when objects cross line from either side.
+Loitering
+When objects are loitering in a defined area for a specific period of time, it would trigger an alarm.
+
+--- Page 116 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 116
+Step1: Enable loitering detection and set minimum loitering time;
+Step2: Set loitering detection region and object size limits;
+Step3: Set detection schedule;
+Step4: Set alarm action.
+Step5: Set alarm settings. If you enable External Output and choose Constant External Output Action
+Time, when objects loiter in the selected regions, External Output Action alarm time will be always
+constant till the alarm is released.
+
+
+--- Page 117 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 117
+Note: After setting minimum loitering time from 3s to 1800s, any objects loitering in the
+selected area over the minimum loitering time will trigger the alarm.
+Human Detection
+Human detection is used for figuring out whether an object is a human or not. Once human detection
+is enabled, when there is an object appearing in the detecting area, an ID will show on the frame. If
+the object is a person, it will mark as “person”. When the Show Tracks is enabled, the tracks of the
+moving object will show on the screen.
+Note: Human Detection tab is no longer displayed separately for all AI cameras.
+Step1: Enable Human Detection;
+Step2: Check Show Tracks;
+Step3: Set object size limits;
+Step4: Set schedule settings;
+Step5: Set alarm action. When enabling PTZ Auto Tracking, camera will mark as “person” and
+automatically track the person if the detected object is a person;
+
+--- Page 118 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 118
+Step6: Set alarm settings. If you enable External Output and choose Constant External Output Action
+Time, when detected object is marked as “person”, External Output Action alarm time will be always
+constant till the alarm is released.
+Object Left/Removed
+Object Left can detect and prompt an alarm if an object is left in a pre-defined region. Object
+Removed can detect and prompt an alarm if an object is removed from a pre-defined region.
+
+--- Page 119 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 119
+Step1: Enable Object Left or Object Removed(Or you can enable both features at the same time);
+Step2: Set minimum time;
+Step3: Set detecting sensitivity;
+Step5: Set detection schedule;
+Step6: Set alarm action.
+Step7: Set alarm settings. If you enable External Output and choose Constant External Output Action
+Time, when an object is left/removed from the selected regions, External Output Action alarm time
+will be always constant till the alarm is released.
+
+--- Page 120 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 120
+Note:
+•After setting minimum time from 3s to 1800s, any objects are left in the selected area or
+removed from the selected area over the minimum time will trigger the alarm.
+5.6.3 People Counting
+People Counting
+People Counting is able to count how many people enter or exit during the setting period.
+
+
+--- Page 121 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 121
+Settings steps are as shown below:
+Step1: Enable People Counting;
+Step2: Set detection line and object size limits.
+Step3: Set detection schedule;
+Step4: Set counting OSD;
+The OSD of the people counting supports manual reset and automatic zeroing;
+Step5: Set alarm trigger. Alarm will be triggered when the thresholds reaches to a certain value from
+1 to 9999.
+Step6: Set alarm action;
+
+--- Page 122 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 122
+Step7: Set alarm settings. If you enable External Output and choose Constant External Output Action
+Time, when the thresholds reach to a certain value you set, External Output Action alarm time will be
+always constant till the alarm is released.
+
+
+--- Page 123 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 123
+Note: Crossing along the direction of the arrow will record as “In”, opposite is “Out”.
+Statistics Report
+The results during the enabling period will be displayed on “ Statistics Report ” interface.
+Step 1: Select Main Type;
+Step2: Select Report Type including Daily Report, Weekly Report, Monthly Report and Annual
+Report;
+Step3: Select Statistics Type including People Entered, People Exited and Sum;
+Step4: Select Start Time, then click
+ button, the camera will automatically count
+the data for the day/ week/ month/ year (based on the report type selected by the user) from the start
+time and generate the corresponding report. Moreover, you can also click
+ or 
+to switch display
+mode of Statistics Report as shown below.
+People Counting-Statistics Report (Line Chart)
+
+--- Page 124 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 124
+People Counting-Statistics Report (Bar Chart)
+Step5: Click 
+ button to pop up the Export window as shown below, and you can
+choose File Format to export the report to local.
+
+--- Page 125 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 125
+Step6: Click 
+  button to pop up the Statistics Report Settings as shown below.
+•Set Export Type. User can check People Counting. When People Counting is checked, the gray
+item becomes editable as shown below;
+•Set Day. User can choose Everyday to export daily reports, while choosing others to export
+reports on a specific day of the week;
+
+--- Page 126 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 126
+•Set Time. User can choose the time of day to export the Statistics Report automatically, click
+the calendar icon to pop up the following Quick Selection;
+•Set Export Time Range;
+Day (Choose Everyday)
+
+--- Page 127 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 127
+Day (Choose Week)
+•Set the destination path of the automatically exported report. The report can be exported to FTP/
+Email/Storage automatically as the form of an Excel spreadsheet according to the day, time and
+export time range you set. Then click “Save”.
+
+--- Page 128 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 128
+Note: If the current Statistics Report is generated, it will be saved as a csv form.
+5.6.4 Heat Map
+Heat Map function can analyze customers movement to reveal insights for better business
+management with the intuitive and accurate statistical analysis results in time or space pattern as
+needed.
+Note:
+•Currently Heat Map is only supported in the original view of 360° Panoramic Fisheye Network
+Camera and the dewarping view of 180° Panoramic Mini Bullet Network Camera and 180°
+Panoramic Mini Dome Network Camera.
+•Please upgrade the camera to V43.7.0.75 or above to use Heat Map function.
+•Only allowed to view reports within 7 days without a SD card or NAS.
+Heat Map
+Step1: After log in the web, go to “Advanced Settings“→  “Heat Map“ . Check the checkbox
+“Enable Heat Map ”, then set the Heat Map settings as shown below.
+
+--- Page 129 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 129
+Table 46. Description of the buttons
+Parameters Function Introduction
+SensitivityLevel 1~10 are available, the default level is 5. The higher the sensitivity, the
+easier it is for moving objects to be recorded in the results.
+Min. Object SizeSet the minimum object size from 1 to 100, the default value is 10. Objects smaller
+than this value will not be recorded in the result.
+Min. Dwell TimeSet the minimum dwell time from 1 to 300, the default value is 30. If the object
+stays in the area longer than the set "Minimum Dwell Time", it will not be recorded
+in the result.
+Scene Change AdaptabilityLevel 1~10 are available, the default level is 5. Scene Change Adaptability
+indicates the camera's adaptability to scene changes, which can increase the
+accuracy of detection. The camera better adapts to faster changing scenes if the
+value is higher.
+Step2: Set Heat Map Region. Draw the screen to set the detection area. You can click “ Select All ”
+button to select all areas, or " Clear All " button to remove the current drawn area.
+
+--- Page 130 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 130
+Step3: Schedule Settings. You can draw the schedule by clicking “ Edit” button. And then click
+“Save” or “Reset” after finishing setting.
+Report
+The results will be displayed on “ Report” interface.
+
+--- Page 131 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 131
+Step1: Select Main Heat Map Type.
+[Space Heat Map] : Space Heat Map will be presented as a picture with different color. Different
+colors represent different heat values. Red represents the highest and blue represents the lowest.
+[Time Heat Map] : Time heat map will be presented as a line chart to show the heat at different
+times.
+Step2: Select Report Type including Daily Report, Weekly Report, Monthly Report and Annual
+Report.
+Step3: Select Start Time, then click the “Search”  button, the camera will automatically count the
+data for the day/ week/ month/ year (based on the report type selected by the user) from the start time
+and generate the corresponding report as shown below.
+Space Heat Map
+
+--- Page 132 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 132
+Time Heat Map
+Step4: Click the " Report Export " button to export the report to local.
+Step5: Click the  "Auto Export" button to pop up the Heat Map Report Settings as shown below.
+•Set Export Type. User can check Space Heat Map or Time Heat Map or both. When either
+Space Heat Map or Time Heat Map is checked, the gray item becomes editable as shown below;
+
+--- Page 133 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 133
+•Set Day. User can choose Everyday to export daily reports, while choosing others to export
+reports on a specific day of the week;
+•Set Time. User can choose the time of day to export the heat map automatically, click the
+calendar icon to pop up the following Quick Selection;
+•Set Export Time Range.
+Day (Choose Everyday)
+
+--- Page 134 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 134
+Day (Choose Week)
+•Set the destination path of the automatically exported report. The report can be exported to FTP/
+Email/Storage automatically as the form of an Excel spreadsheet or a picture according to the
+day, time and export time range you set. Then click “Save”.
+
+--- Page 135 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 135
+If the current Space Heat Map is generated, it will be saved as a png image. If the current Time Heat
+Map is generated, it will be saved as a csv form.
+Note: The automatically exported report of the Space Heat Map only can be used on MS-
+CXX74-PB.
+5.7 System
+All information about the hardware and software of the camera can be checked on this page.
+
+--- Page 136 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 136
+Table 47. Description of the buttons
+Parameters Function Introduction
+Device NameThe device name can be customized. It will be seen in file names of video
+files
+Product Model The product model of the camera
+Hardware Version The hardware version of the camera
+Software Version The software version of the camera can be upgraded
+MAC Address Media Access Control address
+
+--- Page 137 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 137
+Parameters Function Introduction
+Device InformationThe device information, including information about alarm I/O and clipper
+chip
+Alarm Input The number of Alarm Input interface
+Alarm Output The number of Alarm Output interface
+Up Time The elapsed time since the last restarted of the device
+Note: The Alarm Input/Alarm Output will appear only when the camera have alarm input/output
+interface.
+5.8 Maintenance
+5.8.1 System Maintenance
+
+--- Page 138 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 138
+Table 48. Description of the buttons
+
+--- Page 139 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 139
+Parameters Function Introduction
+System UpgradeSoftware Version: The software version of the camera.
+Local Upgrade: Click the “Browse” button and select the upgrading file, then
+click the “Upgrade” button to upgrade. After the system reboots successfully, the
+update is done.
+You can check “ Reset after Upgrading ” to reset the camera after upgrading it.
+Online Upgrade: Click the "Check" button to check the current latest firmware
+version on our website, and then click "OK" to upgrade to this version.
+It will prompt "The current version is the latest version" if your camera is already
+the latest version.
+It will prompt "The current version is the latest version" if your camera is already
+the latest version.
+Note: Do not disconnect the power of the device during the update. The
+device will be restarted to complete the upgrading.
+
+--- Page 140 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 140
+Parameters Function Introduction
+MaintenanceReset settings: Click “Reset” button to reset the camera to factory default
+settings
+Keep the IP Configuration:  Check this option to keep the IP configuration when
+resetting the camera.
+Keep the User information: Check this option to keep the user information
+when resetting the camera.
+Export Diagnose Information: Click this button to export logs and system
+information of the device operation status.
+Note: The file format is “.txt”.
+Export Config File:  Click this button and a window will pop up as shown below:
+You need to enter and confirm password again, then click save button to export
+configuration file.
+Import Config File: Click this button, then a window will pop up and you can
+click "OK" to update the configuration.
+It will pop up a window to prompt "Input the password of config file" , then enter
+password and click save button to import configuration file.
+Note:
+Export and import the same configuration file. Password must be the same.
+
+--- Page 141 ---
+Milesight Fisheye Network Camera User Manual  | 5 - System Operation Guide  | 141
+Parameters Function Introduction
+Reboot Click “Reboot” button to restart the device immediately
+5.8.2 Auto Reboot
+Set the date and time to enable Auto Reboot function, the camera will reboot automatically according
+to the customized time in case that camera overload after running a long time.
+
+
+--- Page 142 ---
+Chapter 6. Services
+Milesight Technology Co., Ltd provides customers with timely and comprehensive technical support
+services. End-users can contact your local dealer to obtain technical support. Distributors and
+resellers can contact directly with Milesight for technical support.
+Technical Support Mailbox: support@milesight.com
+Web: http://www.milesight.com
+Online Problem Submission System: http://www.milesight.com/service/feedback.asp
+MILESIGHT USA
+TEL: +1-800-561-0485
+Add: 7509 N.W. 36th Street, Miami, Florida 33166, USA
+MILESIGHT KOREA
+TEL: +82-2-839-3335
+Add: 925, Anyang SK V1 Center, LS-ro 116beon-gil, Dongan-gu, Anyang-si, Korea
+MILESIGHT CHINA
+TEL: +86-592-5922772
+Add: No.23 Wanghai Road,2nd Software Park, Xiamen, China

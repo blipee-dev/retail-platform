@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - blipee OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #0EA5E9 100%);
+            --gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            --gradient-blue: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-green: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            
+            --purple: #8B5CF6;
+            --blue: #0EA5E9;
+            --green: #10B981;
+            --yellow: #F59E0B;
+            --red: #EF4444;
+            --dark: #0F172A;
+            --darker: #020617;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--darker);
+            color: var(--white);
+            min-height: 100vh;
+        }
+
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            grid-template-rows: 70px 1fr;
+            grid-template-areas: 
+                "header header"
+                "sidebar main";
+            height: 100vh;
+            transition: grid-template-columns 0.3s ease;
+        }
+        
+        .dashboard-layout.sidebar-collapsed {
+            grid-template-columns: 70px 1fr;
+        }
+
+        /* Header */
+        .header {
+            grid-area: header;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 400;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            white-space: nowrap;
+            letter-spacing: -0.02em;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
+        }
+
+        .breadcrumb-separator {
+            opacity: 0.4;
+        }
+
+        .breadcrumb-item {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+        }
+
+        .breadcrumb-item.active {
+            color: white;
+        }
+
+        /* Header Actions */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            grid-area: main;
+            background: var(--darker);
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            grid-area: sidebar;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            margin: 0.25rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link:focus {
+            background: rgba(139, 92, 246, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .nav-link.active {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        /* Settings Navigation */
+        .settings-nav {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            gap: 0.5rem;
+            padding-bottom: 0;
+        }
+
+        .settings-nav-tab {
+            flex-shrink: 0;
+            padding: 1rem 1.5rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .settings-nav-tab:hover,
+        .settings-nav-tab:focus {
+            color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .settings-nav-tab.active {
+            color: white;
+            border-bottom-color: var(--purple);
+        }
+
+        .settings-section {
+            display: none;
+        }
+
+        .settings-section.active {
+            display: block;
+        }
+
+        .form-card {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--purple);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+        }
+
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .role-badge.platform-admin {
+            background: linear-gradient(135deg, #DC2626 0%, #991B1B 100%);
+            color: white;
+        }
+
+        .role-badge.tenant-admin {
+            background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+            color: white;
+        }
+
+        .role-badge.regional-manager {
+            background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%);
+            color: white;
+        }
+
+        .role-badge.store-manager {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+        }
+
+        .role-badge.employee {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .enterprise-alert {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(14, 165, 233, 0.1) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .enterprise-alert-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--purple);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.2);
+            transition: 0.4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background: var(--purple);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .compliance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .compliance-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+
+        .compliance-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-indicator.active {
+            background: var(--green);
+        }
+
+        .status-indicator.warning {
+            background: var(--yellow);
+        }
+
+        .status-indicator.inactive {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .platform-admin-only {
+            display: none;
+        }
+
+        body.platform-admin .platform-admin-only {
+            display: block;
+        }
+
+        .tenant-info {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .audit-log-entry {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .audit-timestamp {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+            min-width: 120px;
+        }
+
+        .audit-action {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .audit-user {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+    </style>
+</head>
+<body class="platform-admin">
+    <div class="dashboard-layout">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <a href="#" class="logo">blipee OS</a>
+                <nav class="breadcrumb">
+                    <span class="breadcrumb-item">Dashboard</span>
+                    <span class="breadcrumb-separator">›</span>
+                    <span class="breadcrumb-item active">Settings</span>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav style="padding: 1rem;">
+                <ul style="list-style: none;">
+                    <li>
+                        <a href="settings.html" class="nav-link active">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Page Header -->
+            <div style="margin-bottom: 2rem;">
+                <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; color: white;">Settings</h1>
+                <p style="color: rgba(255, 255, 255, 0.6); font-size: 1rem;">Manage your platform preferences, team settings, and integrations.</p>
+            </div>
+
+            <!-- Settings Navigation -->
+            <nav class="settings-nav" role="tablist" aria-label="Settings sections">
+                <a href="#" class="settings-nav-tab active" role="tab" aria-selected="true" onclick="switchSettingsSection('profile', event)">Profile</a>
+                <a href="#" class="settings-nav-tab" role="tab" aria-selected="false" onclick="switchSettingsSection('account', event)">Account</a>
+                <a href="#" class="settings-nav-tab" role="tab" aria-selected="false" onclick="switchSettingsSection('security', event)">Security</a>
+                <a href="#" class="settings-nav-tab" role="tab" aria-selected="false" onclick="switchSettingsSection('api', event)">API & Integrations</a>
+                <a href="#" class="settings-nav-tab" role="tab" aria-selected="false" onclick="switchSettingsSection('team', event)">Team & Access</a>
+                <a href="#" class="settings-nav-tab" role="tab" aria-selected="false" onclick="switchSettingsSection('activity', event)">Activity & Usage</a>
+                <a href="#" class="settings-nav-tab" role="tab" aria-selected="false" onclick="switchSettingsSection('stores', event)">Store Management</a>
+                <a href="#" class="settings-nav-tab" role="tab" aria-selected="false" onclick="switchSettingsSection('notifications', event)">Notifications</a>
+                <a href="#" class="settings-nav-tab" role="tab" aria-selected="false" onclick="switchSettingsSection('billing', event)">Billing</a>
+                <a href="#" class="settings-nav-tab" role="tab" aria-selected="false" onclick="switchSettingsSection('data', event)">Data & Privacy</a>
+                <a href="#" class="settings-nav-tab platform-admin-only" role="tab" aria-selected="false" onclick="switchSettingsSection('compliance', event)">Compliance</a>
+                <a href="#" class="settings-nav-tab platform-admin-only" role="tab" aria-selected="false" onclick="switchSettingsSection('platform', event)">Platform Admin</a>
+            </nav>
+
+            <!-- Profile Settings -->
+            <section id="profile-section" class="settings-section active">
+                <div class="form-card">
+                    <h2 class="form-card-title">Personal Information</h2>
+                    <form>
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-input" value="John Doe" placeholder="Enter your full name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-input" value="john.doe@company.com" placeholder="Enter your email">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" class="form-input" value="+1 (555) 123-4567" placeholder="Enter your phone number">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Account Settings -->
+            <section id="account-section" class="settings-section">
+                <div class="tenant-info">
+                    <h3 style="margin: 0 0 0.5rem 0; color: var(--purple);">Tenant Information</h3>
+                    <p style="margin: 0; color: rgba(255, 255, 255, 0.8);">
+                        <strong>Organization:</strong> Acme Retail Corp<br>
+                        <strong>Tenant ID:</strong> tenant_acme_retail_001<br>
+                        <strong>Plan:</strong> Enterprise
+                    </p>
+                </div>
+
+                <div class="form-card">
+                    <h2 class="form-card-title">Account Settings</h2>
+                    <form>
+                        <div class="form-group">
+                            <label class="form-label">Account Type</label>
+                            <select class="form-input">
+                                <option value="enterprise">Enterprise</option>
+                                <option value="business">Business</option>
+                                <option value="starter">Starter</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Primary Language</label>
+                            <select class="form-input">
+                                <option value="en">English</option>
+                                <option value="es">Spanish</option>
+                                <option value="pt">Portuguese</option>
+                                <option value="fr">French</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Timezone</label>
+                            <select class="form-input">
+                                <option value="UTC-8">Pacific Standard Time (UTC-8)</option>
+                                <option value="UTC-5">Eastern Standard Time (UTC-5)</option>
+                                <option value="UTC+0">Coordinated Universal Time (UTC+0)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Account Settings</button>
+                    </form>
+                </div>
+
+                <div class="form-card">
+                    <h2 class="form-card-title">Tenant Compliance Settings</h2>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 1rem;">
+                            <span class="form-label" style="margin: 0;">Data Retention Policy</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+                        <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem; margin-top: 0.5rem;">
+                            Automatically delete customer data after 7 years as per GDPR requirements
+                        </p>
+                    </div>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 1rem;">
+                            <span class="form-label" style="margin: 0;">CCPA Compliance</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+                        <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem; margin-top: 0.5rem;">
+                            Enable California Consumer Privacy Act compliance features
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Security Settings (Enhanced) -->
+            <section id="security-section" class="settings-section">
+                <div class="enterprise-alert">
+                    <div class="enterprise-alert-title">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 1L3 3.5v4.002c0 4.83 2.339 7.498 6.5 9.998 4.161-2.5 6.5-5.168 6.5-9.998V3.5L10 1zm0 2.165l5 1.5v3.337c0 3.764-1.839 5.949-5 7.998-3.161-2.049-5-4.234-5-7.998V4.665l5-1.5z" clip-rule="evenodd"></path>
+                        </svg>
+                        Enterprise Security Features
+                    </div>
+                    <p style="color: rgba(255, 255, 255, 0.8); margin: 0;">Your organization has access to advanced security features including SSO, MFA, and session management.</p>
+                </div>
+
+                <div class="form-card">
+                    <h2 class="form-card-title">Single Sign-On (SSO)</h2>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 1rem;">
+                            <span class="form-label" style="margin: 0;">Enable SSO</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">SSO Provider</label>
+                        <select class="form-input">
+                            <option value="saml">SAML 2.0</option>
+                            <option value="oidc">OpenID Connect</option>
+                            <option value="oauth">OAuth 2.0</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Identity Provider URL</label>
+                        <input type="url" class="form-input" placeholder="https://your-idp.com/saml/sso" value="https://acme.okta.com/app/saml/sso">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Entity ID</label>
+                        <input type="text" class="form-input" placeholder="urn:amazon:cognito:sp:us-east-1_example" value="urn:blipee:tenant:acme_retail">
+                    </div>
+                    <button type="button" class="btn btn-secondary">Test SSO Connection</button>
+                    <button type="submit" class="btn btn-primary">Save SSO Settings</button>
+                </div>
+
+                <div class="form-card">
+                    <h2 class="form-card-title">Multi-Factor Authentication</h2>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 1rem;">
+                            <span class="form-label" style="margin: 0;">Require MFA for all users</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Allowed MFA Methods</label>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="checkbox" checked style="margin: 0;">
+                                <span>SMS/Text Message</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="checkbox" checked style="margin: 0;">
+                                <span>Authenticator App (TOTP)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="checkbox" style="margin: 0;">
+                                <span>Hardware Security Keys (FIDO2)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="checkbox" style="margin: 0;">
+                                <span>Email Verification</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">MFA Enforcement Policy</label>
+                        <select class="form-input">
+                            <option value="immediate">Immediate - Required on next login</option>
+                            <option value="grace">Grace Period - 7 days to setup</option>
+                            <option value="optional">Optional - User choice</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update MFA Settings</button>
+                </div>
+
+                <div class="form-card">
+                    <h2 class="form-card-title">Session Management</h2>
+                    <div class="form-group">
+                        <label class="form-label">Session Timeout (minutes)</label>
+                        <input type="number" class="form-input" value="480" min="15" max="1440">
+                        <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem; margin-top: 0.5rem;">
+                            Users will be automatically logged out after this period of inactivity
+                        </p>
+                    </div>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 1rem;">
+                            <span class="form-label" style="margin: 0;">Concurrent Session Limit</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+                        <input type="number" class="form-input" value="3" min="1" max="10" style="margin-top: 0.5rem;">
+                        <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem; margin-top: 0.5rem;">
+                            Maximum number of simultaneous sessions per user
+                        </p>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Session Settings</button>
+                </div>
+            </section>
+
+            <!-- API & Integrations (Enhanced) -->
+            <section id="api-section" class="settings-section">
+                <div class="form-card">
+                    <h2 class="form-card-title">API Keys & Access</h2>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 1rem;">
+                            <span class="form-label" style="margin: 0;">Enable API Access</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">API Rate Limits</label>
+                        <select class="form-input">
+                            <option value="standard">Standard - 1000 requests/hour</option>
+                            <option value="elevated">Elevated - 5000 requests/hour</option>
+                            <option value="unlimited">Unlimited (Enterprise)</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-secondary">Generate New API Key</button>
+                    <button type="button" class="btn btn-secondary">View API Documentation</button>
+                </div>
+
+                <div class="form-card">
+                    <h2 class="form-card-title">Enterprise Integrations</h2>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255, 255, 255, 0.05); border-radius: 0.5rem;">
+                            <div>
+                                <h4 style="margin: 0 0 0.25rem 0;">Salesforce</h4>
+                                <p style="margin: 0; color: rgba(255, 255, 255, 0.6); font-size: 0.875rem;">CRM Integration</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <span class="role-badge" style="background: var(--green);">Connected</span>
+                                <button class="btn btn-secondary" style="padding: 0.5rem 1rem;">Configure</button>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255, 255, 255, 0.05); border-radius: 0.5rem;">
+                            <div>
+                                <h4 style="margin: 0 0 0.25rem 0;">Microsoft Active Directory</h4>
+                                <p style="margin: 0; color: rgba(255, 255, 255, 0.6); font-size: 0.875rem;">User Directory</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <span class="role-badge" style="background: var(--green);">Connected</span>
+                                <button class="btn btn-secondary" style="padding: 0.5rem 1rem;">Configure</button>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255, 255, 255, 0.05); border-radius: 0.5rem;">
+                            <div>
+                                <h4 style="margin: 0 0 0.25rem 0;">Slack</h4>
+                                <p style="margin: 0; color: rgba(255, 255, 255, 0.6); font-size: 0.875rem;">Team Communication</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <span class="role-badge" style="background: rgba(255, 255, 255, 0.2);">Not Connected</span>
+                                <button class="btn btn-primary" style="padding: 0.5rem 1rem;">Connect</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2 class="form-card-title">Audit Logging</h2>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 1rem;">
+                            <span class="form-label" style="margin: 0;">Enable Comprehensive Audit Logging</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+                        <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem; margin-top: 0.5rem;">
+                            Log all user actions, API calls, and system events for compliance
+                        </p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Log Retention Period</label>
+                        <select class="form-input">
+                            <option value="90">90 days</option>
+                            <option value="365">1 year</option>
+                            <option value="2555">7 years (GDPR Compliance)</option>
+                            <option value="unlimited">Unlimited</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-secondary">Export Audit Logs</button>
+                    <button type="submit" class="btn btn-primary">Save Logging Settings</button>
+                </div>
+            </section>
+
+            <!-- Team & Access (Enhanced with RBAC) -->
+            <section id="team-section" class="settings-section">
+                <div class="form-card">
+                    <h2 class="form-card-title">Role-Based Access Control</h2>
+                    <div class="form-group">
+                        <label class="form-label">Available Roles</label>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
+                            <span class="role-badge tenant-admin">Tenant Admin</span>
+                            <span class="role-badge regional-manager">Regional Manager</span>
+                            <span class="role-badge store-manager">Store Manager</span>
+                            <span class="role-badge employee">Employee</span>
+                            <span class="role-badge employee">Viewer</span>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary">Manage Role Permissions</button>
+                    <button type="button" class="btn btn-primary">Create Custom Role</button>
+                </div>
+
+                <div class="form-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <div>
+                            <h2 class="form-card-title" style="margin-bottom: 0.5rem;">Team Members</h2>
+                            <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem;">5 active members • 1 pending invitation</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="inviteTeamMember()">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+                            </svg>
+                            Invite Member
+                        </button>
+                    </div>
+
+                    <!-- Team Member List -->
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.5rem;">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div style="width: 40px; height: 40px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; color: white;">
+                                    JD
+                                </div>
+                                <div>
+                                    <div style="font-weight: 500;">John Doe</div>
+                                    <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">john.doe@company.com</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <span class="role-badge tenant-admin">Tenant Admin</span>
+                                <button class="btn btn-secondary" style="padding: 0.5rem 1rem;">Edit</button>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.5rem;">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div style="width: 40px; height: 40px; background: var(--gradient-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; color: white;">
+                                    SM
+                                </div>
+                                <div>
+                                    <div style="font-weight: 500;">Sarah Miller</div>
+                                    <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">sarah.miller@company.com</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <span class="role-badge regional-manager">Regional Manager</span>
+                                <button class="btn btn-secondary" style="padding: 0.5rem 1rem;">Edit</button>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.5rem;">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div style="width: 40px; height: 40px; background: var(--gradient-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; color: white;">
+                                    MJ
+                                </div>
+                                <div>
+                                    <div style="font-weight: 500;">Mike Johnson</div>
+                                    <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">mike.johnson@company.com</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <span class="role-badge store-manager">Store Manager</span>
+                                <button class="btn btn-secondary" style="padding: 0.5rem 1rem;">Edit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2 class="form-card-title">Hierarchical Access Control</h2>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 1rem;">
+                            <span class="form-label" style="margin: 0;">Enable Inheritance-Based Access</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+                        <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem; margin-top: 0.5rem;">
+                            Regional Managers automatically get access to all stores in their region
+                        </p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Access Approval Workflow</label>
+                        <select class="form-input">
+                            <option value="auto">Automatic - Based on role hierarchy</option>
+                            <option value="approval">Approval Required - Manager approval needed</option>
+                            <option value="manual">Manual - Admin assigns access manually</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Activity & Usage -->
+            <section id="activity-section" class="settings-section">
+                <div class="form-card">
+                    <h2 class="form-card-title">Recent Activity</h2>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div class="audit-log-entry">
+                            <div class="audit-timestamp">2024-01-15 14:32</div>
+                            <div class="audit-action">User login successful</div>
+                            <div class="audit-user">john.doe@company.com</div>
+                        </div>
+                        <div class="audit-log-entry">
+                            <div class="audit-timestamp">2024-01-15 13:45</div>
+                            <div class="audit-action">Store settings updated</div>
+                            <div class="audit-user">sarah.miller@company.com</div>
+                        </div>
+                        <div class="audit-log-entry">
+                            <div class="audit-timestamp">2024-01-15 12:18</div>
+                            <div class="audit-action">New team member invited</div>
+                            <div class="audit-user">john.doe@company.com</div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary">View Full Activity Log</button>
+                </div>
+            </section>
+
+            <!-- Store Management -->
+            <section id="stores-section" class="settings-section">
+                <div class="form-card">
+                    <h2 class="form-card-title">Store Management</h2>
+                    <p style="color: rgba(255, 255, 255, 0.6); margin-bottom: 1.5rem;">Manage your retail locations and their settings.</p>
+                    <button type="button" class="btn btn-primary">Add New Store</button>
+                    <button type="button" class="btn btn-secondary">Import Stores</button>
+                </div>
+            </section>
+
+            <!-- Notifications -->
+            <section id="notifications-section" class="settings-section">
+                <div class="form-card">
+                    <h2 class="form-card-title">Notification Preferences</h2>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 1rem;">
+                            <span class="form-label" style="margin: 0;">Email Notifications</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 1rem;">
+                            <span class="form-label" style="margin: 0;">SMS Notifications</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 1rem;">
+                            <span class="form-label" style="margin: 0;">Security Alerts</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Notification Settings</button>
+                </div>
+            </section>
+
+            <!-- Billing -->
+            <section id="billing-section" class="settings-section">
+                <div class="form-card">
+                    <h2 class="form-card-title">Billing Information</h2>
+                    <div style="background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
+                        <h4 style="margin: 0 0 0.5rem 0; color: var(--purple);">Enterprise Plan</h4>
+                        <p style="margin: 0; color: rgba(255, 255, 255, 0.8);">$299/month • Unlimited users • Advanced features</p>
+                    </div>
+                    <button type="button" class="btn btn-secondary">View Billing History</button>
+                    <button type="button" class="btn btn-secondary">Update Payment Method</button>
+                </div>
+            </section>
+
+            <!-- Data & Privacy (Enhanced) -->
+            <section id="data-section" class="settings-section">
+                <div class="form-card">
+                    <h2 class="form-card-title">Data Privacy & Protection</h2>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 1rem;">
+                            <span class="form-label" style="margin: 0;">GDPR Compliance Mode</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+                        <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem; margin-top: 0.5rem;">
+                            Enable features required for GDPR compliance including data portability and right to be forgotten
+                        </p>
+                    </div>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 1rem;">
+                            <span class="form-label" style="margin: 0;">CCPA Compliance Mode</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Data Retention Policy</label>
+                        <select class="form-input">
+                            <option value="2years">2 years</option>
+                            <option value="5years">5 years</option>
+                            <option value="7years">7 years (Recommended)</option>
+                            <option value="indefinite">Indefinite</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-secondary">Export All Data</button>
+                    <button type="button" class="btn btn-danger">Request Data Deletion</button>
+                </div>
+            </section>
+
+            <!-- Compliance (New Enterprise Tab) -->
+            <section id="compliance-section" class="settings-section platform-admin-only">
+                <div class="enterprise-alert">
+                    <div class="enterprise-alert-title">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        Enterprise Compliance Dashboard
+                    </div>
+                    <p style="color: rgba(255, 255, 255, 0.8); margin: 0;">Monitor and manage compliance across all enterprise frameworks and regulations.</p>
+                </div>
+
+                <div class="compliance-grid">
+                    <div class="compliance-card">
+                        <div class="compliance-status">
+                            <div class="status-indicator active"></div>
+                            <h3 style="margin: 0; font-size: 1.1rem;">SOC 2 Type II</h3>
+                        </div>
+                        <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem; margin-bottom: 1rem;">
+                            Security, Availability, and Confidentiality controls
+                        </p>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">View Report</button>
+                            <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Download</button>
+                        </div>
+                    </div>
+
+                    <div class="compliance-card">
+                        <div class="compliance-status">
+                            <div class="status-indicator active"></div>
+                            <h3 style="margin: 0; font-size: 1.1rem;">GDPR</h3>
+                        </div>
+                        <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem; margin-bottom: 1rem;">
+                            General Data Protection Regulation compliance
+                        </p>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">View Status</button>
+                            <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Configure</button>
+                        </div>
+                    </div>
+
+                    <div class="compliance-card">
+                        <div class="compliance-status">
+                            <div class="status-indicator warning"></div>
+                            <h3 style="margin: 0; font-size: 1.1rem;">HIPAA</h3>
+                        </div>
+                        <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem; margin-bottom: 1rem;">
+                            Health Insurance Portability and Accountability Act
+                        </p>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Review Issues</button>
+                            <button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Enable</button>
+                        </div>
+                    </div>
+
+                    <div class="compliance-card">
+                        <div class="compliance-status">
+                            <div class="status-indicator active"></div>
+                            <h3 style="margin: 0; font-size: 1.1rem;">CCPA</h3>
+                        </div>
+                        <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem; margin-bottom: 1rem;">
+                            California Consumer Privacy Act compliance
+                        </p>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">View Status</button>
+                            <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Configure</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2 class="form-card-title">Audit Trail Management</h2>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 1rem;">
+                            <span class="form-label" style="margin: 0;">Immutable Audit Logs</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+                        <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem; margin-top: 0.5rem;">
+                            Ensure audit logs cannot be modified after creation
+                        </p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Log Archive Schedule</label>
+                        <select class="form-input">
+                            <option value="monthly">Monthly</option>
+                            <option value="quarterly">Quarterly</option>
+                            <option value="annually">Annually</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-secondary">Export Compliance Report</button>
+                    <button type="submit" class="btn btn-primary">Save Audit Settings</button>
+                </div>
+            </section>
+
+            <!-- Platform Admin (New Super Admin Tab) -->
+            <section id="platform-section" class="settings-section platform-admin-only">
+                <div class="enterprise-alert">
+                    <div class="enterprise-alert-title">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                        </svg>
+                        Platform Administration
+                    </div>
+                    <p style="color: rgba(255, 255, 255, 0.8); margin: 0;">Manage platform-wide settings, tenants, and system configuration. Only visible to platform super administrators.</p>
+                </div>
+
+                <div class="form-card">
+                    <h2 class="form-card-title">Tenant Management</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <p style="color: rgba(255, 255, 255, 0.6); margin: 0;">Manage all tenants on the platform</p>
+                        <button class="btn btn-primary">Create New Tenant</button>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.5rem;">
+                            <div>
+                                <h4 style="margin: 0 0 0.25rem 0;">Acme Retail Corp</h4>
+                                <p style="margin: 0; color: rgba(255, 255, 255, 0.6); font-size: 0.875rem;">tenant_acme_retail_001 • 25 users • Enterprise Plan</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <span class="role-badge" style="background: var(--green);">Active</span>
+                                <button class="btn btn-secondary" style="padding: 0.5rem 1rem;">Manage</button>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.5rem;">
+                            <div>
+                                <h4 style="margin: 0 0 0.25rem 0;">Global Fashion Inc</h4>
+                                <p style="margin: 0; color: rgba(255, 255, 255, 0.6); font-size: 0.875rem;">tenant_global_fashion_002 • 12 users • Business Plan</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <span class="role-badge" style="background: var(--green);">Active</span>
+                                <button class="btn btn-secondary" style="padding: 0.5rem 1rem;">Manage</button>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.5rem;">
+                            <div>
+                                <h4 style="margin: 0 0 0.25rem 0;">TechStart Solutions</h4>
+                                <p style="margin: 0; color: rgba(255, 255, 255, 0.6); font-size: 0.875rem;">tenant_techstart_003 • 5 users • Starter Plan</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <span class="role-badge" style="background: var(--yellow);">Trial</span>
+                                <button class="btn btn-secondary" style="padding: 0.5rem 1rem;">Manage</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2 class="form-card-title">Platform Configuration</h2>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 1rem;">
+                            <span class="form-label" style="margin: 0;">Enable New Tenant Registration</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Default Tenant Plan</label>
+                        <select class="form-input">
+                            <option value="trial">14-day Trial</option>
+                            <option value="starter">Starter Plan</option>
+                            <option value="business">Business Plan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Platform Maintenance Mode</label>
+                        <select class="form-input">
+                            <option value="disabled">Disabled</option>
+                            <option value="scheduled">Scheduled</option>
+                            <option value="active">Active</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Platform Settings</button>
+                </div>
+
+                <div class="form-card">
+                    <h2 class="form-card-title">System Health & Monitoring</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 0.5rem; padding: 1rem; text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: 600; color: var(--green);">99.9%</div>
+                            <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">Uptime</div>
+                        </div>
+                        <div style="background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 0.5rem; padding: 1rem; text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: 600; color: var(--purple);">342</div>
+                            <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">Active Tenants</div>
+                        </div>
+                        <div style="background: rgba(14, 165, 233, 0.1); border: 1px solid rgba(14, 165, 233, 0.3); border-radius: 0.5rem; padding: 1rem; text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: 600; color: var(--blue);">12.4K</div>
+                            <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">Total Users</div>
+                        </div>
+                        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 0.5rem; padding: 1rem; text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: 600; color: var(--green);">15ms</div>
+                            <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">Avg Response</div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary">View Detailed Metrics</button>
+                    <button type="button" class="btn btn-secondary">System Health Report</button>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        // Switch between settings sections
+        function switchSettingsSection(section, event) {
+            event.preventDefault();
+            
+            // Hide all sections
+            document.querySelectorAll('.settings-section').forEach(s => {
+                s.classList.remove('active');
+            });
+            
+            // Remove active state from all nav tabs
+            document.querySelectorAll('.settings-nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+                tab.setAttribute('aria-selected', 'false');
+            });
+            
+            // Show selected section
+            document.getElementById(section + '-section').classList.add('active');
+            
+            // Set active nav tab
+            event.target.classList.add('active');
+            event.target.setAttribute('aria-selected', 'true');
+            
+            console.log(`Switched to ${section} settings`);
+        }
+
+        // Sample functions for demonstration
+        function inviteTeamMember() {
+            alert('Invite team member functionality would open a modal here');
+        }
+
+        function saveSettings() {
+            alert('Settings saved successfully');
+        }
+    </script>
+</body>
+</html>

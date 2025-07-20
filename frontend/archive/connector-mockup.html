@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensor Connector Configuration - Enterprise Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f7fa;
+            color: #2c3e50;
+        }
+        
+        /* Enterprise Header */
+        .header {
+            background-color: #1e2936;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-menu a {
+            color: #cbd5e0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .nav-menu a:hover {
+            color: white;
+        }
+        
+        /* Sidebar */
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: calc(100vh - 60px);
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: white;
+            border-right: 1px solid #e2e8f0;
+            padding: 2rem 0;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+        }
+        
+        .sidebar-menu li {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .sidebar-menu li:hover {
+            background-color: #f7fafc;
+        }
+        
+        .sidebar-menu li.active {
+            background-color: #e6f7ff;
+            border-left: 3px solid #1890ff;
+            font-weight: 600;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+        }
+        
+        .page-header {
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-description {
+            color: #718096;
+        }
+        
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #1890ff;
+            box-shadow: 0 0 0 3px rgba(24,144,255,0.1);
+        }
+        
+        .form-textarea {
+            min-height: 120px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background-color: #1890ff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0e7fe1;
+        }
+        
+        .btn-secondary {
+            background-color: white;
+            color: #4a5568;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #f7fafc;
+        }
+        
+        .btn-success {
+            background-color: #52c41a;
+            color: white;
+        }
+        
+        /* Grid */
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        
+        .grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        /* Connector Templates */
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .template-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .template-card:hover {
+            border-color: #1890ff;
+            box-shadow: 0 4px 12px rgba(24,144,255,0.15);
+        }
+        
+        .template-card.selected {
+            border-color: #1890ff;
+            background-color: #f0f9ff;
+        }
+        
+        .template-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .template-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .template-description {
+            color: #718096;
+            font-size: 0.875rem;
+        }
+        
+        /* Status Badge */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .badge-success {
+            background-color: #d4f4dd;
+            color: #1e7e34;
+        }
+        
+        .badge-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        /* Code Preview */
+        .code-preview {
+            background-color: #f8f9fa;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 1rem;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .tab:hover {
+            color: #1890ff;
+        }
+        
+        .tab.active {
+            color: #1890ff;
+            border-bottom-color: #1890ff;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Advanced Options */
+        .advanced-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            color: #1890ff;
+            margin-bottom: 1rem;
+        }
+        
+        .advanced-content {
+            display: none;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+        
+        .advanced-content.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Enterprise Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <span>🏢</span>
+                <span>Retail Analytics Platform</span>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#">Dashboard</a></li>
+                    <li><a href="#">Analytics</a></li>
+                    <li><a href="#">Connectors</a></li>
+                    <li><a href="#">Settings</a></li>
+                    <li><a href="#">Documentation</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li>📊 Dashboard</li>
+                <li>📈 Analytics</li>
+                <li class="active">🔌 Connectors</li>
+                <li>📷 Sensors</li>
+                <li>🏪 Stores</li>
+                <li>📝 Reports</li>
+                <li>⚙️ Settings</li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Sensor Connector Configuration</h1>
+                <p class="page-description">Configure and manage data connectors for various sensor types</p>
+            </div>
+
+            <!-- Template Selection -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">1. Select Connector Template</h2>
+                    <span class="badge badge-success">Required</span>
+                </div>
+                
+                <div class="template-grid">
+                    <div class="template-card selected" onclick="selectTemplate('people_counting')">
+                        <div class="template-icon">👥</div>
+                        <div class="template-name">People Counting Camera</div>
+                        <div class="template-description">Video analytics for customer traffic</div>
+                    </div>
+                    
+                    <div class="template-card" onclick="selectTemplate('temperature')">
+                        <div class="template-icon">🌡️</div>
+                        <div class="template-name">Temperature Sensor</div>
+                        <div class="template-description">Environmental monitoring</div>
+                    </div>
+                    
+                    <div class="template-card" onclick="selectTemplate('pos')">
+                        <div class="template-icon">💳</div>
+                        <div class="template-name">POS System</div>
+                        <div class="template-description">Point of sale integration</div>
+                    </div>
+                    
+                    <div class="template-card" onclick="selectTemplate('custom')">
+                        <div class="template-icon">⚙️</div>
+                        <div class="template-name">Custom Connector</div>
+                        <div class="template-description">Configure from scratch</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Basic Configuration -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">2. Basic Configuration</h2>
+                    <span class="badge badge-success">Required</span>
+                </div>
+                
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Connector Name</label>
+                        <input type="text" class="form-input" placeholder="e.g., Store Front Camera" value="Store Front Camera">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Store Location</label>
+                        <select class="form-select">
+                            <option>OML01-Omnia GuimarãesShopping</option>
+                            <option>ONL01-Only UBBO Amadora</option>
+                            <option>OML02-Omnia Fórum Almada</option>
+                            <option>OML03-Omnia Norteshopping</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Device IP Address</label>
+                        <input type="text" class="form-input" placeholder="e.g., 192.168.1.100" value="93.108.96.96">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Port</label>
+                        <input type="text" class="form-input" placeholder="e.g., 21001" value="21001">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Authentication -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">3. Authentication</h2>
+                    <span class="badge badge-success">Required</span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Authentication Type</label>
+                    <select class="form-select" onchange="updateAuthFields(this.value)">
+                        <option value="basic">Basic Authentication</option>
+                        <option value="token">Token Based</option>
+                        <option value="oauth">OAuth 2.0</option>
+                        <option value="none">No Authentication</option>
+                    </select>
+                </div>
+                
+                <div id="auth-fields" class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-input" placeholder="Username" value="admin">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-input" placeholder="Password" value="grnl.2024">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Mapping -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">4. Data Endpoints & Mapping</h2>
+                    <span class="badge badge-warning">Optional</span>
+                </div>
+                
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('endpoints')">Endpoints</div>
+                    <div class="tab" onclick="switchTab('mapping')">Field Mapping</div>
+                    <div class="tab" onclick="switchTab('preview')">Configuration Preview</div>
+                </div>
+                
+                <div id="endpoints-tab" class="tab-content active">
+                    <div class="form-group">
+                        <label class="form-label">People Counting Endpoint</label>
+                        <input type="text" class="form-input" value="/dataloader.cgi?dw=vcalogcsv&report_type=0&linetype=31&statistics_type=3">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Heatmap Endpoint</label>
+                        <input type="text" class="form-input" value="/dataloader.cgi?dw=heatmapcsv&sub_type=0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Regional Counting Endpoint</label>
+                        <input type="text" class="form-input" value="/dataloader.cgi?dw=regionalcountlogcsv&report_type=0">
+                    </div>
+                </div>
+                
+                <div id="mapping-tab" class="tab-content">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background-color: #f8f9fa;">
+                                <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #e2e8f0;">Source Field</th>
+                                <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #e2e8f0;">Target Field</th>
+                                <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #e2e8f0;">Data Type</th>
+                                <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #e2e8f0;">Transform</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #e2e8f0;">StartTime</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #e2e8f0;">start_time</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #e2e8f0;">timestamp</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #e2e8f0;">%Y/%m/%d %H:%M:%S</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #e2e8f0;">Line1 - In</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #e2e8f0;">line1_in</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #e2e8f0;">integer</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #e2e8f0;">-</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #e2e8f0;">Line2 - In</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #e2e8f0;">line2_in</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #e2e8f0;">integer</td>
+                                <td style="padding: 0.75rem; border-bottom: 1px solid #e2e8f0;">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <button class="btn btn-secondary" style="margin-top: 1rem;">+ Add Field Mapping</button>
+                </div>
+                
+                <div id="preview-tab" class="tab-content">
+                    <div class="code-preview">
+<pre>{
+  "connector": {
+    "name": "Store Front Camera",
+    "type": "people_counting_camera",
+    "store": "OML01-Omnia GuimarãesShopping",
+    "connection": {
+      "host": "93.108.96.96",
+      "port": 21001,
+      "auth": {
+        "type": "basic",
+        "username": "admin",
+        "password": "****"
+      }
+    },
+    "endpoints": {
+      "people_counting": "/dataloader.cgi?dw=vcalogcsv&report_type=0&linetype=31&statistics_type=3",
+      "heatmap": "/dataloader.cgi?dw=heatmapcsv&sub_type=0",
+      "regional": "/dataloader.cgi?dw=regionalcountlogcsv&report_type=0"
+    },
+    "data_mapping": {
+      "timestamp_format": "%Y/%m/%d %H:%M:%S",
+      "fields": [
+        {
+          "source": "StartTime",
+          "target": "start_time",
+          "type": "timestamp"
+        },
+        {
+          "source": "Line1 - In",
+          "target": "line1_in",
+          "type": "integer"
+        }
+      ]
+    }
+  }
+}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Options -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">5. Advanced Options</h2>
+                    <span class="badge badge-warning">Optional</span>
+                </div>
+                
+                <div class="advanced-toggle" onclick="toggleAdvanced()">
+                    <span id="advanced-arrow">▶</span>
+                    <span>Show Advanced Settings</span>
+                </div>
+                
+                <div id="advanced-content" class="advanced-content">
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Request Timeout (seconds)</label>
+                            <input type="number" class="form-input" value="30">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Retry Attempts</label>
+                            <input type="number" class="form-input" value="3">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Polling Interval (minutes)</label>
+                            <input type="number" class="form-input" value="60">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Data Retention (days)</label>
+                            <input type="number" class="form-input" value="90">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Custom Headers (JSON)</label>
+                        <textarea class="form-textarea" placeholder='{"X-Custom-Header": "value"}'></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button class="btn btn-secondary" onclick="testConnection()">
+                    <span>🧪</span>
+                    Test Connection
+                </button>
+                <button class="btn btn-secondary">
+                    <span>💾</span>
+                    Save as Template
+                </button>
+                <button class="btn btn-primary" onclick="deployConnector()">
+                    <span>🚀</span>
+                    Deploy Connector
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function selectTemplate(type) {
+            // Remove selected class from all cards
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked card
+            event.currentTarget.classList.add('selected');
+            
+            // Update form based on template
+            updateFormForTemplate(type);
+        }
+        
+        function updateFormForTemplate(type) {
+            // This would load template-specific configurations
+            console.log('Loading template:', type);
+        }
+        
+        function updateAuthFields(authType) {
+            const authFields = document.getElementById('auth-fields');
+            
+            switch(authType) {
+                case 'basic':
+                    authFields.innerHTML = `
+                        <div class="form-group">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-input" placeholder="Username" value="admin">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-input" placeholder="Password" value="grnl.2024">
+                        </div>
+                    `;
+                    break;
+                case 'token':
+                    authFields.innerHTML = `
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label class="form-label">API Token</label>
+                            <input type="text" class="form-input" placeholder="Enter your API token">
+                        </div>
+                    `;
+                    break;
+                case 'oauth':
+                    authFields.innerHTML = `
+                        <div class="form-group">
+                            <label class="form-label">Client ID</label>
+                            <input type="text" class="form-input" placeholder="OAuth Client ID">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Client Secret</label>
+                            <input type="password" class="form-input" placeholder="OAuth Client Secret">
+                        </div>
+                    `;
+                    break;
+                case 'none':
+                    authFields.innerHTML = '<p style="color: #718096;">No authentication required</p>';
+                    break;
+            }
+        }
+        
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Show selected tab
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+        
+        function toggleAdvanced() {
+            const content = document.getElementById('advanced-content');
+            const arrow = document.getElementById('advanced-arrow');
+            
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                arrow.textContent = '▶';
+            } else {
+                content.classList.add('show');
+                arrow.textContent = '▼';
+            }
+        }
+        
+        function testConnection() {
+            alert('Testing connection to 93.108.96.96:21001...\n\nConnection successful! ✅\n\nResponse time: 125ms\nData format: CSV\nAuthentication: Valid');
+        }
+        
+        function deployConnector() {
+            if (confirm('Deploy this connector configuration?\n\nThis will start collecting data from the configured sensor.')) {
+                alert('Connector deployed successfully! ✅\n\nThe connector is now active and collecting data.');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - blipee OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Gradient System */
+            --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #0EA5E9 100%);
+            --gradient-mesh: radial-gradient(at 40% 20%, hsla(280,100%,74%,0.3) 0px, transparent 50%),
+                            radial-gradient(at 80% 0%, hsla(189,100%,56%,0.2) 0px, transparent 50%),
+                            radial-gradient(at 0% 50%, hsla(355,100%,93%,0.2) 0px, transparent 50%);
+            
+            /* Colors */
+            --purple: #8B5CF6;
+            --blue: #0EA5E9;
+            --dark: #0F172A;
+            --darker: #020617;
+            --white: #FFFFFF;
+            
+            /* Glassmorphism */
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--darker);
+            color: var(--white);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Background */
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: var(--darker);
+            overflow: hidden;
+        }
+
+        .bg-gradient-mesh {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: var(--gradient-mesh);
+            opacity: 0.3;
+            animation: meshAnimation 30s ease infinite;
+        }
+
+        @keyframes meshAnimation {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-20px, -20px) rotate(120deg); }
+            66% { transform: translate(20px, -10px) rotate(240deg); }
+        }
+
+        /* Navigation */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1.5rem 2rem;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 400;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--white);
+        }
+
+        /* Main Content */
+        .content-container {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.125rem;
+        }
+
+        .last-updated {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Content Sections */
+        .content-section {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--white);
+        }
+
+        .section-subtitle {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .content-text {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .content-list {
+            list-style: none;
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .content-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .content-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--purple);
+            font-weight: bold;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            margin-top: 3rem;
+        }
+
+        .contact-link {
+            color: var(--purple);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .contact-link:hover {
+            color: var(--blue);
+        }
+
+        /* Table of Contents */
+        .toc {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .toc-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-list li {
+            margin-bottom: 0.75rem;
+        }
+
+        .toc-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .toc-link:hover {
+            color: var(--purple);
+            padding-left: 0.5rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .content-section {
+                padding: 1.5rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-container">
+        <div class="bg-gradient-mesh"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="ai-landing.html" class="logo">blipee OS</a>
+            <div class="nav-links">
+                <a href="ai-landing.html" class="nav-link">Home</a>
+                <a href="pricing.html" class="nav-link">Pricing</a>
+                <a href="signin.html" class="nav-link">Sign In</a>
+                <a href="signup.html" class="nav-link">Start Free Trial</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="content-container">
+        <!-- Header -->
+        <div class="page-header">
+            <h1 class="page-title">Terms of Service</h1>
+            <p class="page-subtitle">Please read these terms carefully before using blipee OS</p>
+            <p class="last-updated">Last updated: January 1, 2024</p>
+        </div>
+
+        <!-- Table of Contents -->
+        <div class="content-section toc">
+            <h2 class="toc-title">Table of Contents</h2>
+            <ul class="toc-list">
+                <li><a href="#acceptance" class="toc-link">1. Acceptance of Terms</a></li>
+                <li><a href="#description" class="toc-link">2. Description of Service</a></li>
+                <li><a href="#account" class="toc-link">3. Account Registration</a></li>
+                <li><a href="#usage" class="toc-link">4. Acceptable Use</a></li>
+                <li><a href="#payment" class="toc-link">5. Payment Terms</a></li>
+                <li><a href="#data" class="toc-link">6. Data Privacy and Security</a></li>
+                <li><a href="#intellectual" class="toc-link">7. Intellectual Property</a></li>
+                <li><a href="#termination" class="toc-link">8. Termination</a></li>
+                <li><a href="#disclaimer" class="toc-link">9. Disclaimer of Warranties</a></li>
+                <li><a href="#limitation" class="toc-link">10. Limitation of Liability</a></li>
+            </ul>
+        </div>
+
+        <!-- Content Sections -->
+        <div class="content-section" id="acceptance">
+            <h2 class="section-title">1. Acceptance of Terms</h2>
+            <p class="content-text">
+                By accessing and using blipee OS ("Service"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this Service.
+            </p>
+            <p class="content-text">
+                These Terms of Service ("Terms") constitute a legally binding agreement made between you, whether personally or on behalf of an entity ("you") and blipee OS ("Company", "we", "us", or "our").
+            </p>
+        </div>
+
+        <div class="content-section" id="description">
+            <h2 class="section-title">2. Description of Service</h2>
+            <p class="content-text">
+                blipee OS is a retail intelligence platform that provides:
+            </p>
+            <ul class="content-list">
+                <li>Real-time customer traffic analytics</li>
+                <li>AI-powered predictive insights</li>
+                <li>Store performance monitoring</li>
+                <li>Heatmap and zone analysis</li>
+                <li>Integration with retail systems</li>
+            </ul>
+            <p class="content-text">
+                We reserve the right to modify, suspend, or discontinue any part of the Service at any time without notice.
+            </p>
+        </div>
+
+        <div class="content-section" id="account">
+            <h2 class="section-title">3. Account Registration</h2>
+            <p class="content-text">
+                To use our Service, you must:
+            </p>
+            <ul class="content-list">
+                <li>Register for an account using accurate information</li>
+                <li>Be at least 18 years old or have legal parental consent</li>
+                <li>Maintain the security of your account credentials</li>
+                <li>Notify us immediately of any unauthorized access</li>
+                <li>Be responsible for all activities under your account</li>
+            </ul>
+        </div>
+
+        <div class="content-section" id="usage">
+            <h2 class="section-title">4. Acceptable Use</h2>
+            <p class="content-text">
+                You agree not to use the Service to:
+            </p>
+            <ul class="content-list">
+                <li>Violate any laws or regulations</li>
+                <li>Infringe upon intellectual property rights</li>
+                <li>Transmit malicious code or viruses</li>
+                <li>Attempt to gain unauthorized access to our systems</li>
+                <li>Interfere with other users' access to the Service</li>
+                <li>Use the Service for competitive analysis without permission</li>
+            </ul>
+        </div>
+
+        <div class="content-section" id="payment">
+            <h2 class="section-title">5. Payment Terms</h2>
+            <h3 class="section-subtitle">5.1 Subscription Plans</h3>
+            <p class="content-text">
+                blipee OS offers various subscription plans as detailed on our pricing page. All prices are in USD unless otherwise specified.
+            </p>
+            
+            <h3 class="section-subtitle">5.2 Billing</h3>
+            <p class="content-text">
+                Subscriptions are billed monthly or annually in advance. You authorize us to charge your payment method on a recurring basis.
+            </p>
+            
+            <h3 class="section-subtitle">5.3 Free Trial</h3>
+            <p class="content-text">
+                We offer a 30-day free trial. No credit card is required to start. You may cancel at any time during the trial period without charge.
+            </p>
+        </div>
+
+        <div class="content-section" id="data">
+            <h2 class="section-title">6. Data Privacy and Security</h2>
+            <p class="content-text">
+                We take data privacy seriously. Our handling of your data is governed by our Privacy Policy. We implement industry-standard security measures including:
+            </p>
+            <ul class="content-list">
+                <li>256-bit SSL encryption for all data transmission</li>
+                <li>SOC 2 Type II certification</li>
+                <li>GDPR compliance for EU customers</li>
+                <li>Regular security audits and penetration testing</li>
+            </ul>
+        </div>
+
+        <div class="content-section" id="intellectual">
+            <h2 class="section-title">7. Intellectual Property</h2>
+            <p class="content-text">
+                The Service and its original content, features, and functionality are owned by blipee OS and are protected by international copyright, trademark, patent, trade secret, and other intellectual property laws.
+            </p>
+            <p class="content-text">
+                You retain ownership of any data you upload to the Service. By using the Service, you grant us a license to use this data solely for providing the Service to you.
+            </p>
+        </div>
+
+        <div class="content-section" id="termination">
+            <h2 class="section-title">8. Termination</h2>
+            <p class="content-text">
+                Either party may terminate this agreement at any time. Upon termination:
+            </p>
+            <ul class="content-list">
+                <li>Your access to the Service will be disabled</li>
+                <li>You may request export of your data within 30 days</li>
+                <li>We will delete your data after 90 days unless legally required to retain it</li>
+                <li>No refunds will be provided for partial billing periods</li>
+            </ul>
+        </div>
+
+        <div class="content-section" id="disclaimer">
+            <h2 class="section-title">9. Disclaimer of Warranties</h2>
+            <p class="content-text">
+                THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR IMPLIED. WE DO NOT WARRANT THAT THE SERVICE WILL BE UNINTERRUPTED, ERROR-FREE, OR COMPLETELY SECURE.
+            </p>
+        </div>
+
+        <div class="content-section" id="limitation">
+            <h2 class="section-title">10. Limitation of Liability</h2>
+            <p class="content-text">
+                TO THE MAXIMUM EXTENT PERMITTED BY LAW, blipee OS SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS OR REVENUES.
+            </p>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="content-section contact-section">
+            <h2 class="section-title">Contact Us</h2>
+            <p class="content-text">
+                If you have any questions about these Terms of Service, please contact us at:
+            </p>
+            <p class="content-text">
+                Email: <a href="mailto:legal@blipee.com" class="contact-link">legal@blipee.com</a><br>
+                Address: blipee OS, Inc.<br>
+                123 Intelligence Street<br>
+                San Francisco, CA 94105<br>
+                United States
+            </p>
+        </div>
+    </div>
+</body>
+</html>

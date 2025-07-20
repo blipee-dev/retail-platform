@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Links</title>
+</head>
+<body>
+    <h1>Debug Links Test</h1>
+    <p>This page shows what happens when clicking different types of links:</p>
+    
+    <h2>Standard Links</h2>
+    <p><a href="ai-landing.html">ai-landing.html (with extension)</a></p>
+    <p><a href="ai-landing">ai-landing (without extension)</a></p>
+    
+    <h2>Absolute Links</h2>
+    <p><a href="/ai-landing.html">/ai-landing.html (absolute with extension)</a></p>
+    <p><a href="/ai-landing">/ai-landing (absolute without extension)</a></p>
+    
+    <h2>JavaScript Links</h2>
+    <p><a href="javascript:window.location.href='ai-landing.html'">JavaScript redirect to ai-landing.html</a></p>
+    <p><a href="javascript:window.location.href='ai-landing'">JavaScript redirect to ai-landing</a></p>
+    
+    <h2>Manual Form Test</h2>
+    <form action="ai-landing.html" method="get">
+        <input type="submit" value="Form POST to ai-landing.html">
+    </form>
+    
+    <h2>Network Test</h2>
+    <button onclick="fetchTest()">Test fetch() to ai-landing.html</button>
+    <div id="result"></div>
+    
+    <script>
+        async function fetchTest() {
+            try {
+                const response = await fetch('ai-landing.html');
+                document.getElementById('result').innerHTML = `
+                    <p>Fetch response: ${response.status} ${response.statusText}</p>
+                    <p>URL: ${response.url}</p>
+                `;
+            } catch (error) {
+                document.getElementById('result').innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Log all clicks
+        document.addEventListener('click', function(event) {
+            if (event.target.tagName === 'A') {
+                console.log('Link clicked:', event.target.href);
+                console.log('Link text:', event.target.textContent);
+                console.log('Link attribute href:', event.target.getAttribute('href'));
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retail Analytics Dashboard - Milesight Integration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #0EA5E9 100%);
+            --gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            --gradient-blue: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-green: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            --gradient-orange: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
+            
+            --purple: #8B5CF6;
+            --blue: #0EA5E9;
+            --green: #10B981;
+            --yellow: #F59E0B;
+            --red: #EF4444;
+            --dark: #0F172A;
+            --darker: #020617;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--darker);
+            color: var(--white);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 400;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Plan Selector */
+        .plan-selector {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.25rem;
+            border-radius: 0.5rem;
+        }
+
+        .plan-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.7);
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .plan-btn.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .plan-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--gradient-primary);
+            color: white;
+            font-size: 0.625rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Dashboard Header */
+        .dashboard-header {
+            margin-bottom: 2rem;
+        }
+
+        .store-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 2rem;
+            font-size: 0.875rem;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Time Selector */
+        .time-selector {
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.25rem;
+            border-radius: 0.5rem;
+        }
+
+        .time-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.7);
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .time-btn.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Feature Lock Overlay */
+        .feature-locked {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-locked::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 10;
+        }
+
+        .lock-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 11;
+            padding: 2rem;
+        }
+
+        .lock-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 1rem;
+            opacity: 0.5;
+        }
+
+        .lock-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .lock-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1rem;
+        }
+
+        .upgrade-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .upgrade-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
+        .metric-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-change {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .metric-change.positive {
+            color: var(--green);
+        }
+
+        .metric-change.negative {
+            color: var(--red);
+        }
+
+        /* Zone Grid */
+        .zone-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .zone-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .zone-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .zone-count {
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.25rem;
+        }
+
+        .zone-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* Feature sections */
+        .feature-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .plan-required {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            background: rgba(139, 92, 246, 0.2);
+            color: var(--purple);
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .zone-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">blipee Analytics</div>
+            
+            <!-- Plan Selector for Demo -->
+            <div class="plan-selector">
+                <span style="margin-right: 1rem; color: rgba(255, 255, 255, 0.6); font-size: 0.875rem;">View as:</span>
+                <button class="plan-btn" onclick="switchPlan('essential')">Essential</button>
+                <button class="plan-btn active" onclick="switchPlan('professional')">
+                    Professional
+                    <span class="plan-badge">Current</span>
+                </button>
+                <button class="plan-btn" onclick="switchPlan('intelligence')">Intelligence</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div class="store-info">
+                <div>
+                    <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">Omnia GuimarãesShopping</h1>
+                    <p style="color: rgba(255, 255, 255, 0.6);">Milesight Sensor Integration • Professional Plan</p>
+                </div>
+                <div class="live-indicator">
+                    <div class="live-dot"></div>
+                    <span>Live Data</span>
+                </div>
+            </div>
+
+            <div class="time-selector">
+                <button class="time-btn">Today</button>
+                <button class="time-btn active">24h</button>
+                <button class="time-btn">7d</button>
+                <button class="time-btn">30d</button>
+            </div>
+        </div>
+
+        <!-- Essential Features (Available in all plans) -->
+        <div class="feature-section" id="essential-features">
+            <div class="section-header">
+                <h2 class="section-title">Real-time People Counting</h2>
+                <span class="plan-required">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    All Plans
+                </span>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Current Occupancy</div>
+                    <div class="metric-value">487</div>
+                    <div class="metric-change positive">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>+45 from 1 hour ago</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Today's Visitors</div>
+                    <div class="metric-value">5,743</div>
+                    <div class="metric-change positive">
+                        <span>4,178 entries • 1,565 exits</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Peak Hour Traffic</div>
+                    <div class="metric-value">628</div>
+                    <div class="metric-change">
+                        <span>at 16:00 - 17:00</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Capture Rate</div>
+                    <div class="metric-value">12.4%</div>
+                    <div class="metric-change negative">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>-1.2% from yesterday</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Traffic Flow Analysis -->
+            <div class="card" style="margin-bottom: 2rem;">
+                <div class="card-header">
+                    <h3 class="card-title">24-Hour Traffic Pattern</h3>
+                    <button style="padding: 0.5rem 1rem; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white; border-radius: 0.375rem; cursor: pointer; font-size: 0.875rem;">Export CSV</button>
+                </div>
+                <div class="card-body">
+                    <div style="height: 200px; display: flex; align-items: flex-end; gap: 0.5rem;">
+                        <!-- Simple bar chart visualization -->
+                        <div style="flex: 1; height: 20%; background: var(--gradient-blue); border-radius: 4px 4px 0 0;"></div>
+                        <div style="flex: 1; height: 30%; background: var(--gradient-blue); border-radius: 4px 4px 0 0;"></div>
+                        <div style="flex: 1; height: 45%; background: var(--gradient-blue); border-radius: 4px 4px 0 0;"></div>
+                        <div style="flex: 1; height: 60%; background: var(--gradient-blue); border-radius: 4px 4px 0 0;"></div>
+                        <div style="flex: 1; height: 75%; background: var(--gradient-blue); border-radius: 4px 4px 0 0;"></div>
+                        <div style="flex: 1; height: 85%; background: var(--gradient-blue); border-radius: 4px 4px 0 0;"></div>
+                        <div style="flex: 1; height: 95%; background: var(--gradient-blue); border-radius: 4px 4px 0 0;"></div>
+                        <div style="flex: 1; height: 100%; background: var(--gradient-primary); border-radius: 4px 4px 0 0;"></div>
+                        <div style="flex: 1; height: 90%; background: var(--gradient-blue); border-radius: 4px 4px 0 0;"></div>
+                        <div style="flex: 1; height: 80%; background: var(--gradient-blue); border-radius: 4px 4px 0 0;"></div>
+                        <div style="flex: 1; height: 65%; background: var(--gradient-blue); border-radius: 4px 4px 0 0;"></div>
+                        <div style="flex: 1; height: 45%; background: var(--gradient-blue); border-radius: 4px 4px 0 0;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 1rem; font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">
+                        <span>8:00</span>
+                        <span>12:00</span>
+                        <span>16:00</span>
+                        <span>20:00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Professional Features -->
+        <div class="feature-section" id="professional-features">
+            <div class="section-header">
+                <h2 class="section-title">Zone Analytics & Heat Maps</h2>
+                <span class="plan-required">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    Professional & Above
+                </span>
+            </div>
+
+            <!-- Zone Performance -->
+            <div class="card professional-feature" style="margin-bottom: 2rem;">
+                <div class="card-header">
+                    <h3 class="card-title">Real-time Zone Occupancy</h3>
+                    <span style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">4 configured zones</span>
+                </div>
+                <div class="card-body">
+                    <div class="zone-grid">
+                        <div class="zone-card">
+                            <div class="zone-name">Zone 1</div>
+                            <div class="zone-count">89</div>
+                            <div class="zone-label">Entrance Area</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 35%;"></div>
+                            </div>
+                        </div>
+                        <div class="zone-card">
+                            <div class="zone-name">Zone 2</div>
+                            <div class="zone-count">156</div>
+                            <div class="zone-label">Main Shopping Area</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 62%;"></div>
+                            </div>
+                        </div>
+                        <div class="zone-card">
+                            <div class="zone-name">Zone 3</div>
+                            <div class="zone-count">198</div>
+                            <div class="zone-label">Premium Section</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 79%;"></div>
+                            </div>
+                        </div>
+                        <div class="zone-card">
+                            <div class="zone-name">Zone 4</div>
+                            <div class="zone-count">44</div>
+                            <div class="zone-label">Checkout Area</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 18%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Zone Insights -->
+                    <div style="margin-top: 2rem; padding: 1rem; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 0.5rem;">
+                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Zone Performance Insights</div>
+                        <ul style="list-style: none; font-size: 0.875rem;">
+                            <li style="margin-bottom: 0.5rem;">• Premium Section (Zone 3) showing highest engagement - 79% capacity</li>
+                            <li style="margin-bottom: 0.5rem;">• Checkout area utilization low at 18% - consider promotional displays</li>
+                            <li>• Average dwell time: Zone 1 (2min) → Zone 2 (8min) → Zone 3 (12min)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Heat Map -->
+            <div class="card professional-feature" style="margin-bottom: 2rem;">
+                <div class="card-header">
+                    <h3 class="card-title">Activity Heat Map</h3>
+                    <select style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white; padding: 0.375rem 0.75rem; border-radius: 0.375rem; font-size: 0.875rem;">
+                        <option>Last 24 Hours</option>
+                        <option>Last 7 Days</option>
+                        <option>Last 30 Days</option>
+                    </select>
+                </div>
+                <div class="card-body">
+                    <div style="height: 300px; background: linear-gradient(to bottom, rgba(239, 68, 68, 0.8), rgba(245, 158, 11, 0.6), rgba(16, 185, 129, 0.4), rgba(14, 165, 233, 0.2)); border-radius: 0.5rem; position: relative;">
+                        <div style="position: absolute; top: 20%; left: 30%; width: 60px; height: 60px; background: rgba(239, 68, 68, 0.8); border-radius: 50%; filter: blur(20px);"></div>
+                        <div style="position: absolute; top: 40%; right: 25%; width: 80px; height: 80px; background: rgba(245, 158, 11, 0.7); border-radius: 50%; filter: blur(25px);"></div>
+                        <div style="position: absolute; bottom: 30%; left: 40%; width: 100px; height: 100px; background: rgba(239, 68, 68, 0.9); border-radius: 50%; filter: blur(30px);"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 1rem;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--red);">3</div>
+                            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Hot Spots</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--yellow);">2</div>
+                            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Dead Zones</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--green);">85%</div>
+                            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Space Efficiency</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Intelligence Features (Locked for Professional) -->
+        <div class="feature-section" id="intelligence-features">
+            <div class="section-header">
+                <h2 class="section-title">AI-Powered Analytics</h2>
+                <span class="plan-required" style="background: rgba(239, 68, 68, 0.2); color: var(--red);">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                    </svg>
+                    Intelligence Plan Only
+                </span>
+            </div>
+
+            <!-- Customer Journey (Locked) -->
+            <div class="card intelligence-feature" style="margin-bottom: 2rem;">
+                <div class="card-header">
+                    <h3 class="card-title">Customer Journey Mapping</h3>
+                </div>
+                <div class="card-body" style="height: 300px;">
+                    <!-- Blurred content preview -->
+                    <div style="filter: blur(4px); opacity: 0.3;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 2rem;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 2rem; font-weight: 700;">92%</div>
+                                <div style="font-size: 0.875rem;">Complete Journeys</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 2rem; font-weight: 700;">3.2</div>
+                                <div style="font-size: 0.875rem;">Avg Zones Visited</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="lock-message">
+                    <svg class="lock-icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                    </svg>
+                    <div class="lock-title">Upgrade to Intelligence</div>
+                    <div class="lock-subtitle">Unlock customer journey mapping, AI predictions, and advanced analytics</div>
+                    <button class="upgrade-btn">Upgrade Plan</button>
+                </div>
+            </div>
+
+            <!-- Predictive Analytics (Locked) -->
+            <div class="card intelligence-feature" style="margin-bottom: 2rem;">
+                <div class="card-header">
+                    <h3 class="card-title">AI Traffic Predictions</h3>
+                </div>
+                <div class="card-body" style="height: 250px;">
+                    <div style="filter: blur(4px); opacity: 0.3;">
+                        <div style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">Next 7 Days Forecast</div>
+                        <div style="height: 150px; background: linear-gradient(to right, var(--gradient-blue), var(--gradient-purple)); border-radius: 0.5rem;"></div>
+                    </div>
+                </div>
+                <div class="lock-message">
+                    <svg class="lock-icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                    </svg>
+                    <div class="lock-title">Intelligence Plan Feature</div>
+                    <div class="lock-subtitle">Get ML-powered predictions for staffing and inventory optimization</div>
+                    <button class="upgrade-btn">Learn More</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card" style="background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.3);">
+            <div class="card-body">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">Maximize Your Analytics Potential</h3>
+                        <p style="color: rgba(255, 255, 255, 0.8);">Upgrade to Intelligence plan for AI-powered predictions, customer journey mapping, and API access</p>
+                    </div>
+                    <button class="upgrade-btn" style="white-space: nowrap;">View Pricing</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Plan switching demo
+        function switchPlan(plan) {
+            // Update active button
+            document.querySelectorAll('.plan-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update plan display
+            const subtitle = document.querySelector('.store-info p');
+            const planName = plan.charAt(0).toUpperCase() + plan.slice(1);
+            subtitle.textContent = `Milesight Sensor Integration • ${planName} Plan`;
+            
+            // Show/hide features based on plan
+            if (plan === 'essential') {
+                // Lock professional features
+                document.querySelectorAll('.professional-feature').forEach(el => {
+                    if (!el.classList.contains('feature-locked')) {
+                        el.classList.add('feature-locked');
+                        addLockOverlay(el, 'Professional', 'zone analytics and heat maps');
+                    }
+                });
+            } else if (plan === 'professional') {
+                // Unlock professional, lock intelligence
+                document.querySelectorAll('.professional-feature').forEach(el => {
+                    el.classList.remove('feature-locked');
+                    removeLockOverlay(el);
+                });
+                document.querySelectorAll('.intelligence-feature').forEach(el => {
+                    if (!el.classList.contains('feature-locked')) {
+                        el.classList.add('feature-locked');
+                    }
+                });
+            } else if (plan === 'intelligence') {
+                // Unlock all features
+                document.querySelectorAll('.feature-locked').forEach(el => {
+                    el.classList.remove('feature-locked');
+                    removeLockOverlay(el);
+                });
+            }
+        }
+        
+        function addLockOverlay(element, planName, features) {
+            if (element.querySelector('.lock-message')) return;
+            
+            const lockMessage = document.createElement('div');
+            lockMessage.className = 'lock-message';
+            lockMessage.innerHTML = `
+                <svg class="lock-icon" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                </svg>
+                <div class="lock-title">Upgrade to ${planName}</div>
+                <div class="lock-subtitle">Unlock ${features}</div>
+                <button class="upgrade-btn">Upgrade Plan</button>
+            `;
+            element.appendChild(lockMessage);
+        }
+        
+        function removeLockOverlay(element) {
+            const lockMessage = element.querySelector('.lock-message');
+            if (lockMessage) {
+                lockMessage.remove();
+            }
+        }
+        
+        // Simulate real-time updates
+        setInterval(() => {
+            // Update occupancy
+            const occupancyElement = document.querySelector('.metric-value');
+            const currentOccupancy = parseInt(occupancyElement.textContent);
+            const change = Math.floor(Math.random() * 20) - 10;
+            const newOccupancy = Math.max(0, currentOccupancy + change);
+            occupancyElement.textContent = newOccupancy;
+            
+            // Update zone counts
+            document.querySelectorAll('.zone-count').forEach((el, index) => {
+                const current = parseInt(el.textContent);
+                const change = Math.floor(Math.random() * 10) - 5;
+                el.textContent = Math.max(0, current + change);
+            });
+        }, 5000);
+        
+        // Initialize page with proper locked state
+        document.addEventListener('DOMContentLoaded', function() {
+            // Start with Professional plan (default) - lock intelligence features
+            document.querySelectorAll('.intelligence-feature').forEach(el => {
+                el.classList.add('feature-locked');
+                addLockOverlay(el, 'Intelligence', 'AI predictions, customer journey mapping, and API access');
+            });
+        });
+    </script>
+</body>
+</html>

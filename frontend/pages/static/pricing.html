@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing - blipee OS Retail Intelligence Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Gradient System */
+            --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #0EA5E9 100%);
+            --gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            --gradient-blue: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-green: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            --gradient-dark: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+            
+            /* Colors */
+            --purple: #8B5CF6;
+            --blue: #0EA5E9;
+            --green: #10B981;
+            --pink: #EC4899;
+            --dark: #0F172A;
+            --darker: #020617;
+            --light: #F8FAFC;
+            --white: #FFFFFF;
+            
+            /* Glassmorphism */
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--darker);
+            color: var(--white);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+        }
+
+        /* Background */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(at 40% 20%, hsla(280,100%,74%,0.1) 0px, transparent 50%),
+                        radial-gradient(at 80% 0%, hsla(189,100%,56%,0.1) 0px, transparent 50%);
+            z-index: 0;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1.5rem 2rem;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 400;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--white);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: var(--white);
+            box-shadow: 0 4px 15px 0 rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px 0 rgba(139, 92, 246, 0.4);
+        }
+
+        /* Main Content */
+        .pricing-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 8rem 2rem 4rem;
+        }
+
+        /* Header */
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .pricing-title {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .gradient-text {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .pricing-subtitle {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Pricing Cards */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .pricing-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-card.featured {
+            border-color: var(--purple);
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.3);
+        }
+
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-5px);
+        }
+
+        .plan-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--gradient-primary);
+            color: var(--white);
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 2rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .plan-name {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-description {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .plan-price {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-price .currency {
+            font-size: 1.5rem;
+            vertical-align: super;
+        }
+
+        .plan-price .period {
+            font-size: 1rem;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .plan-subtext {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
+            margin-bottom: 2rem;
+        }
+
+        .features-list {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-icon {
+            width: 20px;
+            height: 20px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+        }
+
+        .feature-icon svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .feature-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+        }
+
+        .plan-cta {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--white);
+            font-weight: 600;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            position: relative;
+            z-index: 10;
+        }
+        
+        a.plan-cta {
+            color: var(--white) !important;
+            text-decoration: none !important;
+        }
+
+        .plan-cta:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .pricing-card.featured .plan-cta {
+            background: var(--gradient-primary);
+            border: none;
+        }
+
+        .pricing-card.featured .plan-cta:hover {
+            box-shadow: 0 10px 20px -10px rgba(139, 92, 246, 0.5);
+        }
+
+        /* Features Comparison */
+        .comparison-section {
+            margin-top: 6rem;
+            text-align: center;
+        }
+
+        .comparison-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+        }
+
+        .comparison-table {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .comparison-table th {
+            background: rgba(255, 255, 255, 0.03);
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .comparison-table td {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .check-icon {
+            color: var(--green);
+        }
+
+        /* Footer CTA */
+        .cta-section {
+            text-align: center;
+            margin-top: 6rem;
+            padding: 4rem 2rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            backdrop-filter: blur(20px);
+        }
+
+        .cta-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .cta-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+
+            .comparison-table {
+                overflow-x: auto;
+            }
+
+            .comparison-table table {
+                min-width: 600px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="index.html" class="logo">blipee OS</a>
+            <div class="nav-links">
+                <a href="ai-landing.html" class="nav-link">Home</a>
+                <a href="integrations.html" class="nav-link">Integrations</a>
+                <a href="pricing.html" class="nav-link">Pricing</a>
+                <a href="docs.html" class="nav-link">Docs</a>
+                <a href="signin.html" class="nav-link">Sign In</a>
+                <a href="signup.html" class="btn btn-primary">Start Free Trial</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="pricing-container">
+        <!-- Header -->
+        <div class="pricing-header">
+            <h1 class="pricing-title">
+                Simple Pricing,
+                <span class="gradient-text">Powerful Results</span>
+            </h1>
+            <p class="pricing-subtitle">
+                Choose the perfect plan for your retail intelligence needs. 
+                All plans include our core AI technology and world-class support.
+            </p>
+        </div>
+
+        <!-- Pricing Cards -->
+        <div class="pricing-grid">
+            <!-- Essential Plan -->
+            <div class="pricing-card">
+                <h3 class="plan-name">Essential</h3>
+                <p class="plan-description">Perfect for single stores starting their intelligence journey</p>
+                <div class="plan-price">
+                    <span class="currency">$</span>49
+                    <span class="period">/month per store</span>
+                </div>
+                <p class="plan-subtext">Everything you need to understand your customers</p>
+                
+                <ul class="features-list">
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="feature-text">Real-time people counting with 98% accuracy</span>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="feature-text">Automatic capture rate calculation</span>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="feature-text">Hourly, daily & historical trend analysis</span>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="feature-text">Mobile-optimized dashboard</span>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="feature-text">Basic email alerts & notifications</span>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="feature-text">Export reports (PDF & CSV)</span>
+                    </li>
+                </ul>
+
+                <a href="signup.html" class="plan-cta">Start Free Trial</a>
+            </div>
+
+            <!-- Professional Plan -->
+            <div class="pricing-card featured">
+                <span class="plan-badge">Most Popular</span>
+                <h3 class="plan-name">Professional</h3>
+                <p class="plan-description">For growing retailers who want deeper insights</p>
+                <div class="plan-price">
+                    <span class="currency">$</span>99
+                    <span class="period">/month per store</span>
+                </div>
+                <p class="plan-subtext">Unlock the power of zones and heatmaps</p>
+                
+                <ul class="features-list">
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="feature-text">Everything in Essential, plus:</span>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="feature-text">Interactive zone heatmaps</span>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="feature-text">Dwell time analysis by area</span>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="feature-text">Dead zone identification & alerts</span>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="feature-text">A/B testing for store layouts</span>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="feature-text">Multi-store comparison dashboard</span>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="feature-text">Priority support & onboarding</span>
+                    </li>
+                </ul>
+
+                <a href="signup.html" class="plan-cta">Start Free Trial</a>
+            </div>
+
+            <!-- Enterprise Plan -->
+            <div class="pricing-card">
+                <h3 class="plan-name">Intelligence</h3>
+                <p class="plan-description">Full AI power for data-driven enterprises</p>
+                <div class="plan-price">
+                    <span class="currency">$</span>199
+                    <span class="period">/month per store</span>
+                </div>
+                <p class="plan-subtext">Complete retail intelligence platform</p>
+                
+                <ul class="features-list">
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="feature-text">Everything in Professional, plus:</span>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="feature-text">AI-powered traffic predictions</span>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="feature-text">Customer journey mapping</span>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="feature-text">POS, CRM & inventory integration</span>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="feature-text">Custom AI models for your business</span>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="feature-text">API access & webhooks</span>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="feature-text">Dedicated success manager</span>
+                    </li>
+                </ul>
+
+                <a href="contact.html?type=sales" class="plan-cta">Contact Sales</a>
+            </div>
+        </div>
+
+        <!-- Features Comparison -->
+        <div class="comparison-section">
+            <h2 class="comparison-title">
+                Compare <span class="gradient-text">Features</span>
+            </h2>
+            
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 40%;">Feature</th>
+                            <th>Essential</th>
+                            <th>Professional</th>
+                            <th>Intelligence</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Core Analytics</strong></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>People counting & capture rate</td>
+                            <td><span class="check-icon">✓</span></td>
+                            <td><span class="check-icon">✓</span></td>
+                            <td><span class="check-icon">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>Real-time dashboards</td>
+                            <td><span class="check-icon">✓</span></td>
+                            <td><span class="check-icon">✓</span></td>
+                            <td><span class="check-icon">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>Historical trends & comparisons</td>
+                            <td><span class="check-icon">✓</span></td>
+                            <td><span class="check-icon">✓</span></td>
+                            <td><span class="check-icon">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Advanced Analytics</strong></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Zone heatmaps</td>
+                            <td>-</td>
+                            <td><span class="check-icon">✓</span></td>
+                            <td><span class="check-icon">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>Dwell time analysis</td>
+                            <td>-</td>
+                            <td><span class="check-icon">✓</span></td>
+                            <td><span class="check-icon">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>Customer journey mapping</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td><span class="check-icon">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>AI & Predictions</strong></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Traffic predictions</td>
+                            <td>-</td>
+                            <td>Basic</td>
+                            <td>Advanced AI</td>
+                        </tr>
+                        <tr>
+                            <td>Anomaly detection</td>
+                            <td>-</td>
+                            <td>Basic</td>
+                            <td>Advanced AI</td>
+                        </tr>
+                        <tr>
+                            <td>Custom AI models</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td><span class="check-icon">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Integrations</strong></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Email & Slack notifications</td>
+                            <td><span class="check-icon">✓</span></td>
+                            <td><span class="check-icon">✓</span></td>
+                            <td><span class="check-icon">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>POS integration</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td><span class="check-icon">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>CRM & inventory systems</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td><span class="check-icon">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>API access</td>
+                            <td>-</td>
+                            <td>Read-only</td>
+                            <td>Full access</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Support</strong></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Support level</td>
+                            <td>Standard</td>
+                            <td>Priority</td>
+                            <td>Dedicated manager</td>
+                        </tr>
+                        <tr>
+                            <td>Onboarding</td>
+                            <td>Self-service</td>
+                            <td>Guided setup</td>
+                            <td>White-glove service</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="cta-section">
+            <h2 class="cta-title">Ready to Transform Your Retail Operations?</h2>
+            <p class="cta-subtitle">Start your 30-day free trial today. No credit card required.</p>
+            <a href="signup.html" class="btn btn-primary">Start Free Trial</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="text-align: center; padding: 3rem 2rem; background: rgba(2, 6, 23, 0.8); border-top: 1px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.6); margin-top: 4rem;">
+        <p>
+            &copy; 2024 blipee OS. All rights reserved. | 
+            <a href="terms.html" style="color: rgba(255, 255, 255, 0.7); text-decoration: none;">Terms of Service</a> | 
+            <a href="privacy.html" style="color: rgba(255, 255, 255, 0.7); text-decoration: none;">Privacy Policy</a> | 
+            SOC 2 Certified | GDPR Compliant
+        </p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligent Store Dashboard - blipee OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #0EA5E9 100%);
+            --gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            --gradient-blue: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-green: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            --gradient-orange: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
+            --gradient-ai: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 40%, #45B7D1 100%);
+            
+            --purple: #8B5CF6;
+            --blue: #0EA5E9;
+            --green: #10B981;
+            --yellow: #F59E0B;
+            --red: #EF4444;
+            --ai-primary: #FF6B6B;
+            --ai-secondary: #4ECDC4;
+            --dark: #0F172A;
+            --darker: #020617;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--darker);
+            color: var(--white);
+            min-height: 100vh;
+        }
+
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            grid-template-rows: 80px 1fr;
+            grid-template-areas: 
+                "header header"
+                "sidebar main";
+            height: 100vh;
+            transition: grid-template-columns 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            grid-area: header;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 400;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            white-space: nowrap;
+            letter-spacing: -0.02em;
+        }
+
+        .store-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .store-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .store-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .live-indicator {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .ai-assistant-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: var(--gradient-ai);
+            border: none;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: ai-glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes ai-glow {
+            0% { box-shadow: 0 0 5px rgba(255, 107, 107, 0.5); }
+            100% { box-shadow: 0 0 20px rgba(255, 107, 107, 0.8), 0 0 30px rgba(78, 205, 196, 0.4); }
+        }
+
+        .ai-assistant-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            grid-area: sidebar;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-title {
+            padding: 0 1.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 1rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--purple);
+            border-left-color: var(--purple);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        /* Main Content */
+        .main-content {
+            grid-area: main;
+            padding: 2rem;
+            overflow-y: auto;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.3) 0%, rgba(2, 6, 23, 0.8) 100%);
+        }
+
+        /* AI Chat Interface */
+        .ai-chat-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            transition: right 0.3s ease;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ai-chat-panel.open {
+            right: 0;
+        }
+
+        .ai-chat-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ai-chat-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
+
+        .ai-chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .ai-message {
+            padding: 1rem;
+            border-radius: 0.75rem;
+            max-width: 85%;
+        }
+
+        .ai-message.user {
+            background: var(--gradient-primary);
+            align-self: flex-end;
+            color: white;
+        }
+
+        .ai-message.assistant {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            align-self: flex-start;
+        }
+
+        .ai-chat-input {
+            padding: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ai-input-container {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .ai-input {
+            flex: 1;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            color: white;
+            outline: none;
+        }
+
+        .ai-send-btn {
+            padding: 0.75rem;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 0.5rem;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .metric-large {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .metric-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .metric-change {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .metric-change.positive {
+            color: var(--green);
+        }
+
+        .metric-change.negative {
+            color: var(--red);
+        }
+
+        /* AI Insights Card */
+        .ai-insights-card {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(78, 205, 196, 0.1) 100%);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+
+        .ai-insight {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid var(--ai-primary);
+        }
+
+        .ai-insight:last-child {
+            margin-bottom: 0;
+        }
+
+        .ai-insight-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--ai-primary);
+        }
+
+        .ai-insight-content {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+        }
+
+        /* Zone Analytics */
+        .zone-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .zone-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .zone-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: scale(1.02);
+        }
+
+        .zone-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .zone-metric {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.25rem;
+        }
+
+        .zone-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Real-time Alerts */
+        .alerts-section {
+            margin-bottom: 2rem;
+        }
+
+        .alert {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .alert.warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .alert.success {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .alert.ai {
+            background: rgba(255, 107, 107, 0.1);
+            border-color: rgba(255, 107, 107, 0.3);
+        }
+
+        .alert-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .alert-message {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .quick-action-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-action-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* Charts placeholder */
+        .chart-container {
+            height: 200px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-placeholder {
+            color: rgba(255, 255, 255, 0.5);
+            text-align: center;
+        }
+
+        /* Animated background for AI sections */
+        .ai-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(78, 205, 196, 0.1) 100%);
+            opacity: 0.5;
+            animation: ai-pulse 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes ai-pulse {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.6; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+                grid-template-areas: 
+                    "header"
+                    "main";
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .ai-chat-panel {
+                width: 100vw;
+                right: -100vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <a href="#" class="logo">blipee</a>
+                <div class="store-info">
+                    <div class="store-name">Omnia GuimarãesShopping</div>
+                    <div class="store-status">
+                        <div class="live-indicator"></div>
+                        <span>Live Data • AI Enabled</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="ai-assistant-btn" onclick="toggleAIChat()">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 000 2h6a1 1 0 100-2H7z"/>
+                    </svg>
+                    AI Assistant
+                </button>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="nav-section">
+                <div class="nav-title">Overview</div>
+                <a href="#" class="nav-item active">
+                    <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                    </svg>
+                    Dashboard
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-title">Sales Intelligence</div>
+                <a href="#" class="nav-item">
+                    <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.51-1.31c-.562-.649-1.413-1.076-2.353-1.253V5z" clip-rule="evenodd"/>
+                    </svg>
+                    Sales Analytics
+                </a>
+                <a href="#" class="nav-item">
+                    <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Transactions
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Customer Intelligence</div>
+                <a href="#" class="nav-item">
+                    <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
+                    </svg>
+                    People Counting
+                </a>
+                <a href="#" class="nav-item">
+                    <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 01-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 1a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-2 0V6.414l-2.293 2.293a1 1 0 11-1.414-1.414L13.586 5H12zm-9 7a1 1 0 012 0v1.586l2.293-2.293a1 1 0 111.414 1.414L6.414 15H8a1 1 0 010 2H4a1 1 0 01-1-1v-4zm13-1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 010-2h1.586l-2.293-2.293a1 1 0 111.414-1.414L15.586 13H14a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    Zone Analytics
+                </a>
+                <a href="#" class="nav-item">
+                    <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293L14 1.586v12.828l2.293 2.293A1 1 0 0018 16V6a1 1 0 00-.293-.707z" clip-rule="evenodd"/>
+                    </svg>
+                    Heat Maps
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">AI Insights</div>
+                <a href="#" class="nav-item">
+                    <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+                    </svg>
+                    Smart Recommendations
+                </a>
+                <a href="#" class="nav-item">
+                    <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                    </svg>
+                    Predictions
+                </a>
+                <a href="#" class="nav-item">
+                    <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    Natural Language
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Real-time Alerts -->
+            <div class="alerts-section">
+                <div class="alert ai">
+                    <svg class="alert-icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+                    </svg>
+                    <div class="alert-content">
+                        <div class="alert-title">AI Recommendation</div>
+                        <div class="alert-message">Traffic is 23% higher than predicted. Consider calling in additional staff for optimal conversion.</div>
+                    </div>
+                </div>
+                
+                <div class="alert warning">
+                    <svg class="alert-icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    <div class="alert-content">
+                        <div class="alert-title">Zone 4 Underperforming</div>
+                        <div class="alert-message">Checkout area utilization at 18%. AI suggests promotional displays to increase engagement.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Real-time Sales -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.51-1.31c-.562-.649-1.413-1.076-2.353-1.253V5z" clip-rule="evenodd"/>
+                            </svg>
+                            Today's Sales
+                        </h3>
+                        <span style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">Real-time API</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="metric-large">€7,348</div>
+                        <div class="metric-label">266 transactions processed</div>
+                        <div class="metric-change positive">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            +18.2% vs yesterday
+                        </div>
+                        <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(16, 185, 129, 0.1); border-radius: 0.5rem; border-left: 4px solid var(--green);">
+                            <div style="font-size: 0.875rem; color: var(--green); font-weight: 600;">AI Insight</div>
+                            <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.8); margin-top: 0.25rem;">Sales velocity is 23% above average. Peak expected at 4-5pm based on current trajectory.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- People Counting -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
+                            </svg>
+                            Live Traffic
+                        </h3>
+                        <span style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">Milesight Sensors</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="metric-large">487</div>
+                        <div class="metric-label">Current occupancy</div>
+                        <div class="metric-change positive">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            +45 in last hour
+                        </div>
+                        <div class="quick-actions">
+                            <button class="quick-action-btn">5,743 today</button>
+                            <button class="quick-action-btn">12.4% conversion</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Insights -->
+                <div class="card ai-insights-card">
+                    <div class="ai-background"></div>
+                    <div class="card-header" style="position: relative; z-index: 1;">
+                        <h3 class="card-title">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+                            </svg>
+                            AI Intelligence
+                        </h3>
+                        <span style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">OpenAI Powered</span>
+                    </div>
+                    <div class="card-body" style="position: relative; z-index: 1;">
+                        <div class="ai-insight">
+                            <div class="ai-insight-title">Revenue Optimization</div>
+                            <div class="ai-insight-content">Moving jewelry displays to Zone 3 could increase sales by €2,100/week based on traffic patterns</div>
+                        </div>
+                        <div class="ai-insight">
+                            <div class="ai-insight-title">Staffing Prediction</div>
+                            <div class="ai-insight-content">Tomorrow 2-4pm: High traffic expected. Recommend +2 staff for optimal conversion (87% confidence)</div>
+                        </div>
+                        <div class="ai-insight">
+                            <div class="ai-insight-title">Customer Behavior</div>
+                            <div class="ai-insight-content">Zone 3→1 pathway (105 visits) shows premium product interest. Consider cross-merchandising</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Zone Analytics -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 01-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 1a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-2 0V6.414l-2.293 2.293a1 1 0 11-1.414-1.414L13.586 5H12zm-9 7a1 1 0 012 0v1.586l2.293-2.293a1 1 0 111.414 1.414L6.414 15H8a1 1 0 010 2H4a1 1 0 01-1-1v-4zm13-1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 010-2h1.586l-2.293-2.293a1 1 0 111.414-1.414L15.586 13H14a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                            Zone Performance
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="zone-grid">
+                            <div class="zone-card">
+                                <div class="zone-name">Zone 1</div>
+                                <div class="zone-metric">89</div>
+                                <div class="zone-label">Entrance</div>
+                            </div>
+                            <div class="zone-card">
+                                <div class="zone-name">Zone 2</div>
+                                <div class="zone-metric">156</div>
+                                <div class="zone-label">Main Area</div>
+                            </div>
+                            <div class="zone-card">
+                                <div class="zone-name">Zone 3</div>
+                                <div class="zone-metric">198</div>
+                                <div class="zone-label">Premium</div>
+                            </div>
+                            <div class="zone-card">
+                                <div class="zone-name">Zone 4</div>
+                                <div class="zone-metric">44</div>
+                                <div class="zone-label">Checkout</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sales Trends -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Sales Velocity</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <div style="width: 100%; height: 100%; display: flex; align-items: flex-end; gap: 4px; padding: 20px;">
+                                <div style="flex: 1; height: 20%; background: var(--gradient-blue); border-radius: 4px 4px 0 0;"></div>
+                                <div style="flex: 1; height: 35%; background: var(--gradient-blue); border-radius: 4px 4px 0 0;"></div>
+                                <div style="flex: 1; height: 50%; background: var(--gradient-blue); border-radius: 4px 4px 0 0;"></div>
+                                <div style="flex: 1; height: 70%; background: var(--gradient-primary); border-radius: 4px 4px 0 0;"></div>
+                                <div style="flex: 1; height: 85%; background: var(--gradient-primary); border-radius: 4px 4px 0 0;"></div>
+                                <div style="flex: 1; height: 100%; background: var(--gradient-ai); border-radius: 4px 4px 0 0;"></div>
+                                <div style="flex: 1; height: 90%; background: var(--gradient-blue); border-radius: 4px 4px 0 0;"></div>
+                                <div style="flex: 1; height: 65%; background: var(--gradient-blue); border-radius: 4px 4px 0 0;"></div>
+                            </div>
+                        </div>
+                        <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem; text-align: center;">
+                            🤖 AI predicts peak at 4-5pm with €1,200+ revenue potential
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- AI Chat Panel -->
+    <div id="aiChatPanel" class="ai-chat-panel">
+        <div class="ai-chat-header">
+            <div class="ai-chat-title">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+                </svg>
+                Store AI Assistant
+            </div>
+            <button onclick="toggleAIChat()" style="background: none; border: none; color: rgba(255, 255, 255, 0.6); cursor: pointer;">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="ai-chat-messages" id="aiChatMessages">
+            <div class="ai-message assistant">
+                👋 Hi! I'm your AI retail assistant. I can analyze your sales data, sensor information, and provide actionable insights. Try asking:
+                <br><br>
+                • "Why is Zone 4 underperforming?"<br>
+                • "What should I stock for tomorrow?"<br>
+                • "How can I improve conversion rates?"<br>
+                • "Analyze today's customer patterns"
+            </div>
+        </div>
+        
+        <div class="ai-chat-input">
+            <div class="ai-input-container">
+                <input type="text" class="ai-input" placeholder="Ask anything about your store..." id="aiInput" onkeypress="handleKeyPress(event)">
+                <button class="ai-send-btn" onclick="sendAIMessage()">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // AI Chat functionality
+        function toggleAIChat() {
+            const panel = document.getElementById('aiChatPanel');
+            panel.classList.toggle('open');
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendAIMessage();
+            }
+        }
+
+        function sendAIMessage() {
+            const input = document.getElementById('aiInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            
+            // Clear input
+            input.value = '';
+            
+            // Simulate AI response
+            setTimeout(() => {
+                const response = generateAIResponse(message);
+                addMessage(response, 'assistant');
+            }, 1000);
+        }
+
+        function addMessage(content, type) {
+            const messagesContainer = document.getElementById('aiChatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `ai-message ${type}`;
+            messageDiv.innerHTML = content;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function generateAIResponse(userMessage) {
+            const message = userMessage.toLowerCase();
+            
+            if (message.includes('zone 4') || message.includes('checkout')) {
+                return `🎯 <strong>Zone 4 Analysis:</strong><br><br>
+                Your checkout area (Zone 4) is underperforming at 18% utilization. Based on sales API data and sensor analytics:<br><br>
+                <strong>Root Causes:</strong><br>
+                • Long queue times during peak hours (2-4pm)<br>
+                • Limited product visibility near checkout<br>
+                • Average dwell time only 45 seconds<br><br>
+                <strong>AI Recommendations:</strong><br>
+                ✅ Add impulse purchase displays (+€340/week potential)<br>
+                ✅ Implement queue management system<br>
+                ✅ Move popular accessories to checkout area<br><br>
+                Implementing these changes could increase Zone 4 engagement by 40-60%.`;
+            }
+            
+            if (message.includes('conversion') || message.includes('improve')) {
+                return `📈 <strong>Conversion Rate Optimization:</strong><br><br>
+                Current conversion: 12.4% (5,743 visitors → 713 purchases)<br><br>
+                <strong>AI Analysis reveals:</strong><br>
+                • Peak conversion occurs during 4-5pm (18.7%)<br>
+                • Zone 3 visitors convert 23% higher than average<br>
+                • Weekend morning conversions drop to 8.2%<br><br>
+                <strong>Immediate Actions:</strong><br>
+                🎯 Increase staff during peak hours (+2.3% conversion)<br>
+                🎯 Move new arrivals to Zone 3 (+€1,200/week)<br>
+                🎯 Implement greeting protocol (+1.8% conversion)<br><br>
+                Potential uplift: 15.7% conversion rate (+€2,800/week revenue)`;
+            }
+            
+            if (message.includes('stock') || message.includes('inventory') || message.includes('tomorrow')) {
+                return `📦 <strong>Tomorrow's Inventory Intelligence:</strong><br><br>
+                Based on sales velocity + weather + historical patterns:<br><br>
+                <strong>High Demand Predicted:</strong><br>
+                • Silver jewelry (+40% vs today) - Zone 3 placement<br>
+                • Accessories (+25%) - Near entrance & checkout<br>
+                • Summer collection (+60%) - Weather boost expected<br><br>
+                <strong>Restock Alerts:</strong><br>
+                ⚠️ PAR DE BRINCOS EM PRATA - 3 units left<br>
+                ⚠️ Summer necklaces - Restock by 11am<br><br>
+                <strong>Staff Recommendations:</strong><br>
+                👥 +2 staff 2-5pm (peak predicted)<br>
+                💡 Focus on upselling accessories (+€45 avg transaction)`;
+            }
+            
+            if (message.includes('pattern') || message.includes('customer') || message.includes('behavior')) {
+                return `🧭 <strong>Customer Journey Analysis:</strong><br><br>
+                Today's movement patterns reveal:<br><br>
+                <strong>Most Popular Path:</strong><br>
+                Zone 3 → Zone 1 → Checkout (105 customers, 23% conversion)<br><br>
+                <strong>High-Value Journey:</strong><br>
+                Zone 1 → Zone 3 → Zone 2 (€67 avg transaction)<br><br>
+                <strong>Behavioral Insights:</strong><br>
+                • 67% of customers spend 8+ minutes in Zone 3<br>
+                • Zone 2 visitors have highest purchase intent (31%)<br>
+                • Entrance browsing time correlates with total spend<br><br>
+                <strong>Optimization Opportunities:</strong><br>
+                ✨ Guide traffic from Zone 1 to Zone 3 first<br>
+                ✨ Place premium items along popular pathways<br>
+                ✨ Create clear sightlines between zones`;
+            }
+            
+            if (message.includes('sales') || message.includes('revenue')) {
+                return `💰 <strong>Sales Performance Deep Dive:</strong><br><br>
+                Today's metrics from our sales API:<br><br>
+                <strong>Current Performance:</strong><br>
+                • €7,348 revenue (266 transactions)<br>
+                • €27.65 average transaction value<br>
+                • Peak hour: 4-5pm (€1,247 revenue)<br><br>
+                <strong>Product Winners:</strong><br>
+                🥇 Silver jewelry: €2,890 (39% of sales)<br>
+                🥈 Accessories: €1,456 (20% of sales)<br>
+                🥉 Summer collection: €1,122 (15% of sales)<br><br>
+                <strong>AI Predictions:</strong><br>
+                📊 End-of-day forecast: €9,200 (+18% vs yesterday)<br>
+                🎯 Tomorrow potential: €10,500 (optimal conditions)`;
+            }
+            
+            // Default response
+            return `🤖 I'm analyzing your store data in real-time! I can help with:<br><br>
+            📊 <strong>Sales Analysis:</strong> Revenue trends, product performance, transaction insights<br>
+            👥 <strong>Customer Intelligence:</strong> Traffic patterns, conversion optimization, behavior analysis<br>
+            🗺️ <strong>Zone Performance:</strong> Space utilization, heat maps, layout optimization<br>
+            🔮 <strong>Predictions:</strong> Sales forecasting, inventory planning, staffing recommendations<br><br>
+            Try asking something specific about your store performance!`;
+        }
+
+        // Simulate real-time updates
+        setInterval(() => {
+            // Update occupancy
+            const occupancyElement = document.querySelector('.metric-large');
+            if (occupancyElement && occupancyElement.textContent !== '€7,348') {
+                const current = parseInt(occupancyElement.textContent);
+                const change = Math.floor(Math.random() * 10) - 5;
+                const newValue = Math.max(400, current + change);
+                occupancyElement.textContent = newValue;
+            }
+            
+            // Update zone counts
+            document.querySelectorAll('.zone-metric').forEach((el, index) => {
+                const current = parseInt(el.textContent);
+                const change = Math.floor(Math.random() * 6) - 3;
+                el.textContent = Math.max(0, current + change);
+            });
+        }, 5000);
+
+        // Initialize with welcome message
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-suggest AI interactions
+            setTimeout(() => {
+                const suggestions = [
+                    "💡 Ask me: 'Why is conversion rate lower today?'",
+                    "🎯 Try: 'How can I optimize Zone 3 performance?'",
+                    "📈 Query: 'What products should I promote tomorrow?'"
+                ];
+                
+                const randomSuggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
+                
+                // Create a subtle notification
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 100px;
+                    right: 20px;
+                    background: linear-gradient(135deg, rgba(255, 107, 107, 0.9) 0%, rgba(78, 205, 196, 0.9) 100%);
+                    color: white;
+                    padding: 1rem;
+                    border-radius: 0.5rem;
+                    font-size: 0.875rem;
+                    z-index: 1000;
+                    max-width: 300px;
+                    animation: slideIn 0.3s ease-out;
+                `;
+                notification.innerHTML = randomSuggestion;
+                document.body.appendChild(notification);
+                
+                // Remove after 5 seconds
+                setTimeout(() => {
+                    notification.remove();
+                }, 5000);
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

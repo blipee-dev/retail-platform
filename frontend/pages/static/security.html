@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security - blipee OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Gradient System */
+            --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #0EA5E9 100%);
+            --gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            --gradient-blue: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-green: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            --gradient-mesh: radial-gradient(at 40% 20%, hsla(280,100%,74%,0.3) 0px, transparent 50%),
+                            radial-gradient(at 80% 0%, hsla(189,100%,56%,0.2) 0px, transparent 50%),
+                            radial-gradient(at 0% 50%, hsla(355,100%,93%,0.2) 0px, transparent 50%);
+            
+            /* Colors */
+            --purple: #8B5CF6;
+            --blue: #0EA5E9;
+            --green: #10B981;
+            --dark: #0F172A;
+            --darker: #020617;
+            --white: #FFFFFF;
+            
+            /* Glassmorphism */
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--darker);
+            color: var(--white);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+        }
+
+        /* Background */
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: var(--darker);
+            overflow: hidden;
+        }
+
+        .bg-gradient-mesh {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: var(--gradient-mesh);
+            opacity: 0.3;
+            animation: meshAnimation 30s ease infinite;
+        }
+
+        @keyframes meshAnimation {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-20px, -20px) rotate(120deg); }
+            66% { transform: translate(20px, -10px) rotate(240deg); }
+        }
+
+        /* Navigation */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1.5rem 2rem;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 400;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--white);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: var(--white);
+            box-shadow: 0 4px 15px 0 rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px 0 rgba(139, 92, 246, 0.4);
+        }
+
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .page-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Security Overview */
+        .security-overview {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            margin-bottom: 6rem;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .overview-content h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        .overview-content p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.125rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .overview-stats {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 3rem;
+            backdrop-filter: blur(20px);
+            text-align: center;
+        }
+
+        .security-badge {
+            width: 120px;
+            height: 120px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 3rem;
+        }
+
+        .badge-text {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .badge-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+        }
+
+        /* Certifications */
+        .certifications {
+            margin-bottom: 6rem;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .certifications-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .certification-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .certification-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient-primary);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+
+        .certification-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .certification-card:hover::before {
+            transform: translateX(0);
+        }
+
+        .certification-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-primary);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+        }
+
+        .certification-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .certification-description {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .certification-status {
+            color: var(--green);
+            font-weight: 500;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            box-shadow: 0 0 5px rgba(16, 185, 129, 0.5);
+        }
+
+        /* Security Measures */
+        .security-measures {
+            margin-bottom: 6rem;
+            animation: fadeInUp 1.2s ease 0.6s both;
+        }
+
+        .measures-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .measure-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+        }
+
+        .measure-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .measure-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .measure-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-primary);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .measure-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .measure-description {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .measure-features {
+            list-style: none;
+        }
+
+        .measure-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+        }
+
+        .feature-check {
+            width: 16px;
+            height: 16px;
+            background: var(--green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* Reporting */
+        .reporting {
+            margin-bottom: 6rem;
+            animation: fadeInUp 1.4s ease 0.8s both;
+        }
+
+        .reporting-content {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 3rem;
+            backdrop-filter: blur(20px);
+            text-align: center;
+        }
+
+        .reporting-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .reporting-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.125rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .reporting-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--white);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Contact Security */
+        .contact-security {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 3rem;
+            backdrop-filter: blur(20px);
+            text-align: center;
+            animation: fadeInUp 1.6s ease 1s both;
+        }
+
+        .contact-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .contact-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .contact-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .contact-method {
+            text-align: center;
+        }
+
+        .contact-method-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+        }
+
+        .contact-method-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-method-text {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+            }
+
+            .security-overview {
+                grid-template-columns: 1fr;
+            }
+
+            .certifications-grid,
+            .measures-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .reporting-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-container">
+        <div class="bg-gradient-mesh"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="ai-landing.html" class="logo">blipee OS</a>
+            <div class="nav-links">
+                <a href="ai-landing.html" class="nav-link">Home</a>
+                <a href="integrations.html" class="nav-link">Integrations</a>
+                <a href="pricing.html" class="nav-link">Pricing</a>
+                <a href="docs.html" class="nav-link">Docs</a>
+                <a href="signin.html" class="nav-link">Sign In</a>
+                <a href="signup.html" class="btn btn-primary">Start Free Trial</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header">
+            <h1 class="page-title">Security & Trust</h1>
+            <p class="page-subtitle">
+                Enterprise-grade security protecting your data with the highest industry standards
+            </p>
+        </div>
+
+        <!-- Security Overview -->
+        <div class="security-overview">
+            <div class="overview-content">
+                <h2>Security First Approach</h2>
+                <p>
+                    At blipee OS, security isn't an afterthought—it's built into every layer of our platform. 
+                    We employ industry-leading security practices to protect your retail data and ensure 
+                    complete privacy compliance.
+                </p>
+                <p>
+                    Our security framework is designed to meet the stringent requirements of enterprise 
+                    retailers while maintaining the flexibility needed for rapid innovation and deployment.
+                </p>
+            </div>
+            <div class="overview-stats">
+                <div class="security-badge">🛡️</div>
+                <div class="badge-text">SOC 2 Type II Certified</div>
+                <div class="badge-description">
+                    Independently audited and certified for security, availability, 
+                    processing integrity, confidentiality, and privacy
+                </div>
+            </div>
+        </div>
+
+        <!-- Certifications -->
+        <div class="certifications">
+            <h2 class="section-title">Compliance & Certifications</h2>
+            <div class="certifications-grid">
+                <div class="certification-card">
+                    <div class="certification-icon">📋</div>
+                    <h3 class="certification-title">SOC 2 Type II</h3>
+                    <p class="certification-description">
+                        Annual third-party security audits ensuring the highest standards 
+                        for data protection and operational security.
+                    </p>
+                    <div class="certification-status">
+                        <div class="status-dot"></div>
+                        Current & Valid
+                    </div>
+                </div>
+
+                <div class="certification-card">
+                    <div class="certification-icon">🌐</div>
+                    <h3 class="certification-title">GDPR Compliant</h3>
+                    <p class="certification-description">
+                        Full compliance with European General Data Protection Regulation 
+                        for data privacy and individual rights.
+                    </p>
+                    <div class="certification-status">
+                        <div class="status-dot"></div>
+                        Verified Compliant
+                    </div>
+                </div>
+
+                <div class="certification-card">
+                    <div class="certification-icon">🔒</div>
+                    <h3 class="certification-title">ISO 27001</h3>
+                    <p class="certification-description">
+                        International standard for information security management 
+                        systems and risk management processes.
+                    </p>
+                    <div class="certification-status">
+                        <div class="status-dot"></div>
+                        In Progress
+                    </div>
+                </div>
+
+                <div class="certification-card">
+                    <div class="certification-icon">🏪</div>
+                    <h3 class="certification-title">PCI DSS Ready</h3>
+                    <p class="certification-description">
+                        Payment Card Industry Data Security Standard compliance 
+                        for secure handling of credit card information.
+                    </p>
+                    <div class="certification-status">
+                        <div class="status-dot"></div>
+                        Framework Ready
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Measures -->
+        <div class="security-measures">
+            <h2 class="section-title">Security Measures</h2>
+            <div class="measures-grid">
+                <div class="measure-card">
+                    <div class="measure-header">
+                        <div class="measure-icon">🔐</div>
+                        <h3 class="measure-title">Data Encryption</h3>
+                    </div>
+                    <p class="measure-description">
+                        All data is encrypted in transit and at rest using industry-standard AES-256 
+                        encryption with regularly rotated keys.
+                    </p>
+                    <ul class="measure-features">
+                        <li>
+                            <div class="feature-check">✓</div>
+                            TLS 1.3 for all API communications
+                        </li>
+                        <li>
+                            <div class="feature-check">✓</div>
+                            AES-256 encryption for stored data
+                        </li>
+                        <li>
+                            <div class="feature-check">✓</div>
+                            Hardware Security Module (HSM) key management
+                        </li>
+                        <li>
+                            <div class="feature-check">✓</div>
+                            Automatic key rotation every 90 days
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="measure-card">
+                    <div class="measure-header">
+                        <div class="measure-icon">👤</div>
+                        <h3 class="measure-title">Access Control</h3>
+                    </div>
+                    <p class="measure-description">
+                        Multi-layered access controls ensure only authorized personnel and systems 
+                        can access your data with appropriate permissions.
+                    </p>
+                    <ul class="measure-features">
+                        <li>
+                            <div class="feature-check">✓</div>
+                            Role-based access control (RBAC)
+                        </li>
+                        <li>
+                            <div class="feature-check">✓</div>
+                            Multi-factor authentication (MFA)
+                        </li>
+                        <li>
+                            <div class="feature-check">✓</div>
+                            Single Sign-On (SSO) integration
+                        </li>
+                        <li>
+                            <div class="feature-check">✓</div>
+                            Principle of least privilege enforcement
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="measure-card">
+                    <div class="measure-header">
+                        <div class="measure-icon">🔍</div>
+                        <h3 class="measure-title">Monitoring & Logging</h3>
+                    </div>
+                    <p class="measure-description">
+                        Comprehensive monitoring and logging systems provide real-time security 
+                        alerts and detailed audit trails for all platform activities.
+                    </p>
+                    <ul class="measure-features">
+                        <li>
+                            <div class="feature-check">✓</div>
+                            24/7 security operations center (SOC)
+                        </li>
+                        <li>
+                            <div class="feature-check">✓</div>
+                            Real-time threat detection and response
+                        </li>
+                        <li>
+                            <div class="feature-check">✓</div>
+                            Comprehensive audit logging
+                        </li>
+                        <li>
+                            <div class="feature-check">✓</div>
+                            Automated security incident response
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="measure-card">
+                    <div class="measure-header">
+                        <div class="measure-icon">🏗️</div>
+                        <h3 class="measure-title">Infrastructure Security</h3>
+                    </div>
+                    <p class="measure-description">
+                        Our cloud infrastructure is built on secure, compliant platforms with 
+                        multiple layers of protection and redundancy.
+                    </p>
+                    <ul class="measure-features">
+                        <li>
+                            <div class="feature-check">✓</div>
+                            AWS SOC 2 compliant infrastructure
+                        </li>
+                        <li>
+                            <div class="feature-check">✓</div>
+                            Virtual private cloud (VPC) isolation
+                        </li>
+                        <li>
+                            <div class="feature-check">✓</div>
+                            DDoS protection and mitigation
+                        </li>
+                        <li>
+                            <div class="feature-check">✓</div>
+                            Regular security patches and updates
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="measure-card">
+                    <div class="measure-header">
+                        <div class="measure-icon">🎯</div>
+                        <h3 class="measure-title">Data Privacy</h3>
+                    </div>
+                    <p class="measure-description">
+                        We implement privacy-by-design principles, ensuring personal data 
+                        protection and compliance with global privacy regulations.
+                    </p>
+                    <ul class="measure-features">
+                        <li>
+                            <div class="feature-check">✓</div>
+                            Anonymous data processing
+                        </li>
+                        <li>
+                            <div class="feature-check">✓</div>
+                            Data minimization practices
+                        </li>
+                        <li>
+                            <div class="feature-check">✓</div>
+                            Right to erasure compliance
+                        </li>
+                        <li>
+                            <div class="feature-check">✓</div>
+                            Automated data retention policies
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="measure-card">
+                    <div class="measure-header">
+                        <div class="measure-icon">🧪</div>
+                        <h3 class="measure-title">Security Testing</h3>
+                    </div>
+                    <p class="measure-description">
+                        Regular penetration testing and vulnerability assessments ensure 
+                        our security measures remain effective against evolving threats.
+                    </p>
+                    <ul class="measure-features">
+                        <li>
+                            <div class="feature-check">✓</div>
+                            Quarterly penetration testing
+                        </li>
+                        <li>
+                            <div class="feature-check">✓</div>
+                            Automated vulnerability scanning
+                        </li>
+                        <li>
+                            <div class="feature-check">✓</div>
+                            Code security review process
+                        </li>
+                        <li>
+                            <div class="feature-check">✓</div>
+                            Bug bounty program
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Reporting -->
+        <div class="reporting">
+            <div class="reporting-content">
+                <h2 class="reporting-title">Security Transparency</h2>
+                <p class="reporting-description">
+                    We believe in complete transparency about our security practices. Access our security 
+                    documentation, compliance reports, and real-time status updates to stay informed about 
+                    how we protect your data.
+                </p>
+                <div class="reporting-actions">
+                    <a href="#" class="btn btn-primary">Security Documentation</a>
+                    <a href="#" class="btn btn-secondary">Compliance Reports</a>
+                    <a href="status.html" class="btn btn-secondary">Security Status</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Security Team -->
+        <div class="contact-security">
+            <h2 class="contact-title">Contact Our Security Team</h2>
+            <p class="contact-subtitle">
+                Have questions about our security practices or need to report a security issue? 
+                Our dedicated security team is here to help.
+            </p>
+            <div class="contact-methods">
+                <div class="contact-method">
+                    <div class="contact-method-icon">🚨</div>
+                    <h3 class="contact-method-title">Security Issues</h3>
+                    <p class="contact-method-text">security@blipee.com</p>
+                </div>
+                <div class="contact-method">
+                    <div class="contact-method-icon">📞</div>
+                    <h3 class="contact-method-title">Security Hotline</h3>
+                    <p class="contact-method-text">+1 (555) SEC-RITY</p>
+                </div>
+                <div class="contact-method">
+                    <div class="contact-method-icon">💬</div>
+                    <h3 class="contact-method-title">General Questions</h3>
+                    <p class="contact-method-text">Live chat support</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="text-align: center; padding: 3rem 2rem; background: rgba(2, 6, 23, 0.8); border-top: 1px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.6); margin-top: 4rem;">
+        <p>
+            &copy; 2024 blipee OS. All rights reserved. | 
+            <a href="terms.html" style="color: rgba(255, 255, 255, 0.7); text-decoration: none;">Terms of Service</a> | 
+            <a href="privacy.html" style="color: rgba(255, 255, 255, 0.7); text-decoration: none;">Privacy Policy</a> | 
+            SOC 2 Certified | GDPR Compliant
+        </p>
+    </footer>
+</body>
+</html>

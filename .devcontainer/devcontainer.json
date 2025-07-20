@@ -1,0 +1,102 @@
+{
+  "name": "Retail Platform Dev Environment",
+  "image": "mcr.microsoft.com/devcontainers/universal:2-linux",
+  
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.10",
+      "installTools": true
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "18"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+  
+  "forwardPorts": [3000, 8000, 8080, 5000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Frontend Dev Server",
+      "onAutoForward": "notify"
+    },
+    "8000": {
+      "label": "Python API Server",
+      "onAutoForward": "notify"
+    },
+    "8080": {
+      "label": "Alternative Server",
+      "onAutoForward": "notify"
+    },
+    "5000": {
+      "label": "Flask/FastAPI Server",
+      "onAutoForward": "notify"
+    }
+  },
+  
+  "postCreateCommand": ".devcontainer/post-create.sh",
+  
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.black-formatter",
+        "ms-python.isort",
+        "charliermarsh.ruff",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ms-azuretools.vscode-docker",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "eamodio.gitlens",
+        "ms-vscode.live-server",
+        "redhat.vscode-yaml",
+        "streetsidesoftware.code-spell-checker",
+        "yzhang.markdown-all-in-one",
+        "bierner.markdown-mermaid",
+        "davidanson.vscode-markdownlint",
+        "usernamehw.errorlens"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.linting.enabled": true,
+        "python.linting.pylintEnabled": true,
+        "python.formatting.provider": "black",
+        "python.testing.pytestEnabled": true,
+        "python.testing.unittestEnabled": false,
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.organizeImports": true,
+          "source.fixAll.eslint": true
+        },
+        "files.autoSave": "afterDelay",
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "[python]": {
+          "editor.defaultFormatter": "ms-python.black-formatter"
+        },
+        "[javascript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        }
+      }
+    }
+  },
+  
+  "secrets": {
+    "MILESIGHT_API_KEY": {
+      "description": "Milesight sensor API key"
+    },
+    "TELEGRAM_BOT_TOKEN": {
+      "description": "Telegram bot token for notifications"
+    }
+  },
+  
+  "remoteEnv": {
+    "CODESPACES": "true",
+    "PYTHONPATH": "/workspaces/retail-platform"
+  },
+  
+  "containerEnv": {
+    "NODE_ENV": "development"
+  }
+}

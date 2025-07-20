@@ -1,0 +1,2101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - blipee OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #0EA5E9 100%);
+            --gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            --gradient-blue: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-green: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            
+            --purple: #8B5CF6;
+            --blue: #0EA5E9;
+            --green: #10B981;
+            --yellow: #F59E0B;
+            --red: #EF4444;
+            --dark: #0F172A;
+            --darker: #020617;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--darker);
+            color: var(--white);
+            min-height: 100vh;
+        }
+
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            grid-template-rows: 70px 1fr;
+            grid-template-areas: 
+                "header header"
+                "sidebar main";
+            height: 100vh;
+            transition: grid-template-columns 0.3s ease;
+        }
+        
+        .dashboard-layout.sidebar-collapsed {
+            grid-template-columns: 70px 1fr;
+        }
+
+        /* Header */
+        .header {
+            grid-area: header;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 400;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            white-space: nowrap;
+            letter-spacing: -0.02em;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
+        }
+
+        .breadcrumb-separator {
+            opacity: 0.4;
+        }
+
+        .breadcrumb-item {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .breadcrumb-item:hover {
+            color: white;
+        }
+
+        .breadcrumb-item.active {
+            color: white;
+        }
+
+        /* Header Actions */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            grid-area: sidebar;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 1rem;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-collapsed .sidebar {
+            padding: 2rem 0.5rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+        
+        .nav-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 1rem 1rem 1rem 1rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        
+        .sidebar-collapsed .nav-link {
+            padding: 0.75rem;
+        }
+        
+        .sidebar-collapsed .nav-link span {
+            display: none;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        /* Sidebar Bottom */
+        .sidebar-bottom {
+            margin-top: auto;
+        }
+
+        /* Sidebar Footer */
+        .sidebar-footer {
+            padding: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            grid-area: main;
+            padding: 2rem;
+            overflow-y: auto;
+            background: var(--darker);
+        }
+
+        /* Common Buttons */
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-icon:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* User Profile */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* User Dropdown */
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            min-width: 200px;
+            display: none;
+            z-index: 1000;
+        }
+
+        .user-dropdown.active {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border-radius: 0.375rem;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 0.5rem 0;
+        }
+
+        /* Collapse Button */
+        .collapse-btn {
+            position: absolute;
+            bottom: 1rem;
+            right: -12px;
+            width: 24px;
+            height: 24px;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .collapse-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* Additional styles for sidebar controls */
+        .sidebar-controls {
+            padding: 0;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .control-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            padding: 0;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        /* Language Selector */
+        .language-selector {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.75rem;
+            width: auto;
+            text-align: center;
+        }
+        
+        .language-selector option {
+            background: var(--dark);
+            color: white;
+        }
+
+        /* Sidebar Toggle */
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* Header Logo */
+        .header-logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Settings Navigation Tabs */
+        .settings-nav {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 2rem;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 1rem;
+            padding: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .settings-nav-tab {
+            padding: 1rem 2rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .settings-nav-tab:hover,
+        .settings-nav-tab:focus {
+            color: white;
+            outline: none;
+        }
+
+        .settings-nav-tab.active {
+            color: white;
+            border-bottom-color: var(--purple);
+        }
+
+        .settings-section {
+            display: none;
+        }
+
+        .settings-section.active {
+            display: block;
+        }
+
+        /* Form Styles */
+        .form-card {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--purple);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .form-select option {
+            background: var(--dark);
+            color: white;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Switch Styles */
+        .switch-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .switch-group:last-child {
+            border-bottom: none;
+        }
+
+        .switch-info {
+            flex: 1;
+        }
+
+        .switch-label {
+            font-weight: 500;
+            color: white;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .switch-description {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background: var(--gradient-primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Table Styles */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            text-align: left;
+            padding: 1rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .table td {
+            padding: 1rem;
+            font-size: 0.875rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Badge Styles */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--green);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--yellow);
+        }
+
+        .badge-error {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--red);
+        }
+
+        /* Platform Indicator */
+        .platform-indicator {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            background: rgba(139, 92, 246, 0.2);
+            color: var(--purple);
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+
+        /* Tenant Switcher */
+        .tenant-switcher {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+        .tenant-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        .tenant-select option {
+            background: var(--dark);
+            color: white;
+        }
+
+        /* Role Cards */
+        .role-card {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .role-card:hover {
+            border-color: var(--purple);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);
+        }
+
+        .role-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .role-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .role-users {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .permission-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .permission-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .permission-item svg {
+            width: 16px;
+            height: 16px;
+            color: var(--green);
+        }
+
+        /* Security Metrics */
+        .security-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .metric-card {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+                <a href="dashboard.html" class="header-logo">blipee</a>
+                <nav class="breadcrumb">
+                    <a href="dashboard.html" class="breadcrumb-item">Dashboard</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-item active">Settings</span>
+                </nav>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="saveSettings()">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    Save Changes
+                </button>
+                <div class="user-profile" onclick="toggleUserMenu()">
+                    <div class="user-avatar">JD</div>
+                    <div class="user-info">
+                        <div class="user-name">John Doe</div>
+                        <div class="user-role">Super Admin <span class="platform-indicator">Platform</span></div>
+                    </div>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="profile.html" class="dropdown-item">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                            </svg>
+                            My Profile
+                        </a>
+                        <a href="settings.html" class="dropdown-item">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                            </svg>
+                            Settings
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="logout.html" class="dropdown-item">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path>
+                            </svg>
+                            Sign Out
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="analytics.html" class="nav-link">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span>Analytics</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="reports.html" class="nav-link">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm2-3a1 1 0 011 1v5a1 1 0 11-2 0v-5a1 1 0 011-1zm4-1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Reports</span>
+                        </a>
+                    </li>
+                    <li class="nav-divider"></li>
+                    <li class="nav-item">
+                        <a href="settings.html" class="nav-link active">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="sidebar-controls">
+                    <div class="control-item">
+                        <button class="theme-toggle" onclick="toggleTheme()">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="control-item">
+                        <select class="language-selector" onchange="changeLanguage(this.value)">
+                            <option value="en" selected>EN</option>
+                            <option value="es">ES</option>
+                            <option value="fr">FR</option>
+                            <option value="pt">PT</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="sidebar-footer">
+                    <div style="text-align: center; color: rgba(255, 255, 255, 0.4); font-size: 0.75rem;">
+                        <div>Powered by blipee</div>
+                        <div>v2.1.0 • Build 4512</div>
+                    </div>
+                </div>
+            </div>
+            <button class="collapse-btn" onclick="toggleSidebar()">
+                <svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                </svg>
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Page Header -->
+            <div style="margin-bottom: 2rem;">
+                <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; color: white;">Settings</h1>
+                <p style="color: rgba(255, 255, 255, 0.6); font-size: 1rem;">Manage your platform preferences, team settings, and enterprise access controls.</p>
+            </div>
+
+            <!-- Tenant Switcher (only visible to super admins) -->
+            <div class="tenant-switcher" id="tenant-switcher">
+                <label for="tenant-select" class="form-label">Current Tenant</label>
+                <select id="tenant-select" class="tenant-select" onchange="switchTenant(this.value)">
+                    <option value="platform">Platform Administration</option>
+                    <option value="acme-retail">Acme Retail Inc.</option>
+                    <option value="fashion-forward">Fashion Forward Ltd.</option>
+                    <option value="tech-gadgets">Tech Gadgets Co.</option>
+                </select>
+            </div>
+
+            <!-- Settings Navigation -->
+            <nav class="settings-nav" role="tablist" aria-label="Settings sections">
+                <a href="#" class="settings-nav-tab active" role="tab" aria-selected="true" onclick="switchSettingsSection('profile', event)">Profile</a>
+                <a href="#" class="settings-nav-tab" role="tab" aria-selected="false" onclick="switchSettingsSection('users', event)">Users & Roles</a>
+                <a href="#" class="settings-nav-tab" role="tab" aria-selected="false" onclick="switchSettingsSection('authentication', event)">Authentication</a>
+                <a href="#" class="settings-nav-tab" role="tab" aria-selected="false" onclick="switchSettingsSection('permissions', event)">Permissions</a>
+                <a href="#" class="settings-nav-tab" role="tab" aria-selected="false" onclick="switchSettingsSection('invitations', event)">Invitations</a>
+                <a href="#" class="settings-nav-tab" role="tab" aria-selected="false" onclick="switchSettingsSection('security', event)">Security</a>
+                <a href="#" class="settings-nav-tab" role="tab" aria-selected="false" onclick="switchSettingsSection('api', event)">API & Integrations</a>
+                <a href="#" class="settings-nav-tab" role="tab" aria-selected="false" onclick="switchSettingsSection('activity', event)">Activity & Audit</a>
+                <a href="#" class="settings-nav-tab" role="tab" aria-selected="false" onclick="switchSettingsSection('billing', event)">Billing</a>
+                <a href="#" class="settings-nav-tab" role="tab" aria-selected="false" onclick="switchSettingsSection('platform', event)" id="platform-tab" style="display: none;">Platform Admin</a>
+            </nav>
+
+            <!-- Profile Settings -->
+            <section id="profile-section" class="settings-section active">
+                <div class="form-card">
+                    <h2 class="form-card-title">Personal Information</h2>
+                    <form>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">First Name</label>
+                                <input type="text" class="form-input" value="John" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" class="form-input" value="Doe" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-input" value="john.doe@company.com" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" class="form-input" value="+1 (555) 123-4567" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Timezone</label>
+                            <select class="form-select">
+                                <option value="UTC-8">Pacific Time (UTC-8)</option>
+                                <option value="UTC-5" selected>Eastern Time (UTC-5)</option>
+                                <option value="UTC">UTC</option>
+                                <option value="UTC+1">Central European Time (UTC+1)</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Users & Roles Settings -->
+            <section id="users-section" class="settings-section">
+                <div class="form-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <h2 class="form-card-title" style="margin-bottom: 0;">Roles & Permissions</h2>
+                        <button class="btn btn-secondary" onclick="createRole()">Create Role</button>
+                    </div>
+                    
+                    <!-- Platform Roles -->
+                    <h3 style="margin-bottom: 1rem; color: var(--purple);">Platform Roles</h3>
+                    
+                    <div class="role-card">
+                        <div class="role-header">
+                            <div class="role-title">Super Admin</div>
+                            <div class="role-users">2 users</div>
+                        </div>
+                        <p style="color: rgba(255, 255, 255, 0.6); margin-bottom: 1rem;">Full platform access with ability to manage all tenants, users, and system settings.</p>
+                        <div class="permission-grid">
+                            <div class="permission-item">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span>All Permissions</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="role-card">
+                        <div class="role-header">
+                            <div class="role-title">Platform Support</div>
+                            <div class="role-users">5 users</div>
+                        </div>
+                        <p style="color: rgba(255, 255, 255, 0.6); margin-bottom: 1rem;">Support staff with read-only access to assist tenants.</p>
+                        <div class="permission-grid">
+                            <div class="permission-item">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span>View All Tenants</span>
+                            </div>
+                            <div class="permission-item">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span>Support Tickets</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tenant Roles -->
+                    <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Tenant Roles</h3>
+                    
+                    <div class="role-card">
+                        <div class="role-header">
+                            <div class="role-title">Admin</div>
+                            <div class="role-users">12 users</div>
+                        </div>
+                        <p style="color: rgba(255, 255, 255, 0.6); margin-bottom: 1rem;">Full tenant administration with ability to manage all stores and users.</p>
+                        <div class="permission-grid">
+                            <div class="permission-item">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span>Manage Users</span>
+                            </div>
+                            <div class="permission-item">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span>All Stores Access</span>
+                            </div>
+                            <div class="permission-item">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span>System Settings</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="role-card">
+                        <div class="role-header">
+                            <div class="role-title">Regional Manager</div>
+                            <div class="role-users">8 users</div>
+                        </div>
+                        <p style="color: rgba(255, 255, 255, 0.6); margin-bottom: 1rem;">Manage multiple stores within assigned regions.</p>
+                        <div class="permission-grid">
+                            <div class="permission-item">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span>Regional Reports</span>
+                            </div>
+                            <div class="permission-item">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span>Store Management</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="role-card">
+                        <div class="role-header">
+                            <div class="role-title">Store Manager</div>
+                            <div class="role-users">45 users</div>
+                        </div>
+                        <p style="color: rgba(255, 255, 255, 0.6); margin-bottom: 1rem;">Manage individual store operations and staff.</p>
+                        <div class="permission-grid">
+                            <div class="permission-item">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span>Store Reports</span>
+                            </div>
+                            <div class="permission-item">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                <span>Staff Management</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users List -->
+                <div class="form-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <h2 class="form-card-title" style="margin-bottom: 0;">Users</h2>
+                        <button class="btn btn-primary" onclick="inviteUser()">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path>
+                            </svg>
+                            Invite User
+                        </button>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Store/Region</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>John Doe</td>
+                                    <td>john.doe@company.com</td>
+                                    <td>Super Admin <span class="platform-indicator">Platform</span></td>
+                                    <td>All</td>
+                                    <td><span class="badge badge-success">Active</span></td>
+                                    <td>
+                                        <button class="btn-icon" aria-label="Edit user">
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Jane Smith</td>
+                                    <td>jane.smith@company.com</td>
+                                    <td>Regional Manager</td>
+                                    <td>North Region</td>
+                                    <td><span class="badge badge-success">Active</span></td>
+                                    <td>
+                                        <button class="btn-icon" aria-label="Edit user">
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Mike Johnson</td>
+                                    <td>mike.johnson@company.com</td>
+                                    <td>Store Manager</td>
+                                    <td>Store #42</td>
+                                    <td><span class="badge badge-success">Active</span></td>
+                                    <td>
+                                        <button class="btn-icon" aria-label="Edit user">
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Authentication Settings -->
+            <section id="authentication-section" class="settings-section">
+                <div class="form-card">
+                    <h2 class="form-card-title">Single Sign-On (SSO)</h2>
+                    <div class="switch-group">
+                        <div class="switch-info">
+                            <div class="switch-label">Enable SAML 2.0</div>
+                            <div class="switch-description">Allow users to authenticate using SAML identity providers</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">SAML Endpoint URL</label>
+                        <input type="url" class="form-input" value="https://sso.company.com/saml2" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">X.509 Certificate</label>
+                        <textarea class="form-input" rows="4" placeholder="Paste your SAML certificate here..."></textarea>
+                    </div>
+                    <div class="switch-group">
+                        <div class="switch-info">
+                            <div class="switch-label">Enable OAuth 2.0</div>
+                            <div class="switch-description">Support OAuth providers like Google, Microsoft, GitHub</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2 class="form-card-title">Multi-Factor Authentication</h2>
+                    <div class="switch-group">
+                        <div class="switch-info">
+                            <div class="switch-label">Require MFA for all users</div>
+                            <div class="switch-description">Enforce two-factor authentication for enhanced security</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="switch-group">
+                        <div class="switch-info">
+                            <div class="switch-label">SMS Authentication</div>
+                            <div class="switch-description">Allow users to receive codes via SMS</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="switch-group">
+                        <div class="switch-info">
+                            <div class="switch-label">Authenticator Apps</div>
+                            <div class="switch-description">Support TOTP apps like Google Authenticator, Authy</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="switch-group">
+                        <div class="switch-info">
+                            <div class="switch-label">Hardware Security Keys</div>
+                            <div class="switch-description">Support FIDO2/WebAuthn security keys</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Permissions Settings -->
+            <section id="permissions-section" class="settings-section">
+                <div class="form-card">
+                    <h2 class="form-card-title">Permission Matrix</h2>
+                    <div style="overflow-x: auto;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Feature</th>
+                                    <th>Super Admin</th>
+                                    <th>Admin</th>
+                                    <th>Regional Manager</th>
+                                    <th>Store Manager</th>
+                                    <th>Store Staff</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>View All Tenants</td>
+                                    <td><input type="checkbox" checked disabled></td>
+                                    <td><input type="checkbox" disabled></td>
+                                    <td><input type="checkbox" disabled></td>
+                                    <td><input type="checkbox" disabled></td>
+                                    <td><input type="checkbox" disabled></td>
+                                </tr>
+                                <tr>
+                                    <td>Manage Users</td>
+                                    <td><input type="checkbox" checked disabled></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox" disabled></td>
+                                </tr>
+                                <tr>
+                                    <td>View All Stores</td>
+                                    <td><input type="checkbox" checked disabled></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" disabled></td>
+                                    <td><input type="checkbox" disabled></td>
+                                </tr>
+                                <tr>
+                                    <td>Edit Store Settings</td>
+                                    <td><input type="checkbox" checked disabled></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" disabled></td>
+                                </tr>
+                                <tr>
+                                    <td>View Reports</td>
+                                    <td><input type="checkbox" checked disabled></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                </tr>
+                                <tr>
+                                    <td>Export Data</td>
+                                    <td><input type="checkbox" checked disabled></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Invitations Settings -->
+            <section id="invitations-section" class="settings-section">
+                <div class="form-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <h2 class="form-card-title" style="margin-bottom: 0;">Active Invitation Codes</h2>
+                        <button class="btn btn-primary" onclick="generateInvitation()">Generate Code</button>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Role</th>
+                                    <th>Store/Region</th>
+                                    <th>Created By</th>
+                                    <th>Expires</th>
+                                    <th>Uses</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code style="background: rgba(255, 255, 255, 0.1); padding: 0.25rem 0.5rem; border-radius: 0.25rem;">INVITE-A8K2M9</code></td>
+                                    <td>Store Manager</td>
+                                    <td>Store #42</td>
+                                    <td>John Doe</td>
+                                    <td>2024-03-15</td>
+                                    <td>0/1</td>
+                                    <td>
+                                        <button class="btn-icon" aria-label="Copy code">
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path>
+                                                <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code style="background: rgba(255, 255, 255, 0.1); padding: 0.25rem 0.5rem; border-radius: 0.25rem;">INVITE-B3L7N4</code></td>
+                                    <td>Regional Manager</td>
+                                    <td>North Region</td>
+                                    <td>Jane Smith</td>
+                                    <td>2024-03-20</td>
+                                    <td>0/5</td>
+                                    <td>
+                                        <button class="btn-icon" aria-label="Copy code">
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path>
+                                                <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2 class="form-card-title">Invitation Settings</h2>
+                    <div class="form-group">
+                        <label class="form-label">Default Expiry (days)</label>
+                        <input type="number" class="form-input" value="7" min="1" max="90" />
+                    </div>
+                    <div class="switch-group">
+                        <div class="switch-info">
+                            <div class="switch-label">Single Use Codes</div>
+                            <div class="switch-description">Invitation codes can only be used once</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="switch-group">
+                        <div class="switch-info">
+                            <div class="switch-label">Email Notifications</div>
+                            <div class="switch-description">Send email when invitation code is used</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Security Settings -->
+            <section id="security-section" class="settings-section">
+                <div class="form-card">
+                    <h2 class="form-card-title">Password Policy</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Minimum Length</label>
+                            <input type="number" class="form-input" value="12" min="8" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password Expiry (days)</label>
+                            <input type="number" class="form-input" value="90" min="0" />
+                        </div>
+                    </div>
+                    <div class="switch-group">
+                        <div class="switch-info">
+                            <div class="switch-label">Require Uppercase</div>
+                            <div class="switch-description">At least one uppercase letter</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="switch-group">
+                        <div class="switch-info">
+                            <div class="switch-label">Require Numbers</div>
+                            <div class="switch-description">At least one numeric character</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="switch-group">
+                        <div class="switch-info">
+                            <div class="switch-label">Require Special Characters</div>
+                            <div class="switch-description">At least one special character (!@#$%^&*)</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2 class="form-card-title">Session Management</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Session Timeout (minutes)</label>
+                            <input type="number" class="form-input" value="30" min="5" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Max Concurrent Sessions</label>
+                            <input type="number" class="form-input" value="3" min="1" />
+                        </div>
+                    </div>
+                    <div class="switch-group">
+                        <div class="switch-info">
+                            <div class="switch-label">Remember Me</div>
+                            <div class="switch-description">Allow users to stay logged in</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2 class="form-card-title">Security Overview</h2>
+                    <div class="security-metrics">
+                        <div class="metric-card">
+                            <div class="metric-value">98%</div>
+                            <div class="metric-label">Users with MFA</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">12</div>
+                            <div class="metric-label">Failed Login Attempts (24h)</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">3</div>
+                            <div class="metric-label">Active Sessions</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">0</div>
+                            <div class="metric-label">Security Incidents</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- API & Integrations Settings -->
+            <section id="api-section" class="settings-section">
+                <div class="form-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <h2 class="form-card-title" style="margin-bottom: 0;">API Keys</h2>
+                        <button class="btn btn-primary" onclick="generateAPIKey()">Generate New Key</button>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Key</th>
+                                    <th>Permissions</th>
+                                    <th>Created</th>
+                                    <th>Last Used</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Production API</td>
+                                    <td><code style="background: rgba(255, 255, 255, 0.1); padding: 0.25rem 0.5rem; border-radius: 0.25rem;">sk_live_9kHJ3m...K2n8</code></td>
+                                    <td>Read/Write</td>
+                                    <td>2024-01-15</td>
+                                    <td>2 hours ago</td>
+                                    <td>
+                                        <button class="btn-icon" aria-label="Revoke key">
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Testing API</td>
+                                    <td><code style="background: rgba(255, 255, 255, 0.1); padding: 0.25rem 0.5rem; border-radius: 0.25rem;">YOUR_STRIPE_SECRET_KEY...X9z1</code></td>
+                                    <td>Read Only</td>
+                                    <td>2024-02-20</td>
+                                    <td>Yesterday</td>
+                                    <td>
+                                        <button class="btn-icon" aria-label="Revoke key">
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <h2 class="form-card-title" style="margin-bottom: 0;">Webhooks</h2>
+                        <button class="btn btn-secondary" onclick="addWebhook()">Add Webhook</button>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>URL</th>
+                                    <th>Events</th>
+                                    <th>Status</th>
+                                    <th>Last Triggered</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>https://api.company.com/webhook</td>
+                                    <td>user.created, user.updated</td>
+                                    <td><span class="badge badge-success">Active</span></td>
+                                    <td>1 hour ago</td>
+                                    <td>
+                                        <button class="btn-icon" aria-label="Edit webhook">
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Activity & Audit Settings -->
+            <section id="activity-section" class="settings-section">
+                <div class="form-card">
+                    <h2 class="form-card-title">Audit Log Settings</h2>
+                    <div class="form-group">
+                        <label class="form-label">Log Retention Period</label>
+                        <select class="form-select">
+                            <option value="30">30 days</option>
+                            <option value="90" selected>90 days</option>
+                            <option value="180">180 days</option>
+                            <option value="365">1 year</option>
+                            <option value="730">2 years</option>
+                            <option value="-1">Indefinite</option>
+                        </select>
+                    </div>
+                    <div class="switch-group">
+                        <div class="switch-info">
+                            <div class="switch-label">Log All API Calls</div>
+                            <div class="switch-description">Record all API requests and responses</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="switch-group">
+                        <div class="switch-info">
+                            <div class="switch-label">Log User Actions</div>
+                            <div class="switch-description">Track all user activities and changes</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="switch-group">
+                        <div class="switch-info">
+                            <div class="switch-label">Log System Events</div>
+                            <div class="switch-description">Record system-level events and errors</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <h2 class="form-card-title" style="margin-bottom: 0;">Recent Activity</h2>
+                        <button class="btn btn-secondary" onclick="exportAuditLog()">Export Log</button>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>User</th>
+                                    <th>Action</th>
+                                    <th>Resource</th>
+                                    <th>IP Address</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2024-03-14 15:32:10</td>
+                                    <td>john.doe@company.com</td>
+                                    <td>user.login</td>
+                                    <td>Authentication</td>
+                                    <td>192.168.1.100</td>
+                                    <td><span class="badge badge-success">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2024-03-14 15:28:45</td>
+                                    <td>jane.smith@company.com</td>
+                                    <td>role.update</td>
+                                    <td>Regional Manager</td>
+                                    <td>192.168.1.101</td>
+                                    <td><span class="badge badge-success">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2024-03-14 15:15:22</td>
+                                    <td>mike.johnson@company.com</td>
+                                    <td>report.export</td>
+                                    <td>Monthly Sales Report</td>
+                                    <td>192.168.1.102</td>
+                                    <td><span class="badge badge-success">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2024-03-14 14:55:18</td>
+                                    <td>sarah.wilson@company.com</td>
+                                    <td>user.login.failed</td>
+                                    <td>Authentication</td>
+                                    <td>192.168.1.103</td>
+                                    <td><span class="badge badge-error">Failed</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Billing Settings -->
+            <section id="billing-section" class="settings-section">
+                <div class="form-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <div>
+                            <h2 style="margin-bottom: 0.5rem;">Current Plan: Enterprise</h2>
+                            <p style="color: rgba(255, 255, 255, 0.6); margin: 0;">$299/month • Unlimited stores • 100 users included</p>
+                        </div>
+                        <button class="btn btn-secondary">Change Plan</button>
+                    </div>
+                    
+                    <div style="padding: 1.5rem; background: rgba(96, 165, 250, 0.1); border-radius: 1rem; border: 1px solid rgba(96, 165, 250, 0.3);">
+                        <h3 style="margin-bottom: 1rem;">Usage This Billing Period</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem;">
+                            <div>
+                                <div style="font-size: 2rem; font-weight: 700;">87</div>
+                                <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem;">Active Users</div>
+                                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.4);">of 100 included</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 2rem; font-weight: 700;">42</div>
+                                <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem;">Active Stores</div>
+                                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.4);">unlimited</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 2rem; font-weight: 700;">2.4TB</div>
+                                <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem;">Data Storage</div>
+                                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.4);">of 5TB included</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 2rem; font-weight: 700;">1.2M</div>
+                                <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem;">API Calls</div>
+                                <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.4);">of 10M included</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <h2 class="form-card-title" style="margin-bottom: 0;">Payment Method</h2>
+                        <button class="btn btn-secondary">Update</button>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 48px; height: 32px; background: #1a1a1a; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                            <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
+                                <path d="M3 10h18v8a2 2 0 01-2 2H5a2 2 0 01-2-2v-8zm0-4a2 2 0 012-2h14a2 2 0 012 2v2H3V6z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <div style="font-weight: 500;">Visa ending in 4242</div>
+                            <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem;">Expires 12/2025</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2 class="form-card-title">Billing History</h2>
+                    <div style="overflow-x: auto;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Invoice</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>March 1, 2024</td>
+                                    <td>Enterprise Plan - Monthly</td>
+                                    <td>$299.00</td>
+                                    <td><span class="badge badge-success">Paid</span></td>
+                                    <td>
+                                        <button class="btn-icon" aria-label="Download invoice">
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>February 1, 2024</td>
+                                    <td>Enterprise Plan - Monthly</td>
+                                    <td>$299.00</td>
+                                    <td><span class="badge badge-success">Paid</span></td>
+                                    <td>
+                                        <button class="btn-icon" aria-label="Download invoice">
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Platform Admin Settings (only visible to super admins) -->
+            <section id="platform-section" class="settings-section">
+                <div class="form-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <h2 class="form-card-title" style="margin-bottom: 0;">Tenant Management</h2>
+                        <button class="btn btn-primary" onclick="createTenant()">Create Tenant</button>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Tenant</th>
+                                    <th>Plan</th>
+                                    <th>Users</th>
+                                    <th>Stores</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Acme Retail Inc.</td>
+                                    <td>Enterprise</td>
+                                    <td>87</td>
+                                    <td>42</td>
+                                    <td><span class="badge badge-success">Active</span></td>
+                                    <td>2023-06-15</td>
+                                    <td>
+                                        <button class="btn-icon" aria-label="Edit tenant">
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Fashion Forward Ltd.</td>
+                                    <td>Professional</td>
+                                    <td>34</td>
+                                    <td>18</td>
+                                    <td><span class="badge badge-success">Active</span></td>
+                                    <td>2023-08-22</td>
+                                    <td>
+                                        <button class="btn-icon" aria-label="Edit tenant">
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Tech Gadgets Co.</td>
+                                    <td>Starter</td>
+                                    <td>12</td>
+                                    <td>5</td>
+                                    <td><span class="badge badge-warning">Trial</span></td>
+                                    <td>2024-02-10</td>
+                                    <td>
+                                        <button class="btn-icon" aria-label="Edit tenant">
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2 class="form-card-title">Platform Settings</h2>
+                    <div class="switch-group">
+                        <div class="switch-info">
+                            <div class="switch-label">Maintenance Mode</div>
+                            <div class="switch-description">Show maintenance page to all tenants</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="switch-group">
+                        <div class="switch-info">
+                            <div class="switch-label">Auto Tenant Provisioning</div>
+                            <div class="switch-description">Automatically create tenants from self-service signups</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="switch-group">
+                        <div class="switch-info">
+                            <div class="switch-label">Global Announcements</div>
+                            <div class="switch-description">Show platform-wide announcements to all users</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="form-group" style="margin-top: 1.5rem;">
+                        <label class="form-label">Platform Version</label>
+                        <input type="text" class="form-input" value="v2.1.0" readonly />
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Check if user is super admin and show/hide platform admin features
+        document.addEventListener('DOMContentLoaded', function() {
+            const isSuperAdmin = true; // This would come from user session/auth
+            
+            if (isSuperAdmin) {
+                document.getElementById('tenant-switcher').style.display = 'block';
+                document.getElementById('platform-tab').style.display = 'block';
+            }
+        });
+
+        // Switch between settings sections
+        function switchSettingsSection(section, event) {
+            event.preventDefault();
+            
+            // Hide all sections
+            document.querySelectorAll('.settings-section').forEach(s => {
+                s.classList.remove('active');
+            });
+            
+            // Remove active state from all nav tabs
+            document.querySelectorAll('.settings-nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+                tab.setAttribute('aria-selected', 'false');
+            });
+            
+            // Show selected section
+            document.getElementById(section + '-section').classList.add('active');
+            
+            // Set active nav tab
+            event.target.classList.add('active');
+            event.target.setAttribute('aria-selected', 'true');
+            
+            console.log(`Switched to ${section} settings`);
+        }
+
+        // Settings actions
+        function saveSettings() {
+            showNotification('Settings saved successfully!', 'success');
+        }
+
+        function inviteUser() {
+            showNotification('User invitation feature coming soon', 'info');
+        }
+
+        function createRole() {
+            showNotification('Role creation feature coming soon', 'info');
+        }
+
+        function generateInvitation() {
+            showNotification('Invitation code generated: INVITE-X9K3M2', 'success');
+        }
+
+        function generateAPIKey() {
+            showNotification('API key generation feature coming soon', 'info');
+        }
+
+        function addWebhook() {
+            showNotification('Webhook configuration feature coming soon', 'info');
+        }
+
+        function exportAuditLog() {
+            showNotification('Audit log export started', 'success');
+        }
+
+        function createTenant() {
+            showNotification('Tenant creation feature coming soon', 'info');
+        }
+
+        function switchTenant(tenantId) {
+            showNotification(`Switched to tenant: ${tenantId}`, 'success');
+        }
+
+        // Sidebar controls
+        function toggleSidebar() {
+            document.querySelector('.dashboard-layout').classList.toggle('sidebar-collapsed');
+        }
+
+        function toggleTheme() {
+            showNotification('Theme toggle feature coming soon', 'info');
+        }
+
+        function changeLanguage(lang) {
+            showNotification(`Language changed to ${lang}`, 'success');
+        }
+
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const userProfile = document.querySelector('.user-profile');
+            const dropdown = document.getElementById('userDropdown');
+            
+            if (!userProfile.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // Notification helper
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 16px 24px;
+                background: ${type === 'success' ? '#10b981' : '#3b82f6'};
+                color: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+        
+        // Add notification animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

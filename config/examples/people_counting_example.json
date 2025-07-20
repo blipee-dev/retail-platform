@@ -1,0 +1,64 @@
+{
+  "connector": {
+    "name": "Store Front Camera",
+    "type": "people_counting_camera",
+    "store": "OML01-Omnia GuimarãesShopping",
+    "connection": {
+      "host": "93.108.96.96",
+      "port": 21001,
+      "auth": {
+        "type": "basic",
+        "username": "admin",
+        "password": "grnl.2024"
+      }
+    },
+    "endpoints": {
+      "people_counting": "/dataloader.cgi?dw=vcalogcsv&report_type=0&linetype=31&statistics_type=3",
+      "heatmap": "/dataloader.cgi?dw=heatmapcsv&sub_type=0",
+      "regional": "/dataloader.cgi?dw=regionalcountlogcsv&report_type=0&lengthtype=0&length=0&region1=1&region2=1&region3=1&region4=1"
+    },
+    "data_mapping": {
+      "timestamp_format": "%Y/%m/%d %H:%M:%S",
+      "fields": [
+        {
+          "source": "StartTime",
+          "target": "start_time",
+          "type": "timestamp"
+        },
+        {
+          "source": "EndTime",
+          "target": "end_time",
+          "type": "timestamp"
+        },
+        {
+          "source": "Line1 - In",
+          "target": "line1_in",
+          "type": "integer"
+        },
+        {
+          "source": "Line2 - In",
+          "target": "line2_in",
+          "type": "integer"
+        },
+        {
+          "source": "Line3 - In",
+          "target": "line3_in",
+          "type": "integer"
+        },
+        {
+          "source": "Line4 - In",
+          "target": "line4_in",
+          "type": "integer"
+        },
+        {
+          "source": "Line4 - Out",
+          "target": "line4_out",
+          "type": "integer"
+        }
+      ]
+    },
+    "retry_attempts": 3,
+    "timeout": 30,
+    "polling_interval": 60
+  }
+}

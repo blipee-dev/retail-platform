@@ -1,0 +1,117 @@
+{
+  "connector": {
+    "name": "Milesight Advanced Analytics Camera",
+    "type": "milesight",
+    "store": "Flagship Store - Analytics Zone",
+    "description": "Full analytics with people counting, regional analysis, and heatmaps",
+    
+    "connection": {
+      "host": "192.168.1.101",
+      "port": 80,
+      "auth": {
+        "type": "basic",
+        "username": "admin",
+        "password": "ms1234"
+      }
+    },
+    
+    "endpoints": {
+      "people_counting": {
+        "params": {
+          "type": 0,
+          "comment": "Get all counting data"
+        }
+      },
+      "regional_counting": {
+        "params": {
+          "report_type": 0,
+          "lengthtype": 1,
+          "length": 3,
+          "region1": 1,
+          "region2": 1,
+          "region3": 1,
+          "region4": 1,
+          "comment": "Daily reports with >60s stay filtering, all regions enabled"
+        }
+      },
+      "heatmap": {
+        "params": {
+          "sub_type": 0,
+          "comment": "Daily heatmap data"
+        }
+      },
+      "space_heatmap": {
+        "params": {
+          "sub_type": 0,
+          "comment": "Spatial heatmap distribution"
+        }
+      },
+      "real_time_status": {
+        "enabled": true,
+        "polling_interval": 15
+      }
+    },
+    
+    "data_mapping": {
+      "timestamp_format": "%Y/%m/%d %H:%M:%S",
+      "heatmap_timestamp_format": "%Y-%m-%d %H:%M:%S",
+      "supports_real_time_status": true,
+      "supports_regional_counting": true,
+      "line_count": 4,
+      "region_count": 4,
+      "fields": [
+        {"source": "StartTime", "target": "start_time", "type": "timestamp"},
+        {"source": "EndTime", "target": "end_time", "type": "timestamp"},
+        {"source": "Line1 - In", "target": "line1_in", "type": "integer"},
+        {"source": "Line2 - In", "target": "line2_in", "type": "integer"},
+        {"source": "Line3 - In", "target": "line3_in", "type": "integer"},
+        {"source": "Line4 - In", "target": "line4_in", "type": "integer"},
+        {"source": "Line1 - Out", "target": "line1_out", "type": "integer"},
+        {"source": "Line2 - Out", "target": "line2_out", "type": "integer"},
+        {"source": "Line3 - Out", "target": "line3_out", "type": "integer"},
+        {"source": "Line4 - Out", "target": "line4_out", "type": "integer"},
+        {"source": "region1", "target": "region1_count", "type": "integer"},
+        {"source": "region2", "target": "region2_count", "type": "integer"},
+        {"source": "region3", "target": "region3_count", "type": "integer"},
+        {"source": "region4", "target": "region4_count", "type": "integer"}
+      ]
+    },
+    
+    "collection_settings": {
+      "retry_attempts": 5,
+      "timeout": 45,
+      "polling_interval": 300,
+      "batch_size_hours": 2,
+      "concurrent_endpoints": 2
+    },
+    
+    "features": {
+      "auto_export": true,
+      "alarm_notifications": true,
+      "capacity_monitoring": true,
+      "line_crossing_detection": true,
+      "regional_analysis": true,
+      "heatmap_analysis": true,
+      "space_analytics": true,
+      "length_of_stay_filtering": true
+    },
+    
+    "advanced_settings": {
+      "auto_reset_schedule": {
+        "enabled": true,
+        "weekday": 7,
+        "hour": 0,
+        "minute": 0,
+        "second": 0
+      },
+      "capacity_thresholds": {
+        "warning": 80,
+        "critical": 95
+      },
+      "regional_filters": {
+        "min_stay_seconds": 60,
+        "ignore_short_visits": true
+      }
+    }
+  }
+}

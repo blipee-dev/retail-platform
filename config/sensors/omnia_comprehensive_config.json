@@ -1,0 +1,147 @@
+{
+  "connector": {
+    "name": "OML01-Omnia Guimar\u00e3esShopping - Full Analytics",
+    "type": "milesight",
+    "store": "Omnia Guimar\u00e3esShopping",
+    "description": "Full analytics suite with all available data types",
+    "connection": {
+      "host": "93.108.96.96",
+      "port": 21001,
+      "auth": {
+        "type": "basic",
+        "username": "admin",
+        "password": "grnl.2024"
+      }
+    },
+    "endpoints": {
+      "people_counting": {
+        "params": {
+          "report_type": 0,
+          "linetype": 31,
+          "statistics_type": 3
+        }
+      },
+      "regional_counting": {
+        "params": {
+          "report_type": 0,
+          "lengthtype": 0,
+          "length": 0,
+          "region1": 1,
+          "region2": 1,
+          "region3": 1,
+          "region4": 1
+        }
+      },
+      "heatmap": {
+        "params": {
+          "sub_type": 0
+        }
+      },
+      "space_heatmap": {
+        "params": {
+          "sub_type": 0
+        }
+      }
+    },
+    "data_mapping": {
+      "timestamp_format": "%Y/%m/%d %H:%M:%S",
+      "heatmap_timestamp_format": "%Y-%m-%d %H:%M:%S",
+      "supports_real_time_status": true,
+      "line_count": 4,
+      "region_count": 4,
+      "fields": [
+        {
+          "source": "StartTime",
+          "target": "starttime",
+          "type": "timestamp"
+        },
+        {
+          "source": "EndTime",
+          "target": "endtime",
+          "type": "timestamp"
+        },
+        {
+          "source": "Tolal - In",
+          "target": "tolal___in",
+          "type": "integer"
+        },
+        {
+          "source": "Tolal - Out",
+          "target": "tolal___out",
+          "type": "integer"
+        },
+        {
+          "source": "Tolal - Sum",
+          "target": "tolal___sum",
+          "type": "integer"
+        },
+        {
+          "source": "Line1 - In",
+          "target": "line1___in",
+          "type": "integer"
+        },
+        {
+          "source": "Line1 - Out",
+          "target": "line1___out",
+          "type": "integer"
+        },
+        {
+          "source": "Line1 - Sum",
+          "target": "line1___sum",
+          "type": "integer"
+        },
+        {
+          "source": "Line2 - In",
+          "target": "line2___in",
+          "type": "integer"
+        },
+        {
+          "source": "Line2 - Out",
+          "target": "line2___out",
+          "type": "integer"
+        },
+        {
+          "source": "Line2 - Sum",
+          "target": "line2___sum",
+          "type": "integer"
+        },
+        {
+          "source": "Line3 - In",
+          "target": "line3___in",
+          "type": "integer"
+        },
+        {
+          "source": "Line3 - Out",
+          "target": "line3___out",
+          "type": "integer"
+        },
+        {
+          "source": "Line3 - Sum",
+          "target": "line3___sum",
+          "type": "integer"
+        },
+        {
+          "source": "Line4 - In",
+          "target": "line4___in",
+          "type": "integer"
+        },
+        {
+          "source": "Line4 - Out",
+          "target": "line4___out",
+          "type": "integer"
+        },
+        {
+          "source": "Line4 - Sum",
+          "target": "line4___sum",
+          "type": "integer"
+        }
+      ]
+    },
+    "collection_settings": {
+      "retry_attempts": 3,
+      "timeout": 30,
+      "polling_interval": 300,
+      "batch_size_hours": 6
+    }
+  }
+}

@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Careers - blipee OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Gradient System */
+            --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #0EA5E9 100%);
+            --gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            --gradient-blue: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-green: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            --gradient-mesh: radial-gradient(at 40% 20%, hsla(280,100%,74%,0.3) 0px, transparent 50%),
+                            radial-gradient(at 80% 0%, hsla(189,100%,56%,0.2) 0px, transparent 50%),
+                            radial-gradient(at 0% 50%, hsla(355,100%,93%,0.2) 0px, transparent 50%);
+            
+            /* Colors */
+            --purple: #8B5CF6;
+            --blue: #0EA5E9;
+            --green: #10B981;
+            --dark: #0F172A;
+            --darker: #020617;
+            --white: #FFFFFF;
+            
+            /* Glassmorphism */
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--darker);
+            color: var(--white);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+        }
+
+        /* Background */
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: var(--darker);
+            overflow: hidden;
+        }
+
+        .bg-gradient-mesh {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: var(--gradient-mesh);
+            opacity: 0.3;
+            animation: meshAnimation 30s ease infinite;
+        }
+
+        @keyframes meshAnimation {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-20px, -20px) rotate(120deg); }
+            66% { transform: translate(20px, -10px) rotate(240deg); }
+        }
+
+        /* Navigation */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1.5rem 2rem;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 400;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--white);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: var(--white);
+            box-shadow: 0 4px 15px 0 rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px 0 rgba(139, 92, 246, 0.4);
+        }
+
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .page-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Culture Section */
+        .culture {
+            margin-bottom: 4rem;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .culture-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .culture-content h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        .culture-content p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.125rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .culture-stats {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 3rem;
+            backdrop-filter: blur(20px);
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+        }
+
+        /* Benefits */
+        .benefits {
+            margin-bottom: 4rem;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .benefit-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .benefit-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient-primary);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .benefit-card:hover::before {
+            transform: translateX(0);
+        }
+
+        .benefit-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .benefit-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .benefit-description {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+
+        /* Jobs Section */
+        .jobs {
+            margin-bottom: 4rem;
+            animation: fadeInUp 1.2s ease 0.6s both;
+        }
+
+        .jobs-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .job-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .job-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .job-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .job-department {
+            color: var(--purple);
+            font-size: 0.875rem;
+            font-weight: 500;
+            background: rgba(139, 92, 246, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+        }
+
+        .job-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .job-description {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .job-requirements {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .requirement-tag {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* CTA Section */
+        .cta {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            backdrop-filter: blur(20px);
+            animation: fadeInUp 1.4s ease 0.8s both;
+        }
+
+        .cta-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .cta-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+            }
+
+            .culture-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-container">
+        <div class="bg-gradient-mesh"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="ai-landing.html" class="logo">blipee OS</a>
+            <div class="nav-links">
+                <a href="ai-landing.html" class="nav-link">Home</a>
+                <a href="integrations.html" class="nav-link">Integrations</a>
+                <a href="pricing.html" class="nav-link">Pricing</a>
+                <a href="docs.html" class="nav-link">Docs</a>
+                <a href="signin.html" class="nav-link">Sign In</a>
+                <a href="signup.html" class="btn btn-primary">Start Free Trial</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header">
+            <h1 class="page-title">Join Our Mission</h1>
+            <p class="page-subtitle">
+                Help us democratize retail intelligence and build the future of data-driven commerce
+            </p>
+        </div>
+
+        <!-- Culture Section -->
+        <div class="culture">
+            <div class="culture-grid">
+                <div class="culture-content">
+                    <h2>Our Culture</h2>
+                    <p>
+                        At blipee OS, we believe that diverse perspectives drive innovation. We're building 
+                        a team of passionate individuals who share our vision of making retail intelligence 
+                        accessible to everyone.
+                    </p>
+                    <p>
+                        We value curiosity, collaboration, and continuous learning. Our remote-first culture 
+                        empowers you to do your best work from anywhere while staying connected with a 
+                        global team of talented professionals.
+                    </p>
+                </div>
+                <div class="culture-stats">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number">100%</div>
+                            <div class="stat-label">Remote-First</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">15+</div>
+                            <div class="stat-label">Countries</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">4.9/5</div>
+                            <div class="stat-label">Employee Rating</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">$2M</div>
+                            <div class="stat-label">Learning Budget</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Benefits -->
+        <div class="benefits">
+            <h2 class="section-title">Why Join blipee OS?</h2>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">💰</div>
+                    <h3 class="benefit-title">Competitive Compensation</h3>
+                    <p class="benefit-description">
+                        Top-tier salary packages with equity participation, performance bonuses, 
+                        and transparent compensation bands.
+                    </p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">🏥</div>
+                    <h3 class="benefit-title">Health & Wellness</h3>
+                    <p class="benefit-description">
+                        Comprehensive health, dental, and vision coverage for you and your family, 
+                        plus mental health support and wellness stipends.
+                    </p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">🌍</div>
+                    <h3 class="benefit-title">Remote-First Culture</h3>
+                    <p class="benefit-description">
+                        Work from anywhere with flexible hours, home office setup budget, 
+                        and annual team retreats in amazing locations.
+                    </p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">📚</div>
+                    <h3 class="benefit-title">Learning & Growth</h3>
+                    <p class="benefit-description">
+                        $5,000 annual learning budget, conference attendance, mentorship programs, 
+                        and clear career progression paths.
+                    </p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">⏰</div>
+                    <h3 class="benefit-title">Work-Life Balance</h3>
+                    <p class="benefit-description">
+                        Unlimited PTO, parental leave, sabbatical options, and a culture that 
+                        truly respects your time and personal life.
+                    </p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">🚀</div>
+                    <h3 class="benefit-title">Cutting-Edge Tech</h3>
+                    <p class="benefit-description">
+                        Work with the latest technologies, contribute to open source, and shape 
+                        the future of retail intelligence platforms.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Open Positions -->
+        <div class="jobs">
+            <h2 class="section-title">Open Positions</h2>
+            <div class="jobs-grid">
+                <div class="job-card">
+                    <div class="job-header">
+                        <div>
+                            <h3 class="job-title">Senior Frontend Engineer</h3>
+                            <div class="job-meta">
+                                <span>📍 Remote</span>
+                                <span>💼 Full-time</span>
+                                <span>💰 $120k - $180k</span>
+                            </div>
+                        </div>
+                        <span class="job-department">Engineering</span>
+                    </div>
+                    <p class="job-description">
+                        Join our frontend team to build beautiful, performant user interfaces for our retail intelligence platform. 
+                        You'll work with React, TypeScript, and modern design systems to create exceptional user experiences.
+                    </p>
+                    <ul class="job-requirements">
+                        <li class="requirement-tag">React</li>
+                        <li class="requirement-tag">TypeScript</li>
+                        <li class="requirement-tag">Next.js</li>
+                        <li class="requirement-tag">Tailwind CSS</li>
+                        <li class="requirement-tag">5+ years</li>
+                    </ul>
+                </div>
+
+                <div class="job-card">
+                    <div class="job-header">
+                        <div>
+                            <h3 class="job-title">Machine Learning Engineer</h3>
+                            <div class="job-meta">
+                                <span>📍 Remote</span>
+                                <span>💼 Full-time</span>
+                                <span>💰 $140k - $200k</span>
+                            </div>
+                        </div>
+                        <span class="job-department">AI/ML</span>
+                    </div>
+                    <p class="job-description">
+                        Help us build the next generation of computer vision and predictive analytics for retail spaces. 
+                        Work on real-time people counting, behavior analysis, and demand forecasting models.
+                    </p>
+                    <ul class="job-requirements">
+                        <li class="requirement-tag">Python</li>
+                        <li class="requirement-tag">PyTorch</li>
+                        <li class="requirement-tag">Computer Vision</li>
+                        <li class="requirement-tag">MLOps</li>
+                        <li class="requirement-tag">PhD/MS preferred</li>
+                    </ul>
+                </div>
+
+                <div class="job-card">
+                    <div class="job-header">
+                        <div>
+                            <h3 class="job-title">Product Designer</h3>
+                            <div class="job-meta">
+                                <span>📍 Remote</span>
+                                <span>💼 Full-time</span>
+                                <span>💰 $100k - $150k</span>
+                            </div>
+                        </div>
+                        <span class="job-department">Design</span>
+                    </div>
+                    <p class="job-description">
+                        Shape the user experience of our retail intelligence platform. Design intuitive interfaces 
+                        that make complex data accessible and actionable for retailers of all sizes.
+                    </p>
+                    <ul class="job-requirements">
+                        <li class="requirement-tag">Figma</li>
+                        <li class="requirement-tag">Design Systems</li>
+                        <li class="requirement-tag">User Research</li>
+                        <li class="requirement-tag">Prototyping</li>
+                        <li class="requirement-tag">4+ years</li>
+                    </ul>
+                </div>
+
+                <div class="job-card">
+                    <div class="job-header">
+                        <div>
+                            <h3 class="job-title">DevOps Engineer</h3>
+                            <div class="job-meta">
+                                <span>📍 Remote</span>
+                                <span>💼 Full-time</span>
+                                <span>💰 $130k - $180k</span>
+                            </div>
+                        </div>
+                        <span class="job-department">Infrastructure</span>
+                    </div>
+                    <p class="job-description">
+                        Build and maintain the infrastructure that powers millions of analytics events daily. 
+                        Work with cloud-native technologies to ensure 99.9% uptime and seamless scalability.
+                    </p>
+                    <ul class="job-requirements">
+                        <li class="requirement-tag">Kubernetes</li>
+                        <li class="requirement-tag">AWS</li>
+                        <li class="requirement-tag">Terraform</li>
+                        <li class="requirement-tag">Docker</li>
+                        <li class="requirement-tag">5+ years</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="cta">
+            <h2 class="cta-title">Don't See Your Role?</h2>
+            <p class="cta-subtitle">
+                We're always looking for exceptional talent. Send us your resume and let's talk about how you can contribute to our mission.
+            </p>
+            <a href="contact.html" class="btn btn-primary">Get in Touch</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="text-align: center; padding: 3rem 2rem; background: rgba(2, 6, 23, 0.8); border-top: 1px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.6); margin-top: 4rem;">
+        <p>
+            &copy; 2024 blipee OS. All rights reserved. | 
+            <a href="terms.html" style="color: rgba(255, 255, 255, 0.7); text-decoration: none;">Terms of Service</a> | 
+            <a href="privacy.html" style="color: rgba(255, 255, 255, 0.7); text-decoration: none;">Privacy Policy</a> | 
+            SOC 2 Certified | GDPR Compliant
+        </p>
+    </footer>
+</body>
+</html>

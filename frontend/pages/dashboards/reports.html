@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - blipee OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #0EA5E9 100%);
+            --gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            --gradient-blue: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-green: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            
+            --purple: #8B5CF6;
+            --blue: #0EA5E9;
+            --green: #10B981;
+            --yellow: #F59E0B;
+            --red: #EF4444;
+            --dark: #0F172A;
+            --darker: #020617;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--darker);
+            color: var(--white);
+            min-height: 100vh;
+        }
+
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            grid-template-rows: 70px 1fr;
+            grid-template-areas: 
+                "header header"
+                "sidebar main";
+            height: 100vh;
+            transition: grid-template-columns 0.3s ease;
+        }
+        
+        .dashboard-layout.sidebar-collapsed {
+            grid-template-columns: 70px 1fr;
+        }
+
+        /* Header */
+        .header {
+            grid-area: header;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 400;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            white-space: nowrap;
+            letter-spacing: -0.02em;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
+        }
+
+        .breadcrumb-separator {
+            opacity: 0.4;
+        }
+
+        .breadcrumb-item {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .breadcrumb-item:hover {
+            color: white;
+        }
+
+        .breadcrumb-item.active {
+            color: white;
+        }
+
+        /* Header Actions */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            grid-area: sidebar;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 1rem;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-collapsed .sidebar {
+            padding: 2rem 0.5rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+        
+        .nav-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 1rem 1rem 1rem 1rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        
+        .sidebar-collapsed .nav-link {
+            padding: 0.75rem;
+        }
+        
+        .sidebar-collapsed .nav-link span {
+            display: none;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        /* Sidebar Bottom */
+        .sidebar-bottom {
+            margin-top: auto;
+        }
+
+        /* Sidebar Footer */
+        .sidebar-footer {
+            padding: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            grid-area: main;
+            padding: 2rem;
+            overflow-y: auto;
+            background: var(--darker);
+        }
+
+        /* Common Buttons */
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-icon:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* User Profile */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* User Dropdown */
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            min-width: 200px;
+            display: none;
+            z-index: 1000;
+        }
+
+        .user-dropdown.active {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border-radius: 0.375rem;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 0.5rem 0;
+        }
+
+        /* Collapse Button */
+        .collapse-btn {
+            position: absolute;
+            bottom: 1rem;
+            right: -12px;
+            width: 24px;
+            height: 24px;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .collapse-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* Additional styles for sidebar controls */
+        .sidebar-controls {
+            padding: 0;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .control-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            padding: 0;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        /* Language Selector */
+        .language-selector {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.75rem;
+            width: auto;
+            text-align: center;
+        }
+        
+        .language-selector option {
+            background: var(--dark);
+            color: white;
+        }
+
+        /* Sidebar Toggle */
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* Header Logo */
+        .header-logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Store Switcher */
+        .store-switcher {
+            position: relative;
+        }
+
+        .store-dropdown-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .store-dropdown-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .store-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 0.5rem;
+            width: 300px;
+            background: rgba(15, 23, 42, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            display: none;
+            z-index: 1000;
+        }
+
+        .store-dropdown.active {
+            display: block;
+        }
+
+        .store-dropdown-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .store-dropdown-header span {
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .view-all-link {
+            color: var(--purple);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .view-all-link:hover {
+            color: var(--blue);
+            text-decoration: underline;
+        }
+
+        .store-dropdown-list {
+            padding: 0.5rem;
+        }
+
+        .store-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.2s ease;
+            margin-bottom: 0.25rem;
+        }
+
+        .store-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .store-item.active {
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        .store-item-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .store-item-name {
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .store-item-location {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .store-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .store-status.online {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--green);
+        }
+
+        .store-status.warning {
+            background: rgba(251, 146, 60, 0.2);
+            color: #FB923C;
+        }
+
+        .store-status.offline {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--red);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            text-align: left;
+            padding: 1rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .table td {
+            padding: 1rem;
+            font-size: 0.875rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status.performing {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--green);
+        }
+
+        .status.underperforming {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--red);
+        }
+
+        .status.maintenance {
+            background: rgba(251, 146, 60, 0.2);
+            color: #FB923C;
+        }
+
+        /* Reports specific styles */
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .report-card {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .report-card:hover,
+        .report-card:focus-within {
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .report-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .report-card:hover::before,
+        .report-card:focus-within::before {
+            opacity: 1;
+        }
+
+        .report-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-primary);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .report-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--white);
+        }
+
+        .report-description {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .report-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .recent-reports {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-completed {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--green);
+        }
+
+        .status-processing {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--yellow);
+        }
+
+        .status-scheduled {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--blue);
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .filter-tab {
+            padding: 1rem 2rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .filter-tab:hover,
+        .filter-tab:focus {
+            color: white;
+            outline: none;
+        }
+
+        .filter-tab.active {
+            color: white;
+            border-bottom-color: var(--purple);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+                grid-template-areas: 
+                    "header"
+                    "main";
+            }
+            
+            .sidebar {
+                display: none;
+            }
+
+            .header {
+                padding: 0 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .reports-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .table {
+                font-size: 0.813rem;
+            }
+
+            .table th,
+            .table td {
+                padding: 0.75rem;
+            }
+
+            /* Hide less important columns on mobile */
+            .table th:nth-child(5),
+            .table td:nth-child(5) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+                <div class="header-logo">blipee</div>
+            </div>
+            <div class="header-actions">
+                <!-- Store Switcher -->
+                <div class="store-switcher">
+                    <button class="store-dropdown-btn" onclick="toggleStoreDropdown()">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
+                            <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="store-name">Downtown Store</span>
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+                    <div class="store-dropdown" id="storeDropdown">
+                        <div class="store-dropdown-header">
+                            <span>Switch Store</span>
+                            <a href="sites.html" class="view-all-link">View All</a>
+                        </div>
+                        <div class="store-dropdown-list">
+                            <a href="#" class="store-item active">
+                                <div class="store-item-info">
+                                    <div class="store-item-name">Downtown Store</div>
+                                    <div class="store-item-location">New York, NY</div>
+                                </div>
+                                <span class="store-status online">ONLINE</span>
+                            </a>
+                            <a href="#" class="store-item">
+                                <div class="store-item-info">
+                                    <div class="store-item-name">Mall Location</div>
+                                    <div class="store-item-location">Los Angeles, CA</div>
+                                </div>
+                                <span class="store-status online">ONLINE</span>
+                            </a>
+                            <a href="#" class="store-item">
+                                <div class="store-item-info">
+                                    <div class="store-item-name">Airport Shop</div>
+                                    <div class="store-item-location">Chicago, IL</div>
+                                </div>
+                                <span class="store-status warning">LOW TRAFFIC</span>
+                            </a>
+                            <a href="#" class="store-item">
+                                <div class="store-item-info">
+                                    <div class="store-item-name">Suburb Store</div>
+                                    <div class="store-item-location">Houston, TX</div>
+                                </div>
+                                <span class="store-status offline">OFFLINE</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <a href="schedule-report.html" class="btn btn-secondary">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zM4 7h12v2a1 1 0 11-2 0v2a1 1 0 11-2 0V9H8v2a1 1 0 11-2 0V9a1 1 0 11-2 0v2H4V7z" clip-rule="evenodd"/>
+                    </svg>
+                    Schedule Report
+                </a>
+                
+                <a href="create-report.html" class="btn btn-primary">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+                    </svg>
+                    Create Report
+                </a>
+                
+                <div class="user-profile" onclick="toggleUserMenu(event)">
+                    <div class="user-avatar">JD</div>
+                    <div class="user-info">
+                        <span class="user-name">John Doe</span>
+                        <span class="user-role">Administrator</span>
+                    </div>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="profile.html" class="dropdown-item">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                            </svg>
+                            My Profile
+                        </a>
+                        <a href="settings.html" class="dropdown-item">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                            </svg>
+                            Settings
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="logout.html" class="dropdown-item">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path>
+                            </svg>
+                            Sign Out
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="sites.html" class="nav-link">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                            </svg>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="analytics.html" class="nav-link">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span>Analytics</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="reports.html" class="nav-link active">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm2-3a1 1 0 011 1v5a1 1 0 11-2 0v-5a1 1 0 011-1zm4-1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Reports</span>
+                        </a>
+                    </li>
+                    <li class="nav-divider"></li>
+                    <li class="nav-item">
+                        <a href="settings.html" class="nav-link">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Sidebar Bottom -->
+            <div class="sidebar-bottom">
+                <!-- Sidebar Controls -->
+                <div class="sidebar-controls">
+                    <div class="control-item">
+                        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+                            <svg class="theme-icon-dark" width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                            </svg>
+                            <svg class="theme-icon-light" width="20" height="20" fill="currentColor" viewBox="0 0 20 20" style="display:none;">
+                                <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="control-item">
+                        <select class="language-selector" onchange="changeLanguage(this.value)">
+                            <option value="en">EN</option>
+                            <option value="es">ES</option>
+                            <option value="fr">FR</option>
+                            <option value="pt">PT</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="sidebar-footer">
+                    <div class="sidebar-footer-content" style="text-align: center;">
+                        <div class="powered-by" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.5rem; font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">
+                            <span class="powered-text">Powered by</span>
+                            <span class="powered-logo" style="font-weight: 600; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">blipee</span>
+                        </div>
+                        <div class="version-info" style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; font-size: 0.625rem; color: rgba(255, 255, 255, 0.4);">
+                            <span>v2.1.0</span>
+                            <span>•</span>
+                            <span>Build 4512</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collapse Button -->
+            <button class="collapse-btn" onclick="toggleSidebar()">
+                <svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                </svg>
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Breadcrumb -->
+            <nav class="breadcrumb" style="margin-bottom: 2rem;">
+                <a href="sites.html" class="breadcrumb-item">All Stores</a>
+                <span class="breadcrumb-separator">/</span>
+                <a href="#" class="breadcrumb-item">Downtown Store</a>
+                <span class="breadcrumb-separator">/</span>
+                <span class="breadcrumb-item active">Reports</span>
+            </nav>
+
+            <!-- Page Header -->
+            <div style="margin-bottom: 2rem;">
+                <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; color: white;">Reports</h1>
+                <p style="color: rgba(255, 255, 255, 0.6); font-size: 1rem;">Generate and schedule comprehensive reports for your retail operations.</p>
+            </div>
+
+            <!-- Filter Tabs -->
+            <nav class="filter-tabs" role="tablist" aria-label="Report filters">
+                <a href="#" class="filter-tab active" role="tab" aria-selected="true" onclick="filterReports('all', event)">All Reports</a>
+                <a href="#" class="filter-tab" role="tab" aria-selected="false" onclick="filterReports('performance', event)">Performance</a>
+                <a href="#" class="filter-tab" role="tab" aria-selected="false" onclick="filterReports('financial', event)">Financial</a>
+                <a href="#" class="filter-tab" role="tab" aria-selected="false" onclick="filterReports('inventory', event)">Inventory</a>
+                <a href="#" class="filter-tab" role="tab" aria-selected="false" onclick="filterReports('custom', event)">Custom</a>
+            </nav>
+
+            <!-- Report Templates -->
+            <section aria-labelledby="report-templates-heading">
+                <h2 id="report-templates-heading" style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: white;">Report Templates</h2>
+                <div class="reports-grid" role="list">
+                    <div class="report-card" tabindex="0" role="listitem" onclick="generateReport('daily-summary')">
+                        <div class="report-icon" aria-hidden="true">
+                            <svg width="24" height="24" fill="white" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zM4 8h12v8H4V8z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <h3 class="report-title">Daily Summary</h3>
+                        <p class="report-description">Comprehensive overview of daily store performance including traffic, sales, and conversions.</p>
+                        <div class="report-meta">
+                            <span>PDF/Excel</span>
+                            <span aria-hidden="true">•</span>
+                            <span>Auto-generated daily</span>
+                        </div>
+                    </div>
+
+                    <div class="report-card" tabindex="0" role="listitem" onclick="generateReport('weekly-analytics')">
+                        <div class="report-icon" style="background: var(--gradient-blue);" aria-hidden="true">
+                            <svg width="24" height="24" fill="white" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <h3 class="report-title">Weekly Analytics</h3>
+                        <p class="report-description">Detailed weekly analysis with trends, patterns, and actionable insights.</p>
+                        <div class="report-meta">
+                            <span>PDF/Excel</span>
+                            <span aria-hidden="true">•</span>
+                            <span>Every Monday</span>
+                        </div>
+                    </div>
+
+                    <div class="report-card" tabindex="0" role="listitem" onclick="generateReport('monthly-revenue')">
+                        <div class="report-icon" style="background: var(--gradient-green);" aria-hidden="true">
+                            <svg width="24" height="24" fill="white" viewBox="0 0 20 20">
+                                <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"></path>
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <h3 class="report-title">Monthly Revenue</h3>
+                        <p class="report-description">Complete financial performance report with revenue breakdown by store and category.</p>
+                        <div class="report-meta">
+                            <span>PDF/Excel</span>
+                            <span aria-hidden="true">•</span>
+                            <span>1st of each month</span>
+                        </div>
+                    </div>
+
+                    <div class="report-card" tabindex="0" role="listitem" onclick="generateReport('inventory-status')">
+                        <div class="report-icon" style="background: var(--gradient-purple);" aria-hidden="true">
+                            <svg width="24" height="24" fill="white" viewBox="0 0 20 20">
+                                <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z"></path>
+                                <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z"></path>
+                                <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="report-title">Inventory Status</h3>
+                        <p class="report-description">Current inventory levels, stock movements, and reorder recommendations.</p>
+                        <div class="report-meta">
+                            <span>PDF/Excel</span>
+                            <span aria-hidden="true">•</span>
+                            <span>On-demand</span>
+                        </div>
+                    </div>
+
+                    <div class="report-card" tabindex="0" role="listitem" onclick="generateReport('customer-insights')">
+                        <div class="report-icon" style="background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);" aria-hidden="true">
+                            <svg width="24" height="24" fill="white" viewBox="0 0 20 20">
+                                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="report-title">Customer Insights</h3>
+                        <p class="report-description">Behavioral analysis, demographics, and customer journey insights.</p>
+                        <div class="report-meta">
+                            <span>PDF/PowerPoint</span>
+                            <span aria-hidden="true">•</span>
+                            <span>Monthly</span>
+                        </div>
+                    </div>
+
+                    <div class="report-card" tabindex="0" role="listitem" onclick="openCustomReport()">
+                        <div class="report-icon" style="background: rgba(255, 255, 255, 0.1); border: 2px dashed rgba(255, 255, 255, 0.3);" aria-hidden="true">
+                            <svg width="24" height="24" fill="white" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <h3 class="report-title">Custom Report</h3>
+                        <p class="report-description">Create your own report with custom metrics, filters, and visualizations.</p>
+                        <div class="report-meta">
+                            <span>Multiple formats</span>
+                            <span aria-hidden="true">•</span>
+                            <span>Flexible schedule</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Reports -->
+            <section style="margin-top: 2rem;" aria-labelledby="recent-reports-heading">
+                <h2 id="recent-reports-heading" style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: white;">Recent Reports</h2>
+                <div class="recent-reports">
+                    <table class="table" role="table" aria-label="Recent reports">
+                        <thead>
+                            <tr role="row">
+                                <th role="columnheader" scope="col">Report Name</th>
+                                <th role="columnheader" scope="col">Type</th>
+                                <th role="columnheader" scope="col">Generated</th>
+                                <th role="columnheader" scope="col">Status</th>
+                                <th role="columnheader" scope="col" class="hide-mobile">Size</th>
+                                <th role="columnheader" scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr role="row">
+                                <td role="cell"><strong>Daily Summary - Nov 17</strong></td>
+                                <td role="cell">Performance</td>
+                                <td role="cell">Today, 6:00 AM</td>
+                                <td role="cell"><span class="status-badge status-completed" role="status">Completed</span></td>
+                                <td role="cell" class="hide-mobile">2.4 MB</td>
+                                <td role="cell">
+                                    <button class="btn-icon" title="Download report" aria-label="Download Daily Summary - Nov 17">
+                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </button>
+                                    <button class="btn-icon" title="Share report" aria-label="Share Daily Summary - Nov 17">
+                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                            <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path>
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr role="row">
+                                <td role="cell"><strong>Weekly Analytics - Week 46</strong></td>
+                                <td role="cell">Analytics</td>
+                                <td role="cell">Nov 13, 9:00 AM</td>
+                                <td role="cell"><span class="status-badge status-completed" role="status">Completed</span></td>
+                                <td role="cell" class="hide-mobile">5.1 MB</td>
+                                <td role="cell">
+                                    <button class="btn-icon" title="Download report" aria-label="Download Weekly Analytics - Week 46">
+                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </button>
+                                    <button class="btn-icon" title="Share report" aria-label="Share Weekly Analytics - Week 46">
+                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                            <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path>
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr role="row">
+                                <td role="cell"><strong>Monthly Revenue - October</strong></td>
+                                <td role="cell">Financial</td>
+                                <td role="cell">Nov 1, 12:00 AM</td>
+                                <td role="cell"><span class="status-badge status-completed" role="status">Completed</span></td>
+                                <td role="cell" class="hide-mobile">8.3 MB</td>
+                                <td role="cell">
+                                    <button class="btn-icon" title="Download report" aria-label="Download Monthly Revenue - October">
+                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </button>
+                                    <button class="btn-icon" title="Share report" aria-label="Share Monthly Revenue - October">
+                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                            <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path>
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr role="row">
+                                <td role="cell"><strong>Q3 Performance Report</strong></td>
+                                <td role="cell">Custom</td>
+                                <td role="cell">Processing...</td>
+                                <td role="cell"><span class="status-badge status-processing" role="status" aria-live="polite">Processing</span></td>
+                                <td role="cell" class="hide-mobile">-</td>
+                                <td role="cell">
+                                    <button class="btn-icon" disabled aria-label="Download not available - report processing">
+                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr role="row">
+                                <td role="cell"><strong>Daily Summary - Nov 18</strong></td>
+                                <td role="cell">Performance</td>
+                                <td role="cell">Scheduled</td>
+                                <td role="cell"><span class="status-badge status-scheduled" role="status">Scheduled</span></td>
+                                <td role="cell" class="hide-mobile">-</td>
+                                <td role="cell">
+                                    <button class="btn-icon" title="Edit schedule" aria-label="Edit schedule for Daily Summary - Nov 18">
+                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // User dropdown functionality
+        function toggleUserMenu(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('userDropdown');
+            const userProfile = event.target.closest('.user-profile');
+            
+            if (!userProfile && dropdown.classList.contains('active')) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // Sidebar toggle
+        function toggleSidebar() {
+            const layout = document.querySelector('.dashboard-layout');
+            layout.classList.toggle('sidebar-collapsed');
+            
+            const collapseBtn = document.querySelector('.collapse-btn');
+            const icon = collapseBtn.querySelector('svg');
+            
+            if (layout.classList.contains('sidebar-collapsed')) {
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Theme toggle functionality
+        function toggleTheme() {
+            const isDark = document.body.classList.toggle('light-theme');
+            document.querySelector('.theme-icon-dark').style.display = isDark ? 'none' : 'block';
+            document.querySelector('.theme-icon-light').style.display = isDark ? 'block' : 'none';
+        }
+
+        // Language change functionality
+        function changeLanguage(lang) {
+            console.log('Language changed to:', lang);
+        }
+
+        // Store dropdown functionality
+        function toggleStoreDropdown() {
+            const dropdown = document.getElementById('storeDropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Close store dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const storeDropdown = document.getElementById('storeDropdown');
+            const storeBtn = document.querySelector('.store-dropdown-btn');
+            
+            if (!storeBtn.contains(event.target) && !storeDropdown.contains(event.target)) {
+                storeDropdown.classList.remove('active');
+            }
+        });
+
+        // Generate report
+        function generateReport(reportType) {
+            alert(`Generating ${reportType.replace('-', ' ')} report...`);
+        }
+
+        // Open custom report builder
+        function openCustomReport() {
+            alert('Custom report builder would open here');
+        }
+
+        // Filter reports
+        function filterReports(filter, event) {
+            event.preventDefault();
+            
+            // Update tab states
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+                tab.setAttribute('aria-selected', 'false');
+            });
+            event.target.classList.add('active');
+            event.target.setAttribute('aria-selected', 'true');
+            
+            console.log(`Filtering by ${filter} reports`);
+        }
+    </script>
+</body>
+</html>

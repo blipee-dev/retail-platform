@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="My Profile - blipee OS Enterprise Retail Intelligence Platform">
+    <title>My Profile - blipee OS</title>
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="common-styles.css">
+    
+    <!-- Page specific styles -->
+    <style>
+        /* Profile Header */
+        .profile-header {
+            background: var(--gradient-primary);
+            padding: var(--space-2xl) 0;
+            margin-bottom: var(--space-2xl);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -25%;
+            width: 50%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transform: rotate(45deg);
+        }
+        
+        .profile-header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: var(--space-xl);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl);
+        }
+        
+        .profile-avatar-large {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
+        }
+        
+        .profile-info h1 {
+            font-size: var(--font-3xl);
+            font-weight: 700;
+            margin-bottom: var(--space-sm);
+            color: var(--white);
+        }
+        
+        .profile-info p {
+            font-size: var(--font-lg);
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .profile-meta {
+            display: flex;
+            gap: var(--space-lg);
+            font-size: var(--font-sm);
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: var(--space-md);
+        }
+        
+        /* Profile Content */
+        .profile-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl);
+        }
+        
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: var(--space-xl);
+            margin-bottom: var(--space-2xl);
+        }
+        
+        /* Profile Sidebar */
+        .profile-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
+        }
+        
+        .sidebar-section h3 {
+            font-size: var(--font-sm);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-md);
+        }
+        
+        .quick-stats {
+            display: grid;
+            gap: var(--space-md);
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-md);
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .stat-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .stat-label {
+            font-size: var(--font-sm);
+            color: var(--text-secondary);
+        }
+        
+        .stat-value {
+            font-size: var(--font-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        /* Profile Forms */
+        .profile-main {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xl);
+        }
+        
+        .profile-section {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: var(--space-xl);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .section-header h2 {
+            font-size: var(--font-xl);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-lg);
+        }
+        
+        .avatar-upload {
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .avatar-preview {
+            position: relative;
+        }
+        
+        .avatar-preview img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .avatar-upload-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-primary);
+            border: 2px solid var(--darker);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .avatar-upload-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .avatar-upload-btn svg {
+            width: 16px;
+            height: 16px;
+            color: white;
+        }
+        
+        .upload-input {
+            display: none;
+        }
+        
+        /* Activity Timeline */
+        .activity-timeline {
+            margin-top: var(--space-lg);
+        }
+        
+        .timeline-item {
+            display: flex;
+            gap: var(--space-md);
+            padding-bottom: var(--space-lg);
+            position: relative;
+        }
+        
+        .timeline-item:not(:last-child)::before {
+            content: '';
+            position: absolute;
+            left: 19px;
+            top: 40px;
+            bottom: 0;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .timeline-marker {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .timeline-marker svg {
+            width: 20px;
+            height: 20px;
+            color: var(--text-secondary);
+        }
+        
+        .timeline-content {
+            flex: 1;
+        }
+        
+        .timeline-content h4 {
+            font-size: var(--font-sm);
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
+            color: var(--text-primary);
+        }
+        
+        .timeline-content p {
+            font-size: var(--font-sm);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .timeline-time {
+            font-size: var(--font-xs);
+            color: var(--text-muted);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-sidebar {
+                order: 2;
+            }
+            
+            .profile-main {
+                order: 1;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .profile-header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-meta {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                gap: var(--space-md);
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip to main content link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- Main layout container -->
+    <div class="dashboard-layout">
+        <!-- Header -->
+        <header class="header" role="banner">
+            <div class="header-left">
+                <!-- Mobile navigation toggle -->
+                <button class="mobile-nav-toggle" 
+                        onclick="toggleMobileNav()" 
+                        aria-label="Toggle navigation menu"
+                        aria-expanded="false"
+                        aria-controls="sidebar-nav">
+                    <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+                
+                <!-- Desktop sidebar toggle -->
+                <button class="sidebar-toggle" 
+                        onclick="toggleSidebar()"
+                        aria-label="Toggle sidebar"
+                        aria-expanded="true">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+                
+                <!-- Logo -->
+                <a href="dashboard.html" class="header-logo" aria-label="blipee homepage">
+                    blipee
+                </a>
+            </div>
+            
+            <div class="header-actions">
+                <!-- User profile dropdown -->
+                <div class="user-profile" 
+                     role="button"
+                     tabindex="0"
+                     onclick="toggleUserMenu(event)"
+                     onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleUserMenu(event)}"
+                     aria-label="User menu"
+                     aria-expanded="false"
+                     aria-haspopup="true">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='16' fill='url(%23gradient)'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.35em' fill='white' font-family='Arial' font-size='14' font-weight='600'%3EJD%3C/text%3E%3Cdefs%3E%3ClinearGradient id='gradient' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%238B5CF6'/%3E%3Cstop offset='100%25' stop-color='%230EA5E9'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E" 
+                         alt="John Doe" 
+                         class="user-avatar">
+                    <div class="user-info">
+                        <span class="user-name">John Doe</span>
+                        <span class="user-role">Administrator</span>
+                    </div>
+                    <nav class="user-dropdown" 
+                         id="userDropdown" 
+                         role="menu"
+                         aria-label="User menu">
+                        <a href="profile.html" class="dropdown-item" role="menuitem" tabindex="-1" aria-current="page">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span>My Profile</span>
+                        </a>
+                        <a href="settings.html" class="dropdown-item" role="menuitem" tabindex="-1">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span>Settings</span>
+                        </a>
+                        <div class="dropdown-divider" role="separator"></div>
+                        <a href="logout.html" class="dropdown-item" role="menuitem" tabindex="-1">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span>Sign Out</span>
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Mobile overlay -->
+        <div class="mobile-overlay" onclick="closeMobileNav()" aria-hidden="true"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar-nav" role="navigation" aria-label="Main navigation">
+            <nav>
+                <h2 class="sr-only">Main Navigation</h2>
+                <ul class="nav-menu" role="list">
+                    <li class="nav-item" role="none">
+                        <a href="sites.html" class="nav-link" role="menuitem">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                            </svg>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="dashboard.html" class="nav-link" role="menuitem">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="analytics.html" class="nav-link" role="menuitem">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span>Analytics</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="reports.html" class="nav-link" role="menuitem">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm2-3a1 1 0 011 1v5a1 1 0 11-2 0v-5a1 1 0 011-1zm4-1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Reports</span>
+                        </a>
+                    </li>
+                    
+                    <li class="nav-divider" role="separator" aria-orientation="horizontal"></li>
+                    
+                    <li class="nav-item">
+                        <a href="settings.html" class="nav-link">
+                            <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Sidebar Bottom -->
+            <div class="sidebar-bottom">
+                <!-- Sidebar Controls -->
+                <div class="sidebar-controls" role="group" aria-label="Theme and language settings">
+                    <div class="control-item">
+                        <button class="theme-toggle" 
+                                onclick="toggleTheme()" 
+                                aria-label="Toggle theme. Currently dark theme"
+                                aria-pressed="false">
+                            <svg class="theme-icon-dark" width="20" height="20" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                            </svg>
+                            <svg class="theme-icon-light" width="20" height="20" fill="currentColor" viewBox="0 0 20 20" style="display:none;" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="control-item">
+                        <label for="language-selector" class="sr-only">Select language</label>
+                        <select id="language-selector" 
+                                class="language-selector" 
+                                onchange="changeLanguage(this.value)"
+                                aria-label="Language selection">
+                            <option value="en" selected>EN</option>
+                            <option value="es">ES</option>
+                            <option value="fr">FR</option>
+                            <option value="pt">PT</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <footer class="sidebar-footer" role="contentinfo">
+                    <div class="sidebar-footer-content">
+                        <div class="powered-by">
+                            <span class="powered-text">Powered by</span>
+                            <span class="powered-logo">blipee</span>
+                        </div>
+                        <div class="version-info">
+                            <span>v2.1.0</span>
+                            <span aria-hidden="true">•</span>
+                            <span>Build 4512</span>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+
+            <!-- Collapse Button -->
+            <button class="collapse-btn" 
+                    onclick="toggleSidebar()"
+                    aria-label="Collapse sidebar"
+                    aria-expanded="true">
+                <svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                </svg>
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="main-content" role="main">
+            <!-- Profile Header with gradient background -->
+            <div class="profile-header">
+                <div class="profile-header-content">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='60' fill='url(%23gradient)'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.35em' fill='white' font-family='Arial' font-size='48' font-weight='600'%3EJD%3C/text%3E%3Cdefs%3E%3ClinearGradient id='gradient' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%238B5CF6'/%3E%3Cstop offset='100%25' stop-color='%230EA5E9'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E" 
+                         alt="John Doe" 
+                         class="profile-avatar-large">
+                    <div class="profile-info">
+                        <h1>John Doe</h1>
+                        <p>Administrator • Enterprise Account</p>
+                        <div class="profile-meta">
+                            <span>📍 New York, NY</span>
+                            <span>📧 john.doe@company.com</span>
+                            <span>📅 Joined March 2022</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Content -->
+            <div class="profile-content">
+                <div class="profile-grid">
+                    <!-- Sidebar -->
+                    <aside class="profile-sidebar">
+                        <!-- Quick Stats -->
+                        <div class="card sidebar-section">
+                            <h3>Quick Stats</h3>
+                            <div class="quick-stats">
+                                <div class="stat-item">
+                                    <span class="stat-label">Stores Managed</span>
+                                    <span class="stat-value">12</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Team Members</span>
+                                    <span class="stat-value">48</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Reports Generated</span>
+                                    <span class="stat-value">256</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Active Since</span>
+                                    <span class="stat-value">2 Years</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div class="card sidebar-section">
+                            <h3>Recent Activity</h3>
+                            <div class="activity-timeline">
+                                <div class="timeline-item">
+                                    <div class="timeline-marker">
+                                        <svg fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                                            <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 1 1 0 000 2H6a2 2 0 00-2 2v6a2 2 0 002 2h2a1 1 0 100 2H6a4 4 0 01-4-4V5a4 4 0 014-4h8a4 4 0 014 4v8a4 4 0 01-4 4h-2a1 1 0 110-2h2a2 2 0 002-2V5a2 2 0 00-2-2h-2a1 1 0 110-2h2a4 4 0 014 4v8a4 4 0 01-4 4H6a4 4 0 01-4-4V5z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <h4>Updated store settings</h4>
+                                        <p>Downtown Store configuration changed</p>
+                                        <span class="timeline-time">2 hours ago</span>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-marker">
+                                        <svg fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                            <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <h4>Added team member</h4>
+                                        <p>Sarah Johnson joined as Store Manager</p>
+                                        <span class="timeline-time">Yesterday</span>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-marker">
+                                        <svg fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm2-3a1 1 0 011 1v5a1 1 0 11-2 0v-5a1 1 0 011-1zm4-1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <h4>Generated report</h4>
+                                        <p>Monthly performance analysis completed</p>
+                                        <span class="timeline-time">3 days ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <!-- Main Content -->
+                    <div class="profile-main">
+                        <!-- Personal Information -->
+                        <section class="profile-section">
+                            <div class="section-header">
+                                <h2>Personal Information</h2>
+                                <button class="btn btn-secondary" onclick="toggleEdit('personal')">
+                                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+                                    </svg>
+                                    <span>Edit</span>
+                                </button>
+                            </div>
+                            
+                            <form id="personal-form">
+                                <div class="avatar-upload">
+                                    <div class="avatar-preview">
+                                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='50' fill='url(%23gradient)'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.35em' fill='white' font-family='Arial' font-size='40' font-weight='600'%3EJD%3C/text%3E%3Cdefs%3E%3ClinearGradient id='gradient' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%238B5CF6'/%3E%3Cstop offset='100%25' stop-color='%230EA5E9'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E" 
+                                             alt="Profile picture">
+                                        <label for="avatar-upload" class="avatar-upload-btn" aria-label="Change profile picture">
+                                            <svg fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+                                            </svg>
+                                        </label>
+                                        <input type="file" id="avatar-upload" class="upload-input" accept="image/*" aria-label="Upload new profile picture">
+                                    </div>
+                                    <div>
+                                        <h3 style="font-size: var(--font-lg); font-weight: 600; margin-bottom: var(--space-xs);">Profile Picture</h3>
+                                        <p style="font-size: var(--font-sm); color: var(--text-secondary);">JPG, GIF or PNG. Max size of 5MB</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="first-name" class="form-label">First Name</label>
+                                        <input type="text" id="first-name" class="form-input" value="John" disabled>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="last-name" class="form-label">Last Name</label>
+                                        <input type="text" id="last-name" class="form-input" value="Doe" disabled>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email" class="form-label">Email Address</label>
+                                        <input type="email" id="email" class="form-input" value="john.doe@company.com" disabled>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="phone" class="form-label">Phone Number</label>
+                                        <input type="tel" id="phone" class="form-input" value="+1 (555) 123-4567" disabled>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="location" class="form-label">Location</label>
+                                        <input type="text" id="location" class="form-input" value="New York, NY" disabled>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="role" class="form-label">Role</label>
+                                        <input type="text" id="role" class="form-input" value="Administrator" disabled>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="bio" class="form-label">Bio</label>
+                                    <textarea id="bio" class="form-textarea" rows="3" disabled>Experienced retail operations manager with over 10 years in the industry. Passionate about leveraging technology to improve store performance and customer experience.</textarea>
+                                </div>
+                            </form>
+                        </section>
+
+                        <!-- Security Settings -->
+                        <section class="profile-section">
+                            <div class="section-header">
+                                <h2>Security Settings</h2>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="card" style="grid-column: 1 / -1;">
+                                    <h3 style="font-size: var(--font-lg); font-weight: 600; margin-bottom: var(--space-md);">Change Password</h3>
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="current-password" class="form-label">Current Password</label>
+                                            <input type="password" id="current-password" class="form-input" aria-required="true">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="new-password" class="form-label">New Password</label>
+                                            <input type="password" id="new-password" class="form-input" aria-required="true">
+                                            <p class="form-help">Must be at least 8 characters with uppercase, lowercase, and numbers</p>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="confirm-password" class="form-label">Confirm New Password</label>
+                                            <input type="password" id="confirm-password" class="form-input" aria-required="true">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span>Update Password</span>
+                                        </button>
+                                    </form>
+                                </div>
+                                
+                                <div class="card" style="grid-column: 1 / -1;">
+                                    <h3 style="font-size: var(--font-lg); font-weight: 600; margin-bottom: var(--space-md);">Two-Factor Authentication</h3>
+                                    <p style="color: var(--text-secondary); margin-bottom: var(--space-lg);">Add an extra layer of security to your account by enabling two-factor authentication.</p>
+                                    <button class="btn btn-secondary">
+                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>Enable 2FA</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Live region for screen reader announcements -->
+    <div aria-live="polite" aria-atomic="true" class="sr-only"></div>
+    <div aria-live="assertive" aria-atomic="true" class="sr-only"></div>
+
+    <!-- Scripts -->
+    <script src="common-scripts-accessible.js"></script>
+    <script>
+
+        // Toggle edit mode for forms
+        function toggleEdit(section) {
+            const form = document.getElementById(section + '-form');
+            const inputs = form.querySelectorAll('input, textarea');
+            const isDisabled = inputs[0].disabled;
+            
+            inputs.forEach(input => {
+                input.disabled = !isDisabled;
+            });
+            
+            if (isDisabled) {
+                a11y.announce('Edit mode enabled for ' + section + ' information');
+            } else {
+                a11y.announce('Edit mode disabled for ' + section + ' information');
+            }
+        }
+        
+        // Handle avatar upload
+        document.getElementById('avatar-upload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    showNotification('File size must be less than 5MB', 'error');
+                    return;
+                }
+                
+                // In a real app, this would upload the file
+                showNotification('Profile picture updated successfully', 'success');
+            }
+        });
+        
+        // Handle form submissions
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // In a real app, this would save the data
+                showNotification('Changes saved successfully', 'success');
+            });
+        });
+    </script>
+</body>
+</html>

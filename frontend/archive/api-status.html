@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Status - blipee OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Gradient System */
+            --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #0EA5E9 100%);
+            --gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            --gradient-blue: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-green: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            --gradient-mesh: radial-gradient(at 40% 20%, hsla(280,100%,74%,0.3) 0px, transparent 50%),
+                            radial-gradient(at 80% 0%, hsla(189,100%,56%,0.2) 0px, transparent 50%),
+                            radial-gradient(at 0% 50%, hsla(355,100%,93%,0.2) 0px, transparent 50%);
+            
+            /* Colors */
+            --purple: #8B5CF6;
+            --blue: #0EA5E9;
+            --green: #10B981;
+            --yellow: #F59E0B;
+            --red: #EF4444;
+            --dark: #0F172A;
+            --darker: #020617;
+            --white: #FFFFFF;
+            
+            /* Glassmorphism */
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--darker);
+            color: var(--white);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+        }
+
+        /* Background */
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: var(--darker);
+            overflow: hidden;
+        }
+
+        .bg-gradient-mesh {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: var(--gradient-mesh);
+            opacity: 0.3;
+            animation: meshAnimation 30s ease infinite;
+        }
+
+        @keyframes meshAnimation {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-20px, -20px) rotate(120deg); }
+            66% { transform: translate(20px, -10px) rotate(240deg); }
+        }
+
+        /* Navigation */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1.5rem 2rem;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 400;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--white);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: var(--white);
+            box-shadow: 0 4px 15px 0 rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px 0 rgba(139, 92, 246, 0.4);
+        }
+
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .page-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* API Overview */
+        .api-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .overview-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .overview-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .overview-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .overview-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Endpoints */
+        .endpoints {
+            margin-bottom: 4rem;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        .endpoints-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .endpoint-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+        }
+
+        .endpoint-card:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .endpoint-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .endpoint-info {
+            flex: 1;
+        }
+
+        .endpoint-method {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .endpoint-method.get {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--green);
+        }
+
+        .endpoint-method.post {
+            background: rgba(14, 165, 233, 0.2);
+            color: var(--blue);
+        }
+
+        .endpoint-method.put {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--yellow);
+        }
+
+        .endpoint-method.delete {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--red);
+        }
+
+        .endpoint-path {
+            font-family: 'Monaco', 'Menlo', monospace;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .endpoint-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.875rem;
+        }
+
+        .endpoint-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .endpoint-status.operational {
+            color: var(--green);
+        }
+
+        .endpoint-status.degraded {
+            color: var(--yellow);
+        }
+
+        .endpoint-status.down {
+            color: var(--red);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-dot.operational {
+            background: var(--green);
+            box-shadow: 0 0 5px rgba(16, 185, 129, 0.5);
+        }
+
+        .status-dot.degraded {
+            background: var(--yellow);
+            box-shadow: 0 0 5px rgba(245, 158, 11, 0.5);
+        }
+
+        .status-dot.down {
+            background: var(--red);
+            box-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
+        }
+
+        .endpoint-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--green);
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Rate Limits */
+        .rate-limits {
+            margin-bottom: 4rem;
+            animation: fadeInUp 1.2s ease 0.6s both;
+        }
+
+        .rate-limits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .rate-limit-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+        }
+
+        .rate-limit-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--purple);
+        }
+
+        .rate-limit-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .rate-limit-table th,
+        .rate-limit-table td {
+            padding: 0.75rem 0;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .rate-limit-table th {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .rate-limit-table td {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.875rem;
+        }
+
+        /* Documentation Links */
+        .docs-links {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            text-align: center;
+            animation: fadeInUp 1.4s ease 0.8s both;
+        }
+
+        .docs-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .docs-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+        }
+
+        .docs-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--white);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+            }
+
+            .api-overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .docs-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-container">
+        <div class="bg-gradient-mesh"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="ai-landing.html" class="logo">blipee OS</a>
+            <div class="nav-links">
+                <a href="ai-landing.html" class="nav-link">Home</a>
+                <a href="integrations.html" class="nav-link">Integrations</a>
+                <a href="pricing.html" class="nav-link">Pricing</a>
+                <a href="docs.html" class="nav-link">Docs</a>
+                <a href="signin.html" class="nav-link">Sign In</a>
+                <a href="signup.html" class="btn btn-primary">Start Free Trial</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header">
+            <h1 class="page-title">API Status</h1>
+            <p class="page-subtitle">
+                Real-time performance metrics and status for all blipee OS API endpoints
+            </p>
+        </div>
+
+        <!-- API Overview -->
+        <div class="api-overview">
+            <div class="overview-card">
+                <div class="overview-value">99.8%</div>
+                <div class="overview-label">Overall Uptime</div>
+            </div>
+            <div class="overview-card">
+                <div class="overview-value">85ms</div>
+                <div class="overview-label">Avg Response Time</div>
+            </div>
+            <div class="overview-card">
+                <div class="overview-value">2.3M</div>
+                <div class="overview-label">Requests/Hour</div>
+            </div>
+            <div class="overview-card">
+                <div class="overview-value">12</div>
+                <div class="overview-label">Active Endpoints</div>
+            </div>
+        </div>
+
+        <!-- API Endpoints -->
+        <div class="endpoints">
+            <h2 class="section-title">API Endpoints</h2>
+            <div class="endpoints-grid">
+                <!-- Data Ingestion -->
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <div class="endpoint-info">
+                            <span class="endpoint-method post">POST</span>
+                            <div class="endpoint-path">/v1/data/sales</div>
+                            <div class="endpoint-description">Submit sales transaction data</div>
+                        </div>
+                        <div class="endpoint-status operational">
+                            <div class="status-dot operational"></div>
+                            Operational
+                        </div>
+                    </div>
+                    <div class="endpoint-metrics">
+                        <div class="metric">
+                            <div class="metric-value">99.9%</div>
+                            <div class="metric-label">Uptime</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">120ms</div>
+                            <div class="metric-label">Response</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">425K</div>
+                            <div class="metric-label">Requests/Day</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <div class="endpoint-info">
+                            <span class="endpoint-method post">POST</span>
+                            <div class="endpoint-path">/v1/data/traffic</div>
+                            <div class="endpoint-description">Submit people counting data</div>
+                        </div>
+                        <div class="endpoint-status operational">
+                            <div class="status-dot operational"></div>
+                            Operational
+                        </div>
+                    </div>
+                    <div class="endpoint-metrics">
+                        <div class="metric">
+                            <div class="metric-value">99.7%</div>
+                            <div class="metric-label">Uptime</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">95ms</div>
+                            <div class="metric-label">Response</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">1.2M</div>
+                            <div class="metric-label">Requests/Day</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <div class="endpoint-info">
+                            <span class="endpoint-method post">POST</span>
+                            <div class="endpoint-path">/v1/data/heatmap</div>
+                            <div class="endpoint-description">Submit heatmap analytics data</div>
+                        </div>
+                        <div class="endpoint-status operational">
+                            <div class="status-dot operational"></div>
+                            Operational
+                        </div>
+                    </div>
+                    <div class="endpoint-metrics">
+                        <div class="metric">
+                            <div class="metric-value">99.8%</div>
+                            <div class="metric-label">Uptime</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">110ms</div>
+                            <div class="metric-label">Response</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">850K</div>
+                            <div class="metric-label">Requests/Day</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Retrieval -->
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <div class="endpoint-info">
+                            <span class="endpoint-method get">GET</span>
+                            <div class="endpoint-path">/v1/analytics/overview</div>
+                            <div class="endpoint-description">Get store performance overview</div>
+                        </div>
+                        <div class="endpoint-status operational">
+                            <div class="status-dot operational"></div>
+                            Operational
+                        </div>
+                    </div>
+                    <div class="endpoint-metrics">
+                        <div class="metric">
+                            <div class="metric-value">99.9%</div>
+                            <div class="metric-label">Uptime</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">75ms</div>
+                            <div class="metric-label">Response</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">320K</div>
+                            <div class="metric-label">Requests/Day</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <div class="endpoint-info">
+                            <span class="endpoint-method get">GET</span>
+                            <div class="endpoint-path">/v1/analytics/traffic</div>
+                            <div class="endpoint-description">Get traffic analytics data</div>
+                        </div>
+                        <div class="endpoint-status operational">
+                            <div class="status-dot operational"></div>
+                            Operational
+                        </div>
+                    </div>
+                    <div class="endpoint-metrics">
+                        <div class="metric">
+                            <div class="metric-value">99.8%</div>
+                            <div class="metric-label">Uptime</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">85ms</div>
+                            <div class="metric-label">Response</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">180K</div>
+                            <div class="metric-label">Requests/Day</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <div class="endpoint-info">
+                            <span class="endpoint-method get">GET</span>
+                            <div class="endpoint-path">/v1/reports/export</div>
+                            <div class="endpoint-description">Export analytics reports</div>
+                        </div>
+                        <div class="endpoint-status operational">
+                            <div class="status-dot operational"></div>
+                            Operational
+                        </div>
+                    </div>
+                    <div class="endpoint-metrics">
+                        <div class="metric">
+                            <div class="metric-value">99.6%</div>
+                            <div class="metric-label">Uptime</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">1.2s</div>
+                            <div class="metric-label">Response</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">15K</div>
+                            <div class="metric-label">Requests/Day</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Authentication -->
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <div class="endpoint-info">
+                            <span class="endpoint-method post">POST</span>
+                            <div class="endpoint-path">/v1/auth/token</div>
+                            <div class="endpoint-description">Get API access token</div>
+                        </div>
+                        <div class="endpoint-status operational">
+                            <div class="status-dot operational"></div>
+                            Operational
+                        </div>
+                    </div>
+                    <div class="endpoint-metrics">
+                        <div class="metric">
+                            <div class="metric-value">99.9%</div>
+                            <div class="metric-label">Uptime</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">45ms</div>
+                            <div class="metric-label">Response</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">95K</div>
+                            <div class="metric-label">Requests/Day</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GraphQL -->
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <div class="endpoint-info">
+                            <span class="endpoint-method post">POST</span>
+                            <div class="endpoint-path">/graphql</div>
+                            <div class="endpoint-description">GraphQL endpoint for flexible queries</div>
+                        </div>
+                        <div class="endpoint-status operational">
+                            <div class="status-dot operational"></div>
+                            Operational
+                        </div>
+                    </div>
+                    <div class="endpoint-metrics">
+                        <div class="metric">
+                            <div class="metric-value">99.7%</div>
+                            <div class="metric-label">Uptime</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">125ms</div>
+                            <div class="metric-label">Response</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">280K</div>
+                            <div class="metric-label">Requests/Day</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rate Limits -->
+        <div class="rate-limits">
+            <h2 class="section-title">Rate Limits</h2>
+            <div class="rate-limits-grid">
+                <div class="rate-limit-card">
+                    <h3 class="rate-limit-title">Free Plan</h3>
+                    <table class="rate-limit-table">
+                        <thead>
+                            <tr>
+                                <th>Endpoint Type</th>
+                                <th>Rate Limit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Data Ingestion</td>
+                                <td>1,000/hour</td>
+                            </tr>
+                            <tr>
+                                <td>Analytics</td>
+                                <td>500/hour</td>
+                            </tr>
+                            <tr>
+                                <td>Reports</td>
+                                <td>50/hour</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="rate-limit-card">
+                    <h3 class="rate-limit-title">Professional Plan</h3>
+                    <table class="rate-limit-table">
+                        <thead>
+                            <tr>
+                                <th>Endpoint Type</th>
+                                <th>Rate Limit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Data Ingestion</td>
+                                <td>10,000/hour</td>
+                            </tr>
+                            <tr>
+                                <td>Analytics</td>
+                                <td>5,000/hour</td>
+                            </tr>
+                            <tr>
+                                <td>Reports</td>
+                                <td>500/hour</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="rate-limit-card">
+                    <h3 class="rate-limit-title">Enterprise Plan</h3>
+                    <table class="rate-limit-table">
+                        <thead>
+                            <tr>
+                                <th>Endpoint Type</th>
+                                <th>Rate Limit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Data Ingestion</td>
+                                <td>100,000/hour</td>
+                            </tr>
+                            <tr>
+                                <td>Analytics</td>
+                                <td>50,000/hour</td>
+                            </tr>
+                            <tr>
+                                <td>Reports</td>
+                                <td>5,000/hour</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documentation Links -->
+        <div class="docs-links">
+            <h2 class="docs-title">API Documentation</h2>
+            <p class="docs-subtitle">
+                Comprehensive guides and references for integrating with the blipee OS API
+            </p>
+            <div class="docs-buttons">
+                <a href="docs.html" class="btn btn-primary">API Reference</a>
+                <a href="docs.html" class="btn btn-secondary">Getting Started</a>
+                <a href="docs.html" class="btn btn-secondary">SDKs & Libraries</a>
+                <a href="docs.html" class="btn btn-secondary">Code Examples</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="text-align: center; padding: 3rem 2rem; background: rgba(2, 6, 23, 0.8); border-top: 1px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.6); margin-top: 4rem;">
+        <p>
+            &copy; 2024 blipee OS. All rights reserved. | 
+            <a href="terms.html" style="color: rgba(255, 255, 255, 0.7); text-decoration: none;">Terms of Service</a> | 
+            <a href="privacy.html" style="color: rgba(255, 255, 255, 0.7); text-decoration: none;">Privacy Policy</a> | 
+            SOC 2 Certified | GDPR Compliant
+        </p>
+    </footer>
+</body>
+</html>

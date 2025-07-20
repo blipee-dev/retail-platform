@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Site - blipee OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #0EA5E9 100%);
+            --gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            --gradient-blue: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-mesh: radial-gradient(at 40% 20%, hsla(280,100%,74%,0.3) 0px, transparent 50%),
+                            radial-gradient(at 80% 0%, hsla(189,100%,56%,0.2) 0px, transparent 50%),
+                            radial-gradient(at 0% 50%, hsla(355,100%,93%,0.2) 0px, transparent 50%);
+            
+            --purple: #8B5CF6;
+            --blue: #0EA5E9;
+            --green: #10B981;
+            --yellow: #F59E0B;
+            --red: #EF4444;
+            --dark: #0F172A;
+            --darker: #020617;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--darker);
+            color: var(--white);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Background */
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: var(--darker);
+            overflow: hidden;
+        }
+
+        .bg-gradient-mesh {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: var(--gradient-mesh);
+            animation: meshAnimation 20s ease infinite;
+        }
+
+        @keyframes meshAnimation {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-20px, -20px) rotate(120deg); }
+            66% { transform: translate(20px, -10px) rotate(240deg); }
+        }
+
+        /* Navigation */
+        .nav {
+            position: relative;
+            z-index: 10;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 400;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.125rem;
+        }
+
+        /* Progress Steps */
+        .progress-container {
+            max-width: 800px;
+            margin: 0 auto 3rem;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: -1;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .step-circle.active {
+            background: var(--gradient-primary);
+            border-color: transparent;
+        }
+
+        .step-circle.completed {
+            background: var(--green);
+            border-color: transparent;
+        }
+
+        .step-label {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+        }
+
+        /* Form Container */
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-card {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--purple);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-select option {
+            background: var(--dark);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-help {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 0.25rem;
+        }
+
+        /* Integration Cards */
+        .integration-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .integration-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .integration-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .integration-card.selected {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: var(--purple);
+        }
+
+        .integration-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 0.75rem;
+            background: var(--gradient-primary);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .integration-name {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .integration-desc {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Action Buttons */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.75rem 1.5rem;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Map Container */
+        .map-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 0.5rem;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-placeholder {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.875rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .integration-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-step .step-label {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-container">
+        <div class="bg-gradient-mesh"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="dashboard.html" class="logo">blipee</a>
+            <div class="nav-actions">
+                <a href="sites.html" class="btn btn-secondary">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                    </svg>
+                    Cancel
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="page-header">
+            <h1>Add New Site</h1>
+            <p>Connect your retail location to blipee's intelligence platform</p>
+        </div>
+
+        <!-- Progress Steps -->
+        <div class="progress-container">
+            <div class="progress-steps">
+                <div class="progress-step">
+                    <div class="step-circle active" id="step1">1</div>
+                    <span class="step-label">Basic Info</span>
+                </div>
+                <div class="progress-step">
+                    <div class="step-circle" id="step2">2</div>
+                    <span class="step-label">Location</span>
+                </div>
+                <div class="progress-step">
+                    <div class="step-circle" id="step3">3</div>
+                    <span class="step-label">Integration</span>
+                </div>
+                <div class="progress-step">
+                    <div class="step-circle" id="step4">4</div>
+                    <span class="step-label">Review</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Container -->
+        <div class="form-container">
+            <div class="form-card">
+                <!-- Step 1: Basic Information -->
+                <div class="form-section active" id="section1">
+                    <h2 class="section-title">Basic Information</h2>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Site Name</label>
+                        <input type="text" class="form-input" placeholder="e.g., Downtown Store">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Site Type</label>
+                        <select class="form-select">
+                            <option>Retail Store</option>
+                            <option>Shopping Mall</option>
+                            <option>Department Store</option>
+                            <option>Supermarket</option>
+                            <option>Warehouse</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Store Size</label>
+                            <select class="form-select">
+                                <option>Small (< 5,000 sq ft)</option>
+                                <option>Medium (5,000 - 20,000 sq ft)</option>
+                                <option>Large (20,000 - 50,000 sq ft)</option>
+                                <option>Extra Large (> 50,000 sq ft)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Operating Hours</label>
+                            <select class="form-select" id="operatingHours" onchange="toggleCustomHours()">
+                                <option value="24/7">24/7</option>
+                                <option value="standard">Standard (9 AM - 9 PM)</option>
+                                <option value="extended">Extended (7 AM - 11 PM)</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="customHoursSection" style="display: none;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Opening Time</label>
+                                <input type="time" class="form-input" id="openingTime" value="09:00">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Closing Time</label>
+                                <input type="time" class="form-input" id="closingTime" value="21:00">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="checkbox" id="sameAllDays" checked style="width: 16px; height: 16px;">
+                                <span style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.8);">Same hours for all days</span>
+                            </label>
+                        </div>
+                        <div id="weeklySchedule" style="display: none;">
+                            <div class="form-help" style="margin-bottom: 0.75rem;">Set different hours for each day</div>
+                            <div style="display: grid; gap: 0.5rem;">
+                                <div style="display: grid; grid-template-columns: 100px 1fr 1fr auto; gap: 0.5rem; align-items: center;">
+                                    <span style="font-size: 0.875rem;">Monday</span>
+                                    <input type="time" class="form-input" value="09:00" style="padding: 0.5rem;">
+                                    <input type="time" class="form-input" value="21:00" style="padding: 0.5rem;">
+                                    <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem;">
+                                        <input type="checkbox" style="width: 14px; height: 14px;">
+                                        <span>Closed</span>
+                                    </label>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 100px 1fr 1fr auto; gap: 0.5rem; align-items: center;">
+                                    <span style="font-size: 0.875rem;">Tuesday</span>
+                                    <input type="time" class="form-input" value="09:00" style="padding: 0.5rem;">
+                                    <input type="time" class="form-input" value="21:00" style="padding: 0.5rem;">
+                                    <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem;">
+                                        <input type="checkbox" style="width: 14px; height: 14px;">
+                                        <span>Closed</span>
+                                    </label>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 100px 1fr 1fr auto; gap: 0.5rem; align-items: center;">
+                                    <span style="font-size: 0.875rem;">Wednesday</span>
+                                    <input type="time" class="form-input" value="09:00" style="padding: 0.5rem;">
+                                    <input type="time" class="form-input" value="21:00" style="padding: 0.5rem;">
+                                    <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem;">
+                                        <input type="checkbox" style="width: 14px; height: 14px;">
+                                        <span>Closed</span>
+                                    </label>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 100px 1fr 1fr auto; gap: 0.5rem; align-items: center;">
+                                    <span style="font-size: 0.875rem;">Thursday</span>
+                                    <input type="time" class="form-input" value="09:00" style="padding: 0.5rem;">
+                                    <input type="time" class="form-input" value="21:00" style="padding: 0.5rem;">
+                                    <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem;">
+                                        <input type="checkbox" style="width: 14px; height: 14px;">
+                                        <span>Closed</span>
+                                    </label>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 100px 1fr 1fr auto; gap: 0.5rem; align-items: center;">
+                                    <span style="font-size: 0.875rem;">Friday</span>
+                                    <input type="time" class="form-input" value="09:00" style="padding: 0.5rem;">
+                                    <input type="time" class="form-input" value="21:00" style="padding: 0.5rem;">
+                                    <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem;">
+                                        <input type="checkbox" style="width: 14px; height: 14px;">
+                                        <span>Closed</span>
+                                    </label>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 100px 1fr 1fr auto; gap: 0.5rem; align-items: center;">
+                                    <span style="font-size: 0.875rem;">Saturday</span>
+                                    <input type="time" class="form-input" value="10:00" style="padding: 0.5rem;">
+                                    <input type="time" class="form-input" value="22:00" style="padding: 0.5rem;">
+                                    <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem;">
+                                        <input type="checkbox" style="width: 14px; height: 14px;">
+                                        <span>Closed</span>
+                                    </label>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 100px 1fr 1fr auto; gap: 0.5rem; align-items: center;">
+                                    <span style="font-size: 0.875rem;">Sunday</span>
+                                    <input type="time" class="form-input" value="10:00" style="padding: 0.5rem;">
+                                    <input type="time" class="form-input" value="20:00" style="padding: 0.5rem;">
+                                    <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem;">
+                                        <input type="checkbox" style="width: 14px; height: 14px;">
+                                        <span>Closed</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Site Manager</label>
+                        <input type="text" class="form-input" placeholder="Manager's name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Contact Email</label>
+                        <input type="email" class="form-input" placeholder="manager@example.com">
+                    </div>
+                </div>
+
+                <!-- Step 2: Location -->
+                <div class="form-section" id="section2">
+                    <h2 class="section-title">Location Details</h2>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Address</label>
+                        <input type="text" class="form-input" placeholder="Street address">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">City</label>
+                            <input type="text" class="form-input" placeholder="City">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">State/Province</label>
+                            <input type="text" class="form-input" placeholder="State">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">ZIP/Postal Code</label>
+                            <input type="text" class="form-input" placeholder="12345">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Country</label>
+                            <select class="form-select">
+                                <option>United States</option>
+                                <option>Canada</option>
+                                <option>United Kingdom</option>
+                                <option>Australia</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="map-container">
+                        <span class="map-placeholder">Map preview will appear here</span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Timezone</label>
+                        <select class="form-select">
+                            <option>UTC-05:00 Eastern Time</option>
+                            <option>UTC-06:00 Central Time</option>
+                            <option>UTC-07:00 Mountain Time</option>
+                            <option>UTC-08:00 Pacific Time</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 3: Integration -->
+                <div class="form-section" id="section3">
+                    <h2 class="section-title">Choose Integration Method</h2>
+                    
+                    <div class="integration-grid">
+                        <div class="integration-card" onclick="selectIntegration(this)">
+                            <div class="integration-icon">🔌</div>
+                            <div class="integration-name">API Integration</div>
+                            <div class="integration-desc">Connect via REST API</div>
+                        </div>
+                        
+                        <div class="integration-card" onclick="selectIntegration(this)">
+                            <div class="integration-icon">📱</div>
+                            <div class="integration-name">Mobile App</div>
+                            <div class="integration-desc">Use our mobile app</div>
+                        </div>
+                        
+                        <div class="integration-card" onclick="selectIntegration(this)">
+                            <div class="integration-icon">🔧</div>
+                            <div class="integration-name">No-Code Setup</div>
+                            <div class="integration-desc">Simple web interface</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Camera System</label>
+                        <select class="form-select">
+                            <option>Existing CCTV System</option>
+                            <option>IP Cameras</option>
+                            <option>blipee Smart Cameras</option>
+                            <option>Mixed Setup</option>
+                            <option>Need Consultation</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Number of Cameras</label>
+                        <input type="number" class="form-input" placeholder="e.g., 12">
+                        <span class="form-help">Approximate number of cameras to be connected</span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">POS System (Optional)</label>
+                        <select class="form-select">
+                            <option>None</option>
+                            <option>Square</option>
+                            <option>Shopify POS</option>
+                            <option>SAP</option>
+                            <option>Oracle Retail</option>
+                            <option>Custom System</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 4: Review -->
+                <div class="form-section" id="section4">
+                    <h2 class="section-title">Review & Confirm</h2>
+                    
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                        <h3 style="margin-bottom: 1rem; font-size: 1.125rem;">Site Summary</h3>
+                        <div style="display: grid; gap: 0.75rem;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: rgba(255, 255, 255, 0.6);">Site Name:</span>
+                                <span id="review-name">Downtown Store</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: rgba(255, 255, 255, 0.6);">Type:</span>
+                                <span id="review-type">Retail Store</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: rgba(255, 255, 255, 0.6);">Location:</span>
+                                <span id="review-location">New York, NY</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: rgba(255, 255, 255, 0.6);">Integration:</span>
+                                <span id="review-integration">API Integration</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: rgba(255, 255, 255, 0.6);">Cameras:</span>
+                                <span id="review-cameras">12 cameras</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                        <h4 style="color: var(--green); margin-bottom: 0.5rem;">✓ Ready to Connect</h4>
+                        <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7);">
+                            Your site will be added to the blipee platform. Our team will contact you within 24 hours to complete the setup process.
+                        </p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <input type="checkbox" style="width: auto; margin: 0;">
+                            <span style="font-size: 0.875rem;">
+                                I confirm that I have the authority to add this site and agree to blipee's terms of service
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="form-actions">
+                <button class="btn btn-outline" onclick="previousStep()" id="prevBtn" style="display: none;">
+                    Previous
+                </button>
+                <button class="btn btn-primary" onclick="nextStep()" id="nextBtn">
+                    Next Step
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
+
+        function updateProgress() {
+            // Update step circles
+            for (let i = 1; i <= totalSteps; i++) {
+                const circle = document.getElementById(`step${i}`);
+                if (i < currentStep) {
+                    circle.classList.add('completed');
+                    circle.classList.remove('active');
+                    circle.innerHTML = '✓';
+                } else if (i === currentStep) {
+                    circle.classList.add('active');
+                    circle.classList.remove('completed');
+                    circle.innerHTML = i;
+                } else {
+                    circle.classList.remove('active', 'completed');
+                    circle.innerHTML = i;
+                }
+            }
+
+            // Update sections
+            document.querySelectorAll('.form-section').forEach((section, index) => {
+                if (index + 1 === currentStep) {
+                    section.classList.add('active');
+                } else {
+                    section.classList.remove('active');
+                }
+            });
+
+            // Update buttons
+            document.getElementById('prevBtn').style.display = currentStep > 1 ? 'block' : 'none';
+            
+            const nextBtn = document.getElementById('nextBtn');
+            if (currentStep === totalSteps) {
+                nextBtn.innerHTML = 'Complete Setup';
+            } else {
+                nextBtn.innerHTML = 'Next Step';
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateProgress();
+            } else {
+                // Complete setup
+                alert('Site added successfully! Redirecting to dashboard...');
+                window.location.href = 'sites.html';
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateProgress();
+            }
+        }
+
+        function selectIntegration(card) {
+            document.querySelectorAll('.integration-card').forEach(c => {
+                c.classList.remove('selected');
+            });
+            card.classList.add('selected');
+        }
+
+        function toggleCustomHours() {
+            const operatingHours = document.getElementById('operatingHours');
+            const customHoursSection = document.getElementById('customHoursSection');
+            
+            if (operatingHours.value === 'custom') {
+                customHoursSection.style.display = 'block';
+            } else {
+                customHoursSection.style.display = 'none';
+            }
+        }
+
+        // Handle checkbox for same hours all days
+        document.getElementById('sameAllDays').addEventListener('change', function() {
+            const weeklySchedule = document.getElementById('weeklySchedule');
+            
+            if (this.checked) {
+                weeklySchedule.style.display = 'none';
+            } else {
+                weeklySchedule.style.display = 'block';
+            }
+        });
+
+        // Handle closed day checkboxes
+        document.querySelectorAll('#weeklySchedule input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const row = this.closest('div');
+                const timeInputs = row.querySelectorAll('input[type="time"]');
+                
+                if (this.checked) {
+                    timeInputs.forEach(input => {
+                        input.disabled = true;
+                        input.style.opacity = '0.5';
+                    });
+                } else {
+                    timeInputs.forEach(input => {
+                        input.disabled = false;
+                        input.style.opacity = '1';
+                    });
+                }
+            });
+        });
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>

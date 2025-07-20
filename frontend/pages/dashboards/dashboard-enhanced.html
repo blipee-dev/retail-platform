@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Dashboard - blipee OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #0EA5E9 100%);
+            --gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            --gradient-blue: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-green: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            --gradient-ai: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --gradient-orange: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
+            
+            --purple: #8B5CF6;
+            --blue: #0EA5E9;
+            --green: #10B981;
+            --yellow: #F59E0B;
+            --red: #EF4444;
+            --ai-primary: #fa709a;
+            --dark: #0F172A;
+            --darker: #020617;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--darker);
+            color: var(--white);
+            min-height: 100vh;
+        }
+
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            grid-template-rows: 70px 1fr;
+            grid-template-areas: 
+                "header header"
+                "sidebar main";
+            height: 100vh;
+            transition: grid-template-columns 0.3s ease;
+        }
+        
+        .dashboard-layout.sidebar-collapsed {
+            grid-template-columns: 70px 1fr;
+        }
+
+        /* Header */
+        .header {
+            grid-area: header;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 400;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            white-space: nowrap;
+            letter-spacing: -0.02em;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
+        }
+
+        .breadcrumb-separator {
+            opacity: 0.4;
+        }
+
+        .breadcrumb-item {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .breadcrumb-item:hover {
+            color: white;
+        }
+
+        .breadcrumb-item.active {
+            color: white;
+        }
+
+        /* Header Actions */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 2rem;
+            font-size: 0.875rem;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .ai-assistant-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--gradient-ai);
+            border: none;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+
+        .ai-assistant-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(250, 112, 154, 0.4);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            grid-area: sidebar;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 1rem;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-collapsed .sidebar {
+            padding: 2rem 0.5rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+        
+        .nav-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 1rem 1rem 1rem 1rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        
+        .sidebar-collapsed .nav-link {
+            padding: 0.75rem;
+        }
+        
+        .sidebar-collapsed .nav-link span {
+            display: none;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        /* Sidebar Bottom */
+        .sidebar-bottom {
+            margin-top: auto;
+        }
+
+        /* Main Content */
+        .main-content {
+            grid-area: main;
+            padding: 2rem;
+            overflow-y: auto;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.3) 0%, rgba(2, 6, 23, 0.8) 100%);
+        }
+
+        /* Store Header */
+        .store-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+        }
+
+        .store-info h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .store-info p {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .store-stats {
+            display: flex;
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .store-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .store-stat-label {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            opacity: 0.8;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .metric-card:nth-child(1)::before { background: var(--gradient-primary); }
+        .metric-card:nth-child(2)::before { background: var(--gradient-blue); }
+        .metric-card:nth-child(3)::before { background: var(--gradient-green); }
+        .metric-card:nth-child(4)::before { background: var(--gradient-ai); }
+
+        .metric-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .metric-change {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .metric-change.positive {
+            color: var(--green);
+        }
+
+        .metric-change.negative {
+            color: var(--red);
+        }
+
+        /* AI Insights */
+        .ai-insights-section {
+            margin-bottom: 2rem;
+        }
+
+        .ai-insights-card {
+            background: linear-gradient(135deg, rgba(250, 112, 154, 0.1) 0%, rgba(254, 225, 64, 0.1) 100%);
+            border: 1px solid rgba(250, 112, 154, 0.3);
+            border-radius: 1rem;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-insights-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-ai);
+        }
+
+        .ai-insight {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid var(--ai-primary);
+        }
+
+        .ai-insight:last-child {
+            margin-bottom: 0;
+        }
+
+        .ai-insight-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--ai-primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ai-insight-content {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+        }
+
+        .confidence-badge {
+            background: rgba(250, 112, 154, 0.2);
+            color: var(--ai-primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        /* Zone Analytics */
+        .zones-section {
+            margin-bottom: 2rem;
+        }
+
+        .zones-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .zone-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .zone-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: scale(1.02);
+        }
+
+        .zone-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .zone-count {
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.25rem;
+        }
+
+        .zone-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* Recommendations */
+        .recommendations-section {
+            margin-bottom: 2rem;
+        }
+
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .recommendation-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            border-left: 4px solid;
+        }
+
+        .recommendation-card:nth-child(1) { border-left-color: var(--green); }
+        .recommendation-card:nth-child(2) { border-left-color: var(--blue); }
+        .recommendation-card:nth-child(3) { border-left-color: var(--red); }
+
+        .recommendation-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .recommendation-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .recommendation-content {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .recommendation-impact {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--green);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Performance Grid */
+        .performance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .performance-metric {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .performance-metric:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .performance-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: var(--gradient-green);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .performance-label {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+                grid-template-areas: 
+                    "header"
+                    "main";
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .zones-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <a href="#" class="logo">blipee</a>
+                <nav class="breadcrumb">
+                    <a href="#" class="breadcrumb-item">Dashboard</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-item active">Omnia GuimarãesShopping</span>
+                </nav>
+            </div>
+            <div class="header-actions">
+                <div class="live-indicator">
+                    <div class="live-dot"></div>
+                    <span>Live Data</span>
+                </div>
+                <a href="#" class="ai-assistant-btn">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+                    </svg>
+                    AI Assistant
+                </a>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-divider"></li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.51-1.31c-.562-.649-1.413-1.076-2.353-1.253V5z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>Sales</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
+                        </svg>
+                        <span>People Counting</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 01-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 1a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-2 0V6.414l-2.293 2.293a1 1 0 11-1.414-1.414L13.586 5H12zm-9 7a1 1 0 012 0v1.586l2.293-2.293a1 1 0 111.414 1.414L6.414 15H8a1 1 0 010 2H4a1 1 0 01-1-1v-4zm13-1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 010-2h1.586l-2.293-2.293a1 1 0 111.414-1.414L15.586 13H14a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>Zone Analytics</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li class="nav-divider"></li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>AI Insights</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>Predictions</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-bottom">
+                <a href="#" class="nav-link">
+                    <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>Settings</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Store Header -->
+            <div class="store-header">
+                <div class="store-info">
+                    <h1>Omnia GuimarãesShopping</h1>
+                    <p>Real-time Retail Intelligence • AI-Powered Analytics • Live Sensor Data</p>
+                </div>
+                <div class="store-stats">
+                    <div>
+                        <div class="store-stat-value" id="todayRevenue">€9,247</div>
+                        <div class="store-stat-label">Today's Revenue</div>
+                    </div>
+                    <div>
+                        <div class="store-stat-value" id="totalVisitors">5,743</div>
+                        <div class="store-stat-label">Visitors</div>
+                    </div>
+                    <div>
+                        <div class="store-stat-value">14.7%</div>
+                        <div class="store-stat-label">Conversion</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metrics Grid -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Revenue Velocity</div>
+                    <div class="metric-value" id="revenueVelocity">€387</div>
+                    <div class="metric-change positive">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>+23% per hour</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Current Occupancy</div>
+                    <div class="metric-value" id="currentOccupancy">487</div>
+                    <div class="metric-change positive">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>+45 last hour</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Peak Traffic Expected</div>
+                    <div class="metric-value">4-5pm</div>
+                    <div class="metric-change positive">
+                        <span>620+ visitors predicted</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">AI Confidence</div>
+                    <div class="metric-value">96%</div>
+                    <div class="metric-change positive">
+                        <span>Model optimizing</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Insights Section -->
+            <div class="ai-insights-section">
+                <div class="card ai-insights-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+                            </svg>
+                            AI Intelligence Engine
+                        </h3>
+                        <span style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">OpenAI GPT-4 Powered</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="ai-insight">
+                            <div class="ai-insight-title">
+                                🎯 Revenue Optimization Alert
+                                <span class="confidence-badge">94% Confident</span>
+                            </div>
+                            <div class="ai-insight-content">
+                                Peak traffic surge detected (+31% above forecast). Adding 2 associates now could capture additional €1,847 revenue during 3-6pm window.
+                            </div>
+                        </div>
+                        
+                        <div class="ai-insight">
+                            <div class="ai-insight-title">
+                                💎 Product Placement Insight
+                                <span class="confidence-badge">91% Confident</span>
+                            </div>
+                            <div class="ai-insight-content">
+                                Zone 3 engagement up 47%. Moving premium jewelry collection here could boost weekly sales by €3,200 based on traffic patterns.
+                            </div>
+                        </div>
+                        
+                        <div class="ai-insight">
+                            <div class="ai-insight-title">
+                                📈 Predictive Inventory
+                                <span class="confidence-badge">89% Confident</span>
+                            </div>
+                            <div class="ai-insight-content">
+                                Tomorrow's weather (sunny, 26°C) + weekend pattern suggests 73% spike in summer accessories demand. Restock recommended.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            Sales Performance
+                        </h3>
+                        <span style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">Real-time API Data</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="salesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
+                            </svg>
+                            Customer Traffic
+                        </h3>
+                        <span style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">Milesight Sensors</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="trafficChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Zone Analytics -->
+            <div class="zones-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 01-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 1a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-2 0V6.414l-2.293 2.293a1 1 0 11-1.414-1.414L13.586 5H12zm-9 7a1 1 0 012 0v1.586l2.293-2.293a1 1 0 111.414 1.414L6.414 15H8a1 1 0 010 2H4a1 1 0 01-1-1v-4zm13-1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 010-2h1.586l-2.293-2.293a1 1 0 111.414-1.414L15.586 13H14a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                            Zone Performance Intelligence
+                        </h3>
+                        <span style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">Real-time Occupancy Analysis</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="zones-grid">
+                            <div class="zone-card">
+                                <div class="zone-name">Zone 1</div>
+                                <div class="zone-count" id="zone1Count">89</div>
+                                <div class="zone-label">Entrance Area</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 35%;"></div>
+                                </div>
+                            </div>
+                            <div class="zone-card">
+                                <div class="zone-name">Zone 2</div>
+                                <div class="zone-count" id="zone2Count">156</div>
+                                <div class="zone-label">Main Shopping Area</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 62%;"></div>
+                                </div>
+                            </div>
+                            <div class="zone-card">
+                                <div class="zone-name">Zone 3</div>
+                                <div class="zone-count" id="zone3Count">198</div>
+                                <div class="zone-label">Premium Section</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 84%;"></div>
+                                </div>
+                            </div>
+                            <div class="zone-card">
+                                <div class="zone-name">Zone 4</div>
+                                <div class="zone-count" id="zone4Count">44</div>
+                                <div class="zone-label">Checkout Area</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 18%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Metrics -->
+            <div class="card" style="margin-bottom: 2rem;">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                        </svg>
+                        Key Performance Indicators
+                    </h3>
+                    <span style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">Today vs Yesterday</span>
+                </div>
+                <div class="card-body">
+                    <div class="performance-grid">
+                        <div class="performance-metric">
+                            <div class="performance-value">€34.87</div>
+                            <div class="performance-label">Avg Transaction</div>
+                        </div>
+                        <div class="performance-metric">
+                            <div class="performance-value">6.7min</div>
+                            <div class="performance-label">Avg Dwell Time</div>
+                        </div>
+                        <div class="performance-metric">
+                            <div class="performance-value">73%</div>
+                            <div class="performance-label">Return Rate</div>
+                        </div>
+                        <div class="performance-metric">
+                            <div class="performance-value">4.2</div>
+                            <div class="performance-label">Items per Sale</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="recommendations-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+                            </svg>
+                            AI Recommendations
+                        </h3>
+                        <span style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">Intelligent Action Items</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="recommendations-grid">
+                            <div class="recommendation-card">
+                                <div class="recommendation-title">
+                                    👥 Immediate Staffing Alert
+                                </div>
+                                <div class="recommendation-content">
+                                    Peak traffic window starting now. Deploy 2 additional associates to Zones 2-3 for optimal customer service and conversion during the 3-6pm surge.
+                                </div>
+                                <div class="recommendation-impact">+€1,847 Revenue Potential</div>
+                            </div>
+                            
+                            <div class="recommendation-card">
+                                <div class="recommendation-title">
+                                    🎯 Zone Optimization
+                                </div>
+                                <div class="recommendation-content">
+                                    Zone 4 significantly underperforming at 18% utilization. Install premium impulse displays and promotional materials near checkout terminals.
+                                </div>
+                                <div class="recommendation-impact">+€540 Weekly Revenue</div>
+                            </div>
+                            
+                            <div class="recommendation-card">
+                                <div class="recommendation-title">
+                                    📦 Inventory Alert
+                                </div>
+                                <div class="recommendation-content">
+                                    Silver jewelry collection trending heavily. Critical restock needed before tomorrow's predicted 73% demand spike. Priority: premium earrings and necklaces.
+                                </div>
+                                <div class="recommendation-impact">Prevent €3,200 Lost Sales</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Initialize charts
+        document.addEventListener('DOMContentLoaded', function() {
+            initSalesChart();
+            initTrafficChart();
+            startRealTimeUpdates();
+        });
+
+        function initSalesChart() {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['9AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM', '5PM', '6PM'],
+                    datasets: [{
+                        label: 'Revenue',
+                        data: [347, 521, 789, 1156, 1523, 1889, 2347, 2891, 2456, 1934],
+                        borderColor: '#8B5CF6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#8B5CF6',
+                        pointBorderColor: 'white',
+                        pointBorderWidth: 2,
+                        pointRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: 'rgba(255, 255, 255, 0.8)' }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { 
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                callback: value => '€' + value
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function initTrafficChart() {
+            const ctx = document.getElementById('trafficChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['9AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM', '5PM', '6PM'],
+                    datasets: [{
+                        label: 'Visitors',
+                        data: [89, 134, 187, 256, 334, 423, 512, 589, 467, 378],
+                        backgroundColor: 'rgba(14, 165, 233, 0.8)',
+                        borderColor: '#0EA5E9',
+                        borderWidth: 2,
+                        borderRadius: 6,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: 'rgba(255, 255, 255, 0.8)' }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: 'rgba(255, 255, 255, 0.8)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function startRealTimeUpdates() {
+            setInterval(() => {
+                // Update occupancy
+                const occupancyEl = document.getElementById('currentOccupancy');
+                const current = parseInt(occupancyEl.textContent);
+                const change = Math.floor(Math.random() * 10) - 5;
+                const newValue = Math.max(400, Math.min(600, current + change));
+                
+                occupancyEl.style.transform = 'scale(1.05)';
+                occupancyEl.style.color = '#0EA5E9';
+                
+                setTimeout(() => {
+                    occupancyEl.textContent = newValue;
+                    occupancyEl.style.transform = 'scale(1)';
+                    occupancyEl.style.color = '';
+                }, 200);
+
+                // Update revenue velocity
+                const revenueEl = document.getElementById('revenueVelocity');
+                const currentRevenue = parseInt(revenueEl.textContent.replace('€', ''));
+                const increase = Math.floor(Math.random() * 15) + 5;
+                const newRevenue = currentRevenue + increase;
+                
+                revenueEl.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    revenueEl.textContent = '€' + newRevenue;
+                    revenueEl.style.transform = 'scale(1)';
+                }, 200);
+
+                // Update zone counts
+                ['zone1Count', 'zone2Count', 'zone3Count', 'zone4Count'].forEach(id => {
+                    const el = document.getElementById(id);
+                    const current = parseInt(el.textContent);
+                    const change = Math.floor(Math.random() * 6) - 3;
+                    const newValue = Math.max(0, current + change);
+                    
+                    el.style.transform = 'scale(1.05)';
+                    setTimeout(() => {
+                        el.textContent = newValue;
+                        el.style.transform = 'scale(1)';
+                    }, 200);
+                });
+
+                // Update daily totals
+                const todayRevenueEl = document.getElementById('todayRevenue');
+                const totalVisitorsEl = document.getElementById('totalVisitors');
+                
+                const currentDailyRevenue = parseInt(todayRevenueEl.textContent.replace(/[€,]/g, ''));
+                const dailyIncrease = Math.floor(Math.random() * 25) + 10;
+                todayRevenueEl.textContent = '€' + (currentDailyRevenue + dailyIncrease).toLocaleString();
+                
+                const currentVisitors = parseInt(totalVisitorsEl.textContent.replace(',', ''));
+                const visitorIncrease = Math.floor(Math.random() * 8) + 3;
+                totalVisitorsEl.textContent = (currentVisitors + visitorIncrease).toLocaleString();
+                
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
