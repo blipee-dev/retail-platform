@@ -85,6 +85,14 @@ export default function AdminDashboardPage() {
               </Link>
 
               <Link
+                href="/dashboard/sensors"
+                className="flex flex-col items-center justify-center p-4 bg-gray-800/50 hover:bg-gray-800 rounded-lg transition-colors"
+              >
+                <div className="text-2xl mb-2">📡</div>
+                <span className="text-sm text-gray-300">Manage Sensors</span>
+              </Link>
+
+              <Link
                 href="/dashboard/admin/analytics"
                 className="flex flex-col items-center justify-center p-4 bg-gray-800/50 hover:bg-gray-800 rounded-lg transition-colors"
               >

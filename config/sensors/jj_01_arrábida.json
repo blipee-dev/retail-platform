@@ -1,0 +1,21 @@
+{
+  "sensor_id": "jj_01_arrabida",
+  "sensor_name": "J&J - 01 - ArrábidaShopping",
+  "connection": {
+    "host": "176.79.62.167",
+    "port": 2102,
+    "auth": {
+      "type": "basic",
+      "username": "admin",
+      "password": "grnl.2024"
+    }
+  },
+  "data_mapping": {
+    "supports_regional_counting": true,
+    "supports_real_time_status": true,
+    "line_count": 4,
+    "region_count": 4
+  },
+  "location": "J&J Store - ArrábidaShopping",
+  "timezone": "Europe/Lisbon"
+}
