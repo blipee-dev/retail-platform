@@ -1,0 +1,78 @@
+{
+  "header": {
+    "title": "Documentaci\u00f3n",
+    "subtitle": "Todo lo que necesitas para dominar blipee OS y transformar tu inteligencia minorista"
+  },
+  "search": {
+    "placeholder": "Buscar documentaci\u00f3n..."
+  },
+  "categories": {
+    "gettingStarted": {
+      "title": "Primeros Pasos",
+      "description": "Gu\u00edas de inicio r\u00e1pido para ponerte en marcha con blipee OS en minutos",
+      "links": {
+        "quickStart": "Gu\u00eda de Inicio R\u00e1pido",
+        "setup": "Configuraci\u00f3n Inicial",
+        "firstAnalytics": "Primeros An\u00e1lisis"
+      }
+    },
+    "api": {
+      "title": "Referencia API",
+      "description": "Documentaci\u00f3n completa de la API para desarrolladores que construyen con blipee OS",
+      "links": {
+        "rest": "API REST",
+        "graphql": "API GraphQL",
+        "webhooks": "Webhooks"
+      }
+    },
+    "integrations": {
+      "title": "Integraciones",
+      "description": "Conecta blipee OS con tus sistemas y herramientas minoristas existentes",
+      "links": {
+        "pos": "Sistemas POS",
+        "crm": "Integraci\u00f3n CRM",
+        "analytics": "Herramientas de An\u00e1lisis"
+      }
+    },
+    "userGuides": {
+      "title": "Gu\u00edas de Usuario",
+      "description": "Gu\u00edas completas para usar cada caracter\u00edstica de blipee OS",
+      "links": {
+        "dashboard": "Gu\u00eda del Panel",
+        "analytics": "Gu\u00eda de An\u00e1lisis",
+        "reports": "Gu\u00eda de Informes"
+      }
+    },
+    "tutorials": {
+      "title": "Tutoriales en Video",
+      "description": "Gu\u00edas en video paso a paso para aprendizaje visual",
+      "links": {
+        "overview": "Visi\u00f3n General de la Plataforma",
+        "bestPractices": "Mejores Pr\u00e1cticas",
+        "caseStudies": "Casos de Estudio"
+      }
+    },
+    "support": {
+      "title": "Soporte y FAQ",
+      "description": "Obt\u00e9n ayuda con preguntas comunes y contacta a nuestro equipo de soporte",
+      "links": {
+        "faq": "FAQ",
+        "troubleshooting": "Soluci\u00f3n de Problemas",
+        "contact": "Contactar Soporte"
+      }
+    }
+  },
+  "popularTopics": {
+    "title": "Temas Populares",
+    "topics": [
+      "Configurar zonas",
+      "Entender mapas de calor",
+      "Autenticaci\u00f3n API",
+      "Exportar datos",
+      "Permisos de usuario",
+      "Alertas personalizadas",
+      "Aplicaci\u00f3n m\u00f3vil",
+      "Retenci\u00f3n de datos"
+    ]
+  }
+}

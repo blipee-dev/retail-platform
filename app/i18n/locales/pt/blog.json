@@ -1,0 +1,78 @@
+{
+  "header": {
+    "title": "Blog blipee OS",
+    "subtitle": "Insights, atualiza\u00e7\u00f5es e lideran\u00e7a de pensamento da fronteira da intelig\u00eancia para retalho"
+  },
+  "categories": {
+    "all": "Todos os Posts",
+    "productUpdates": "Atualiza\u00e7\u00f5es de Produto",
+    "industryInsights": "Insights da Ind\u00fastria",
+    "caseStudies": "Casos de Estudo",
+    "engineering": "Engenharia",
+    "companyNews": "Not\u00edcias da Empresa"
+  },
+  "featured": {
+    "category": "Insights da Ind\u00fastria",
+    "date": "15 de dezembro de 2024",
+    "readTime": "8 min de leitura",
+    "title": "O Futuro do Retalho: Como a IA est\u00e1 a Transformar as Lojas F\u00edsicas",
+    "excerpt": "\u00c0 medida que o com\u00e9rcio eletr\u00f3nico continua a evoluir, as lojas de retalho f\u00edsicas est\u00e3o a utilizar intelig\u00eancia artificial para criar experi\u00eancias de compra personalizadas e baseadas em dados. Descubra as tecnologias e estrat\u00e9gias que est\u00e3o a remodelar o panorama do retalho e a gerar insights de clientes sem precedentes.",
+    "readMore": "Ler Artigo Completo"
+  },
+  "posts": [
+    {
+      "category": "Atualiza\u00e7\u00f5es de Produto",
+      "date": "12 de dez de 2024",
+      "title": "Apresentamos An\u00e1lise de Zonas em Tempo Real",
+      "excerpt": "O nosso \u00faltimo lan\u00e7amento traz an\u00e1lise de zonas em tempo real para ajudar os retalhistas a compreender os padr\u00f5es de comportamento dos clientes em diferentes \u00e1reas da sua loja.",
+      "author": "Sarah Martinez",
+      "role": "CTO"
+    },
+    {
+      "category": "Casos de Estudo",
+      "date": "10 de dez de 2024",
+      "title": "Como a RetailMax Aumentou as Vendas em 23% com o blipee OS",
+      "excerpt": "Saiba como a RetailMax usou a nossa contagem de pessoas e an\u00e1lise de mapas de calor para otimizar o layout da loja e melhorar as taxas de convers\u00e3o de clientes.",
+      "author": "Alex Chen",
+      "role": "CEO"
+    },
+    {
+      "category": "Engenharia",
+      "date": "8 de dez de 2024",
+      "title": "Construindo Vis\u00e3o Computacional Escal\u00e1vel com 50M+ Eventos Di\u00e1rios",
+      "excerpt": "Um mergulho profundo nos nossos desafios de engenharia e solu\u00e7\u00f5es para processar milh\u00f5es de eventos de an\u00e1lise em tempo real com 99,9% de tempo de atividade.",
+      "author": "David Kim",
+      "role": "Chefe de IA"
+    },
+    {
+      "category": "Insights da Ind\u00fastria",
+      "date": "5 de dez de 2024",
+      "title": "Tend\u00eancias de An\u00e1lise de Retalho 2024: O Que os Dados Mostram",
+      "excerpt": "Analisando dados agregados de mais de 500 parceiros de retalho para descobrir as maiores tend\u00eancias que moldam a ind\u00fastria este ano.",
+      "author": "Emily Johnson",
+      "role": "Chefe de Design"
+    },
+    {
+      "category": "Not\u00edcias da Empresa",
+      "date": "3 de dez de 2024",
+      "title": "blipee OS Angaria $50M na S\u00e9rie B para Acelerar o Desenvolvimento de IA",
+      "excerpt": "Estamos entusiasmados em anunciar a nossa ronda de financiamento S\u00e9rie B, que nos ajudar\u00e1 a expandir as nossas capacidades de IA e alcance global.",
+      "author": "Alex Chen",
+      "role": "CEO"
+    },
+    {
+      "category": "Atualiza\u00e7\u00f5es de Produto",
+      "date": "30 de nov de 2024",
+      "title": "Controlos de Privacidade Melhorados e Atualiza\u00e7\u00f5es de Conformidade RGPD",
+      "excerpt": "Novas funcionalidades de privacidade e ferramentas de conformidade para ajudar os retalhistas a cumprir os mais altos padr\u00f5es de prote\u00e7\u00e3o de dados e privacidade do cliente.",
+      "author": "Sarah Martinez",
+      "role": "CTO"
+    }
+  ],
+  "newsletter": {
+    "title": "Mantenha-se Atualizado",
+    "subtitle": "Receba os \u00faltimos insights, atualiza\u00e7\u00f5es de produtos e tend\u00eancias da ind\u00fastria diretamente na sua caixa de entrada",
+    "placeholder": "Insira o seu e-mail",
+    "button": "Subscrever"
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "header": {
+    "title": "Documentation",
+    "subtitle": "Everything you need to master blipee OS and transform your retail intelligence"
+  },
+  "search": {
+    "placeholder": "Search documentation..."
+  },
+  "categories": {
+    "gettingStarted": {
+      "title": "Getting Started",
+      "description": "Quick start guides to get you up and running with blipee OS in minutes",
+      "links": {
+        "quickStart": "Quick Start Guide",
+        "setup": "Initial Setup",
+        "firstAnalytics": "First Analytics"
+      }
+    },
+    "api": {
+      "title": "API Reference",
+      "description": "Complete API documentation for developers building on blipee OS",
+      "links": {
+        "rest": "REST API",
+        "graphql": "GraphQL API",
+        "webhooks": "Webhooks"
+      }
+    },
+    "integrations": {
+      "title": "Integrations",
+      "description": "Connect blipee OS with your existing retail systems and tools",
+      "links": {
+        "pos": "POS Systems",
+        "crm": "CRM Integration",
+        "analytics": "Analytics Tools"
+      }
+    },
+    "userGuides": {
+      "title": "User Guides",
+      "description": "Comprehensive guides for using every feature of blipee OS",
+      "links": {
+        "dashboard": "Dashboard Guide",
+        "analytics": "Analytics Guide",
+        "reports": "Reports Guide"
+      }
+    },
+    "tutorials": {
+      "title": "Video Tutorials",
+      "description": "Step-by-step video guides for visual learners",
+      "links": {
+        "overview": "Platform Overview",
+        "bestPractices": "Best Practices",
+        "caseStudies": "Case Studies"
+      }
+    },
+    "support": {
+      "title": "Support & FAQ",
+      "description": "Get help with common questions and contact our support team",
+      "links": {
+        "faq": "FAQ",
+        "troubleshooting": "Troubleshooting",
+        "contact": "Contact Support"
+      }
+    }
+  },
+  "popularTopics": {
+    "title": "Popular Topics",
+    "topics": [
+      "Setting up zones",
+      "Understanding heatmaps",
+      "API authentication",
+      "Export data",
+      "User permissions",
+      "Custom alerts",
+      "Mobile app",
+      "Data retention"
+    ]
+  }
+}

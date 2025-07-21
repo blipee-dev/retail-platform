@@ -1,0 +1,78 @@
+{
+  "header": {
+    "title": "Blog de blipee OS",
+    "subtitle": "Perspectivas, actualizaciones y liderazgo de pensamiento desde la frontera de la inteligencia para retail"
+  },
+  "categories": {
+    "all": "Todos los Posts",
+    "productUpdates": "Actualizaciones de Producto",
+    "industryInsights": "Perspectivas de la Industria",
+    "caseStudies": "Casos de Estudio",
+    "engineering": "Ingenier\u00eda",
+    "companyNews": "Noticias de la Empresa"
+  },
+  "featured": {
+    "category": "Perspectivas de la Industria",
+    "date": "15 de diciembre de 2024",
+    "readTime": "8 min de lectura",
+    "title": "El Futuro del Retail: C\u00f3mo la IA est\u00e1 Transformando las Tiendas F\u00edsicas",
+    "excerpt": "A medida que el comercio electr\u00f3nico contin\u00faa evolucionando, las tiendas f\u00edsicas est\u00e1n aprovechando la inteligencia artificial para crear experiencias de compra personalizadas y basadas en datos. Descubre las tecnolog\u00edas y estrategias que est\u00e1n remodelando el panorama minorista e impulsando insights de clientes sin precedentes.",
+    "readMore": "Leer Art\u00edculo Completo"
+  },
+  "posts": [
+    {
+      "category": "Actualizaciones de Producto",
+      "date": "12 de dic de 2024",
+      "title": "Presentamos An\u00e1lisis de Zonas en Tiempo Real",
+      "excerpt": "Nuestra \u00faltima versi\u00f3n trae an\u00e1lisis de zonas en tiempo real para ayudar a los minoristas a comprender los patrones de comportamiento del cliente en diferentes \u00e1reas de su tienda.",
+      "author": "Sarah Martinez",
+      "role": "CTO"
+    },
+    {
+      "category": "Casos de Estudio",
+      "date": "10 de dic de 2024",
+      "title": "C\u00f3mo RetailMax Aument\u00f3 las Ventas un 23% con blipee OS",
+      "excerpt": "Aprende c\u00f3mo RetailMax us\u00f3 nuestro conteo de personas y an\u00e1lisis de mapas de calor para optimizar el dise\u00f1o de su tienda y mejorar las tasas de conversi\u00f3n de clientes.",
+      "author": "Alex Chen",
+      "role": "CEO"
+    },
+    {
+      "category": "Ingenier\u00eda",
+      "date": "8 de dic de 2024",
+      "title": "Construyendo Visi\u00f3n por Computadora Escalable con 50M+ Eventos Diarios",
+      "excerpt": "Una inmersi\u00f3n profunda en nuestros desaf\u00edos de ingenier\u00eda y soluciones para procesar millones de eventos de an\u00e1lisis en tiempo real con 99.9% de tiempo de actividad.",
+      "author": "David Kim",
+      "role": "Jefe de IA"
+    },
+    {
+      "category": "Perspectivas de la Industria",
+      "date": "5 de dic de 2024",
+      "title": "Tendencias de An\u00e1lisis Minorista 2024: Lo Que Muestran los Datos",
+      "excerpt": "Analizando datos agregados de m\u00e1s de 500 socios minoristas para descubrir las mayores tendencias que dan forma a la industria este a\u00f1o.",
+      "author": "Emily Johnson",
+      "role": "Jefa de Dise\u00f1o"
+    },
+    {
+      "category": "Noticias de la Empresa",
+      "date": "3 de dic de 2024",
+      "title": "blipee OS Recauda $50M en Serie B para Acelerar el Desarrollo de IA",
+      "excerpt": "Estamos emocionados de anunciar nuestra ronda de financiamiento Serie B, que nos ayudar\u00e1 a expandir nuestras capacidades de IA y alcance global.",
+      "author": "Alex Chen",
+      "role": "CEO"
+    },
+    {
+      "category": "Actualizaciones de Producto",
+      "date": "30 de nov de 2024",
+      "title": "Controles de Privacidad Mejorados y Actualizaciones de Cumplimiento GDPR",
+      "excerpt": "Nuevas funciones de privacidad y herramientas de cumplimiento para ayudar a los minoristas a cumplir con los m\u00e1s altos est\u00e1ndares de protecci\u00f3n de datos y privacidad del cliente.",
+      "author": "Sarah Martinez",
+      "role": "CTO"
+    }
+  ],
+  "newsletter": {
+    "title": "Mant\u00e9nte Actualizado",
+    "subtitle": "Recibe las \u00faltimas perspectivas, actualizaciones de productos y tendencias de la industria en tu bandeja de entrada",
+    "placeholder": "Ingresa tu correo electr\u00f3nico",
+    "button": "Suscribirse"
+  }
+}

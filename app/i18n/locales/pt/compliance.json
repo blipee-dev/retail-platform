@@ -1,0 +1,118 @@
+{
+  "header": {
+    "title": "Segurança e Conformidade",
+    "subtitle": "Segurança de nível empresarial e certificações de conformidade para proteger os seus dados de retalho"
+  },
+  "overview": {
+    "cards": {
+      "dataProtection": {
+        "title": "Proteção de Dados",
+        "description": "Encriptação ponta a ponta e práticas seguras de tratamento de dados"
+      },
+      "enterpriseSecurity": {
+        "title": "Segurança Empresarial",
+        "description": "Infraestrutura de segurança e monitorização de nível bancário"
+      },
+      "globalStandards": {
+        "title": "Padrões Globais",
+        "description": "Em conformidade com regulamentos internacionais de privacidade"
+      },
+      "industrySpecific": {
+        "title": "Específico do Setor",
+        "description": "Conformidade adaptada aos requisitos do setor de retalho"
+      }
+    }
+  },
+  "frameworks": {
+    "title": "Estruturas de Conformidade",
+    "items": {
+      "soc2": {
+        "name": "SOC 2 Tipo II",
+        "status": "Certificado",
+        "description": "Auditorias independentes anuais verificam os nossos controlos de segurança, disponibilidade, integridade de processamento, confidencialidade e privacidade",
+        "details": [
+          "Controlos de segurança auditados anualmente",
+          "Monitorização e melhoria contínuas",
+          "Processos validados por terceiros",
+          "Avaliações de risco abrangentes"
+        ]
+      },
+      "gdpr": {
+        "name": "Conformidade RGPD",
+        "status": "Em Conformidade",
+        "description": "Conformidade total com os regulamentos europeus de proteção de dados, incluindo direitos dos titulares e privacidade desde a conceção",
+        "details": [
+          "Arquitetura de privacidade desde a conceção",
+          "Gestão dos direitos dos titulares dos dados",
+          "Acordos de processamento de dados",
+          "Revisões regulares de conformidade"
+        ]
+      },
+      "iso27001": {
+        "name": "ISO 27001",
+        "status": "Em Progresso",
+        "description": "A trabalhar para a certificação ISO 27001 para sistemas de gestão de segurança da informação",
+        "details": [
+          "Gestão de segurança da informação",
+          "Abordagem baseada em risco",
+          "Processo de melhoria contínua",
+          "Conclusão prevista para o 2º trimestre de 2024"
+        ]
+      }
+    }
+  },
+  "reports": {
+    "title": "Relatórios de Segurança e Documentação",
+    "cards": {
+      "penetrationTesting": {
+        "title": "Testes de Penetração",
+        "description": "Avaliações de segurança anuais por terceiros",
+        "link": "Solicitar Relatório"
+      },
+      "securityWhitepaper": {
+        "title": "Documento Técnico de Segurança",
+        "description": "Visão detalhada da nossa arquitetura de segurança",
+        "link": "Descarregar"
+      },
+      "privacyPolicy": {
+        "title": "Política de Privacidade",
+        "description": "Como recolhemos, usamos e protegemos os seus dados",
+        "link": "Ver Política"
+      },
+      "dataProcessing": {
+        "title": "Acordo de Processamento de Dados",
+        "description": "Cláusulas contratuais padrão para proteção de dados",
+        "link": "Descarregar APD"
+      }
+    }
+  },
+  "dataHandling": {
+    "title": "Princípios de Tratamento de Dados",
+    "principles": {
+      "encryption": {
+        "title": "Encriptação",
+        "description": "Todos os dados encriptados em repouso e em trânsito usando protocolos padrão da indústria"
+      },
+      "access": {
+        "title": "Controlo de Acesso",
+        "description": "Controlo de acesso baseado em funções com autenticação multifator"
+      },
+      "retention": {
+        "title": "Retenção de Dados",
+        "description": "Políticas automatizadas de retenção de dados alinhadas com requisitos regulamentares"
+      },
+      "sovereignty": {
+        "title": "Soberania de Dados",
+        "description": "Os seus dados permanecem na região escolhida sem transferências transfronteiriças"
+      }
+    }
+  },
+  "contact": {
+    "title": "Equipa de Segurança e Conformidade",
+    "subtitle": "Tem questões sobre as nossas práticas de segurança ou precisa de documentação específica de conformidade?",
+    "buttons": {
+      "contact": "Contactar Equipa de Segurança",
+      "request": "Solicitar Documentação"
+    }
+  }
+}

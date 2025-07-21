@@ -1,0 +1,69 @@
+{
+  "common": {
+    "signOut": "Sair",
+    "loading": "Carregando...",
+    "error": "Ocorreu um erro",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "add": "Adicionar",
+    "search": "Pesquisar",
+    "filter": "Filtrar",
+    "export": "Exportar",
+    "import": "Importar"
+  },
+  "roles": {
+    "tenant_admin": "Administrador",
+    "regional_manager": "Gerente Regional",
+    "store_manager": "Gerente de Loja",
+    "analyst": "Analista",
+    "store_staff": "Equipe da Loja",
+    "viewer": "Visualizador"
+  },
+  "navigation": {
+    "dashboard": "Painel",
+    "stores": "Lojas",
+    "users": "Usuários",
+    "analytics": "Análises",
+    "settings": "Configurações",
+    "reports": "Relatórios",
+    "sensors": "Sensores"
+  },
+  "admin": {
+    "title": "Painel Administrativo",
+    "stats": {
+      "totalStores": "Total de Lojas",
+      "activeStores": "Lojas Ativas",
+      "totalUsers": "Total de Usuários",
+      "recentActivity": "Atividade Recente"
+    },
+    "quickActions": {
+      "title": "Ações Rápidas",
+      "manageUsers": "Gerenciar Usuários",
+      "manageStores": "Gerenciar Lojas",
+      "viewAnalytics": "Ver Análises",
+      "settings": "Configurações"
+    },
+    "stores": {
+      "title": "Suas Lojas",
+      "addStore": "Adicionar Loja",
+      "noStores": "Nenhuma loja ainda",
+      "createFirst": "Crie Sua Primeira Loja",
+      "columns": {
+        "name": "Nome",
+        "code": "Código",
+        "status": "Status",
+        "actions": "Ações"
+      },
+      "status": {
+        "active": "Ativa",
+        "inactive": "Inativa"
+      },
+      "actions": {
+        "manage": "Gerenciar",
+        "view": "Visualizar"
+      }
+    }
+  }
+}

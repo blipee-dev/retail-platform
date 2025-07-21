@@ -1,0 +1,89 @@
+{
+  "app": {
+    "name": "blipee OS",
+    "subtitle": "Plataforma de Inteligencia para Retail"
+  },
+  "nav": {
+    "backToHome": "Volver al Inicio",
+    "signIn": "Iniciar Sesión",
+    "signUp": "Iniciar Prueba Gratuita",
+    "dashboard": "Panel de Control",
+    "home": "Inicio",
+    "integrations": "Integraciones",
+    "pricing": "Precios",
+    "docs": "Documentación",
+    "startFreeTrial": "Iniciar Prueba Gratuita",
+    "features": "Características",
+    "about": "Acerca",
+    "contact": "Contacto",
+    "blog": "Blog"
+  },
+  "auth": {
+    "welcomeTitle": "Bienvenido al",
+    "future": "Futuro",
+    "welcomeSubtitle": "Inicia sesión para acceder a tu panel de inteligencia",
+    "emailLabel": "Dirección de Correo",
+    "emailPlaceholder": "tu@empresa.com",
+    "passwordLabel": "Contraseña",
+    "passwordPlaceholder": "Ingresa tu contraseña",
+    "rememberMe": "Recuérdame",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "signInButton": "Iniciar Sesión",
+    "signingIn": "Iniciando sesión...",
+    "orContinueWith": "O continuar con",
+    "noAccount": "¿No tienes una cuenta?",
+    "startFreeTrial": "Iniciar prueba gratuita",
+    "createAccount": "Crea Tu Cuenta",
+    "startYourFreeTrial": "Comienza tu prueba gratuita de 14 días",
+    "organizationInfo": "Información de la Organización",
+    "organizationName": "Nombre de la Organización",
+    "organizationNamePlaceholder": "Acme Retail S.A.",
+    "organizationUrl": "URL de la Organización",
+    "urlHint": "Solo letras, números y guiones",
+    "personalInfo": "Información Personal",
+    "fullName": "Nombre Completo",
+    "fullNamePlaceholder": "Juan Pérez",
+    "createPassword": "Crea una contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "confirmPasswordPlaceholder": "Vuelve a ingresar tu contraseña",
+    "agreeToTerms": "Acepto los",
+    "termsOfService": "Términos de Servicio",
+    "and": "y",
+    "privacyPolicy": "Política de Privacidad",
+    "createAccountButton": "Crear Cuenta e Iniciar Prueba",
+    "creatingAccount": "Creando cuenta...",
+    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+    "signInHere": "Inicia sesión aquí",
+    "features": {
+      "secure": "Seguridad Empresarial",
+      "analytics": "Análisis en Tiempo Real",
+      "trial": "Prueba Gratuita de 14 Días"
+    },
+    "errors": {
+      "unexpected": "Ocurrió un error inesperado",
+      "invalidCredentials": "Correo o contraseña inválidos",
+      "nameRequired": "El nombre completo es obligatorio",
+      "organizationRequired": "El nombre de la organización es obligatorio",
+      "slugRequired": "La URL de la organización es obligatoria",
+      "passwordMismatch": "Las contraseñas no coinciden",
+      "passwordTooShort": "La contraseña debe tener al menos 6 caracteres",
+      "mustAgreeToTerms": "Debes aceptar los términos y condiciones"
+    }
+  },
+  "features": {
+    "title": "Análisis en Tiempo Real a Tu Alcance",
+    "subtitle": "Monitorea el tráfico peatonal, analiza patrones y toma decisiones basadas en datos con nuestra plataforma de IA.",
+    "analytics": "Análisis y reportes avanzados",
+    "heatmaps": "Mapas de calor e insights en tiempo real",
+    "predictions": "Predicciones y alertas con IA"
+  },
+  "footer": {
+    "copyright": "Todos los derechos reservados.",
+    "certifications": "Certificado SOC 2 | Cumple con GDPR",
+    "links": {
+      "terms": "Términos de Servicio",
+      "privacy": "Política de Privacidad",
+      "aboutUs": "Acerca de Nosotros"
+    }
+  }
+}

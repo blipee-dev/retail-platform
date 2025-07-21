@@ -1,0 +1,821 @@
+'use client'
+
+import { useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { createClient } from '@/app/lib/supabase'
+import { useTranslation } from '@/app/i18n/client'
+
+export default function SignInPage() {
+  const router = useRouter()
+  const supabase = createClient()
+  const { t } = useTranslation('auth')
+  
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [rememberMe, setRememberMe] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null)
+    setLoading(true)
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+
+      if (error) {
+        setError(error.message)
+      } else if (data.user) {
+        router.push('/dashboard')
+      }
+    } catch (err) {
+      console.error('❌ Signin exception:', err)
+      setError(t('signin.errors.unexpected'))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const togglePassword = () => {
+    setShowPassword(!showPassword)
+  }
+
+  return (
+    <>
+      <style jsx global>{`
+        :root {
+          /* Gradient System */
+          --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #0EA5E9 100%);
+          --gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+          --gradient-blue: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+          --gradient-green: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+          --gradient-mesh: radial-gradient(at 40% 20%, hsla(280,100%,74%,0.3) 0px, transparent 50%),
+                          radial-gradient(at 80% 0%, hsla(189,100%,56%,0.2) 0px, transparent 50%),
+                          radial-gradient(at 0% 50%, hsla(355,100%,93%,0.2) 0px, transparent 50%);
+          
+          /* Colors */
+          --purple: #8B5CF6;
+          --blue: #0EA5E9;
+          --pink: #EC4899;
+          --dark: #0F172A;
+          --darker: #020617;
+          --light: #F8FAFC;
+          --white: #FFFFFF;
+          
+          /* Glassmorphism */
+          --glass-bg: rgba(255, 255, 255, 0.05);
+          --glass-border: rgba(255, 255, 255, 0.1);
+          --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        body {
+          font-family: 'Inter', -apple-system, sans-serif;
+          background: var(--darker);
+          color: var(--white);
+          overflow: hidden;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          height: 100vh;
+        }
+
+        /* Animated Background */
+        .bg-container {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 0;
+          background: var(--darker);
+          overflow: hidden;
+        }
+
+        .bg-gradient-mesh {
+          position: absolute;
+          width: 200%;
+          height: 200%;
+          top: -50%;
+          left: -50%;
+          background: var(--gradient-mesh);
+          animation: meshAnimation 20s ease infinite;
+        }
+
+        .bg-orb {
+          position: absolute;
+          border-radius: 50%;
+          filter: blur(40px);
+          opacity: 0.5;
+          animation: float 20s ease-in-out infinite;
+        }
+
+        .bg-orb-1 {
+          width: 400px;
+          height: 400px;
+          background: var(--purple);
+          top: -200px;
+          right: -200px;
+          animation-duration: 25s;
+        }
+
+        .bg-orb-2 {
+          width: 300px;
+          height: 300px;
+          background: var(--blue);
+          bottom: -150px;
+          left: -150px;
+          animation-duration: 30s;
+          animation-delay: -5s;
+        }
+
+        .bg-orb-3 {
+          width: 350px;
+          height: 350px;
+          background: var(--pink);
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          animation-duration: 35s;
+          animation-delay: -10s;
+        }
+
+        @keyframes meshAnimation {
+          0%, 100% { transform: translate(0, 0) rotate(0deg); }
+          33% { transform: translate(-20px, -20px) rotate(120deg); }
+          66% { transform: translate(20px, -10px) rotate(240deg); }
+        }
+
+        @keyframes float {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(30px, -30px) scale(1.1); }
+          66% { transform: translate(-30px, 30px) scale(0.9); }
+        }
+
+        /* Main Layout */
+        .signin-layout {
+          position: relative;
+          z-index: 1;
+          height: 100vh;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+        }
+
+        /* Left Side - Form */
+        .signin-left {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 2rem;
+        }
+
+        .signin-container {
+          width: 100%;
+          max-width: 480px;
+        }
+
+        /* Logo */
+        .logo-section {
+          margin-bottom: 3rem;
+          animation: fadeInUp 0.6s ease;
+        }
+
+        .logo {
+          font-size: 2.5rem;
+          font-weight: 400;
+          background: var(--gradient-primary);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          text-decoration: none;
+          letter-spacing: -0.02em;
+          display: inline-block;
+        }
+
+        .logo-subtitle {
+          margin-top: 0.5rem;
+          color: rgba(255, 255, 255, 0.6);
+          font-size: 0.875rem;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+          margin-bottom: 3rem;
+          animation: fadeInUp 0.8s ease 0.1s both;
+        }
+
+        .welcome-title {
+          font-size: 2.5rem;
+          font-weight: 800;
+          margin-bottom: 1rem;
+          line-height: 1.2;
+        }
+
+        .gradient-text {
+          background: var(--gradient-primary);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
+        .welcome-subtitle {
+          color: rgba(255, 255, 255, 0.7);
+          font-size: 1.125rem;
+        }
+
+        /* Form */
+        .signin-form {
+          animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .form-group {
+          margin-bottom: 1.75rem;
+        }
+
+        .form-label {
+          display: block;
+          margin-bottom: 0.75rem;
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: rgba(255, 255, 255, 0.9);
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+
+        .form-input {
+          width: 100%;
+          padding: 1rem 1.25rem;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid var(--glass-border);
+          border-radius: 0.75rem;
+          color: var(--white);
+          font-size: 1rem;
+          transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+          outline: none;
+          border-color: var(--purple);
+          background: rgba(255, 255, 255, 0.05);
+          box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .form-input::placeholder {
+          color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Password Input with Toggle */
+        .password-group {
+          position: relative;
+        }
+
+        .password-toggle {
+          position: absolute;
+          right: 1rem;
+          top: 50%;
+          transform: translateY(-50%);
+          background: none;
+          border: none;
+          color: rgba(255, 255, 255, 0.5);
+          cursor: pointer;
+          padding: 0.5rem;
+          transition: all 0.3s ease;
+        }
+
+        .password-toggle:hover {
+          color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Form Options */
+        .form-options {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 2rem;
+        }
+
+        .remember-me {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .checkbox {
+          width: 20px;
+          height: 20px;
+          appearance: none;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid var(--glass-border);
+          border-radius: 0.25rem;
+          cursor: pointer;
+          position: relative;
+          transition: all 0.3s ease;
+        }
+
+        .checkbox:checked {
+          background: var(--gradient-primary);
+          border-color: transparent;
+        }
+
+        .checkbox:checked::after {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 10px;
+          height: 6px;
+          border-left: 2px solid white;
+          border-bottom: 2px solid white;
+          transform: translate(-50%, -60%) rotate(-45deg);
+        }
+
+        .remember-label {
+          color: rgba(255, 255, 255, 0.8);
+          font-size: 0.875rem;
+          cursor: pointer;
+        }
+
+        .forgot-link {
+          color: var(--purple);
+          text-decoration: none;
+          font-size: 0.875rem;
+          font-weight: 500;
+          transition: all 0.3s ease;
+        }
+
+        .forgot-link:hover {
+          color: var(--blue);
+        }
+
+        /* Sign In Button */
+        .signin-btn {
+          width: 100%;
+          padding: 1.125rem;
+          background: var(--gradient-primary);
+          color: var(--white);
+          border: none;
+          border-radius: 0.75rem;
+          font-size: 1rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .signin-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 20px 40px -15px rgba(139, 92, 246, 0.5);
+        }
+
+        .signin-btn::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+          transition: left 0.5s ease;
+        }
+
+        .signin-btn:hover::before {
+          left: 100%;
+        }
+
+        .signin-btn:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+        }
+
+        /* Divider */
+        .divider {
+          display: flex;
+          align-items: center;
+          margin: 2rem 0;
+          color: rgba(255, 255, 255, 0.4);
+          font-size: 0.875rem;
+        }
+
+        .divider::before,
+        .divider::after {
+          content: '';
+          flex: 1;
+          height: 1px;
+          background: var(--glass-border);
+        }
+
+        .divider span {
+          padding: 0 1rem;
+        }
+
+        /* Social Buttons */
+        .social-buttons {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1rem;
+        }
+
+        .social-btn {
+          padding: 0.875rem;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid var(--glass-border);
+          border-radius: 0.75rem;
+          color: var(--white);
+          text-decoration: none;
+          font-size: 0.875rem;
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          transition: all 0.3s ease;
+          cursor: pointer;
+        }
+
+        .social-btn:hover {
+          background: rgba(255, 255, 255, 0.05);
+          border-color: rgba(255, 255, 255, 0.2);
+          transform: translateY(-2px);
+        }
+
+        /* Sign Up Link */
+        .signup-section {
+          text-align: center;
+          margin-top: 2rem;
+          color: rgba(255, 255, 255, 0.7);
+          font-size: 0.875rem;
+        }
+
+        .signup-link {
+          color: var(--purple);
+          text-decoration: none;
+          font-weight: 600;
+          transition: all 0.3s ease;
+        }
+
+        .signup-link:hover {
+          color: var(--blue);
+        }
+
+        /* Right Side - Visual */
+        .signin-right {
+          position: relative;
+          background: rgba(139, 92, 246, 0.05);
+          border-left: 1px solid var(--glass-border);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        }
+
+        .visual-content {
+          text-align: center;
+          padding: 3rem;
+          max-width: 500px;
+          animation: fadeIn 1s ease 0.5s both;
+        }
+
+        .visual-icon {
+          width: 120px;
+          height: 120px;
+          margin: 0 auto 2rem;
+          background: var(--gradient-primary);
+          border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          animation: morphing 8s ease-in-out infinite;
+        }
+
+        @keyframes morphing {
+          0%, 100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+          25% { border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%; }
+          50% { border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%; }
+          75% { border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%; }
+        }
+
+        .visual-title {
+          font-size: 2rem;
+          font-weight: 700;
+          margin-bottom: 1rem;
+        }
+
+        .visual-subtitle {
+          color: rgba(255, 255, 255, 0.7);
+          font-size: 1.125rem;
+          line-height: 1.6;
+        }
+
+        /* Feature List */
+        .feature-list {
+          margin-top: 3rem;
+          text-align: left;
+        }
+
+        .feature-item {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+          opacity: 0;
+          animation: slideInRight 0.6s ease forwards;
+        }
+
+        .feature-item:nth-child(1) { animation-delay: 0.8s; }
+        .feature-item:nth-child(2) { animation-delay: 1s; }
+        .feature-item:nth-child(3) { animation-delay: 1.2s; }
+
+        .feature-icon {
+          width: 40px;
+          height: 40px;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 0.75rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .feature-text {
+          color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        @keyframes slideInRight {
+          from {
+            opacity: 0;
+            transform: translateX(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        /* Back Link */
+        .back-link {
+          position: absolute;
+          top: 2rem;
+          left: 2rem;
+          color: rgba(255, 255, 255, 0.7);
+          text-decoration: none;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.875rem;
+          transition: all 0.3s ease;
+          z-index: 10;
+        }
+
+        .back-link:hover {
+          color: var(--white);
+          transform: translateX(-5px);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+          .signin-layout {
+            grid-template-columns: 1fr;
+          }
+
+          .signin-right {
+            display: none;
+          }
+
+          .signin-left {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+          }
+        }
+
+        @media (max-width: 480px) {
+          .signin-container {
+            padding: 1rem;
+          }
+
+          .welcome-title {
+            font-size: 2rem;
+          }
+
+          .social-buttons {
+            grid-template-columns: 1fr;
+          }
+        }
+      `}</style>
+
+      <div className="bg-container">
+        <div className="bg-gradient-mesh"></div>
+        <div className="bg-orb bg-orb-1"></div>
+        <div className="bg-orb bg-orb-2"></div>
+        <div className="bg-orb bg-orb-3"></div>
+      </div>
+
+      {/* Back Link */}
+      <Link href="/" className="back-link">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd"/>
+        </svg>
+        {t('signin.backToHome')}
+      </Link>
+
+      <div className="signin-layout">
+        {/* Left Side - Form */}
+        <div className="signin-left">
+          <div className="signin-container">
+            {/* Logo */}
+            <div className="logo-section">
+              <div className="logo">{t('signin.logoTitle')}</div>
+              <div className="logo-subtitle">{t('signin.logoSubtitle')}</div>
+            </div>
+
+            {/* Welcome */}
+            <div className="welcome-section">
+              <h1 className="welcome-title">
+                {t('signin.welcomeTitle')}
+                <span className="gradient-text"> {t('signin.welcomeTitleHighlight')}</span>
+              </h1>
+              <p className="welcome-subtitle">
+                {t('signin.welcomeSubtitle')}
+              </p>
+            </div>
+
+            {/* Form */}
+            <form className="signin-form" onSubmit={handleSignIn}>
+              {error && (
+                <div style={{
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  borderRadius: '0.75rem',
+                  padding: '1rem',
+                  marginBottom: '1.5rem',
+                  color: '#FCA5A5',
+                  fontSize: '0.875rem'
+                }}>
+                  {error}
+                </div>
+              )}
+
+              <div className="form-group">
+                <label htmlFor="email" className="form-label">{t('signin.emailLabel')}</label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  className="form-input" 
+                  placeholder={t('signin.emailPlaceholder')}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="password" className="form-label">{t('signin.passwordLabel')}</label>
+                <div className="password-group">
+                  <input 
+                    type={showPassword ? 'text' : 'password'}
+                    id="password" 
+                    className="form-input" 
+                    placeholder={t('signin.passwordPlaceholder')}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                  <button type="button" className="password-toggle" onClick={togglePassword}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div className="form-options">
+                <label className="remember-me">
+                  <input 
+                    type="checkbox" 
+                    className="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                  />
+                  <span className="remember-label">{t('signin.rememberMe')}</span>
+                </label>
+                <Link href="/auth/forgot-password" className="forgot-link">{t('signin.forgotPassword')}</Link>
+              </div>
+
+              <button type="submit" className="signin-btn" disabled={loading}>
+                {loading ? t('signin.submittingButton') : t('signin.submitButton')}
+              </button>
+            </form>
+
+            {/* Divider */}
+            <div className="divider">
+              <span>{t('signin.orContinueWith')}</span>
+            </div>
+
+            {/* Social Login */}
+            <div className="social-buttons">
+              <button className="social-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+                GitHub
+              </button>
+              <button className="social-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Google
+              </button>
+            </div>
+
+            {/* Sign Up */}
+            <div className="signup-section">
+              {t('signin.noAccount')} <Link href="/auth/signup" className="signup-link">{t('signin.signUpLink')}</Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Side - Visual */}
+        <div className="signin-right">
+          <div className="visual-content">
+            <div className="visual-icon">
+              <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" />
+                <path d="M2 17L12 22L22 17" />
+                <path d="M2 12L12 17L22 12" />
+              </svg>
+            </div>
+            <h2 className="visual-title">
+              {t('signin.visualTitle')}
+              <span className="gradient-text"> {t('signin.visualTitleHighlight')}</span>
+            </h2>
+            <p className="visual-subtitle">
+              {t('signin.visualSubtitle')}
+            </p>
+
+            <div className="feature-list">
+              <div className="feature-item">
+                <div className="feature-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M13 2L3 14L12 14L11 22L21 10L12 10L13 2Z"/>
+                  </svg>
+                </div>
+                <span className="feature-text">{t('signin.features.realtime')}</span>
+              </div>
+              <div className="feature-item">
+                <div className="feature-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 1V6M12 18V23M4.22 4.22L7.76 7.76M16.24 16.24L19.78 19.78M1 12H6M18 12H23M4.22 19.78L7.76 16.24M16.24 7.76L19.78 4.22"/>
+                  </svg>
+                </div>
+                <span className="feature-text">{t('signin.features.aiPowered')}</span>
+              </div>
+              <div className="feature-item">
+                <div className="feature-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z"/>
+                    <path d="M2 17L12 22L22 17"/>
+                    <path d="M2 12L12 17L22 12"/>
+                  </svg>
+                </div>
+                <span className="feature-text">{t('signin.features.security')}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}

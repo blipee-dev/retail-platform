@@ -1,0 +1,187 @@
+{
+  "header": {
+    "title": "Privacy Policy",
+    "effectiveDate": "Effective Date: January 1, 2024",
+    "lastUpdated": "Last Updated: January 1, 2024"
+  },
+  "introduction": {
+    "title": "1. Introduction",
+    "text": "blipee OS (\"we,\" \"our,\" or \"us\") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our retail analytics platform and related services (collectively, the \"Service\").",
+    "compliance": "We comply with applicable data protection laws, including the General Data Protection Regulation (GDPR) for European Union residents and the California Consumer Privacy Act (CCPA) for California residents."
+  },
+  "information": {
+    "title": "2. Information We Collect",
+    "provided": {
+      "title": "2.1 Information You Provide",
+      "items": [
+        "Account information (name, email, company details)",
+        "Payment and billing information",
+        "Communications with our support team",
+        "Feedback and survey responses"
+      ]
+    },
+    "automatic": {
+      "title": "2.2 Information Collected Automatically",
+      "items": [
+        "Usage data and analytics",
+        "Device and browser information",
+        "IP address and location data",
+        "Cookies and similar tracking technologies"
+      ]
+    },
+    "analytics": {
+      "title": "2.3 Retail Analytics Data",
+      "description": "Our platform processes anonymized customer traffic data from your retail locations. This includes:",
+      "items": [
+        "Foot traffic patterns and counts",
+        "Dwell time and heat map data",
+        "Zone performance metrics",
+        "Aggregated behavioral insights"
+      ],
+      "important": "Important: We do not collect or store personally identifiable information about your customers. All analytics data is anonymized and aggregated."
+    }
+  },
+  "usage": {
+    "title": "3. How We Use Your Information",
+    "description": "We use the information we collect to:",
+    "items": [
+      "Provide and maintain our Service",
+      "Process transactions and send billing information",
+      "Send administrative information and updates",
+      "Respond to customer service requests",
+      "Send marketing communications (with your consent)",
+      "Monitor and analyze usage patterns",
+      "Detect and prevent fraud or security issues",
+      "Comply with legal obligations"
+    ]
+  },
+  "sharing": {
+    "title": "4. Information Sharing",
+    "description": "We do not sell, trade, or rent your personal information. We may share your information only in the following circumstances:",
+    "items": [
+      {
+        "title": "Service Providers:",
+        "text": "With trusted third parties who assist in operating our platform"
+      },
+      {
+        "title": "Legal Requirements:",
+        "text": "When required by law or to protect our rights"
+      },
+      {
+        "title": "Business Transfers:",
+        "text": "In connection with a merger or acquisition"
+      },
+      {
+        "title": "With Your Consent:",
+        "text": "When you explicitly agree to sharing"
+      }
+    ]
+  },
+  "security": {
+    "title": "5. Data Security",
+    "description": "We implement industry-standard security measures to protect your data:",
+    "items": [
+      "256-bit SSL encryption for all data in transit",
+      "Encryption at rest for sensitive data",
+      "Regular security audits and penetration testing",
+      "SOC 2 Type II certification",
+      "Access controls and authentication measures",
+      "Regular employee security training"
+    ]
+  },
+  "retention": {
+    "title": "6. Data Retention",
+    "description": "We retain your information for as long as necessary to provide our services and comply with legal obligations:",
+    "table": {
+      "headers": ["Data Type", "Retention Period"],
+      "rows": [
+        ["Account Information", "Duration of account + 90 days"],
+        ["Analytics Data", "24 months (configurable)"],
+        ["Billing Records", "7 years (legal requirement)"],
+        ["Support Communications", "3 years"]
+      ]
+    }
+  },
+  "rights": {
+    "title": "7. Your Rights",
+    "description": "Depending on your location, you may have the following rights:",
+    "gdpr": {
+      "title": "7.1 GDPR Rights (EU Residents)",
+      "items": [
+        {
+          "title": "Access:",
+          "text": "Request a copy of your personal data"
+        },
+        {
+          "title": "Rectification:",
+          "text": "Correct inaccurate data"
+        },
+        {
+          "title": "Erasure:",
+          "text": "Request deletion of your data"
+        },
+        {
+          "title": "Portability:",
+          "text": "Receive your data in a portable format"
+        },
+        {
+          "title": "Object:",
+          "text": "Opt out of certain processing activities"
+        },
+        {
+          "title": "Restrict:",
+          "text": "Limit how we use your data"
+        }
+      ]
+    },
+    "ccpa": {
+      "title": "7.2 CCPA Rights (California Residents)",
+      "items": [
+        "Know what personal information we collect",
+        "Request deletion of your information",
+        "Opt out of the sale of personal information (we don't sell data)",
+        "Non-discrimination for exercising your rights"
+      ]
+    }
+  },
+  "cookies": {
+    "title": "8. Cookies and Tracking",
+    "description": "We use cookies and similar technologies to:",
+    "items": [
+      "Maintain your session and preferences",
+      "Analyze platform usage and performance",
+      "Provide personalized experiences",
+      "Prevent fraud and enhance security"
+    ],
+    "control": "You can control cookies through your browser settings. Note that disabling cookies may affect platform functionality."
+  },
+  "international": {
+    "title": "9. International Data Transfers",
+    "description": "Your information may be transferred to and processed in countries other than your own. We ensure appropriate safeguards are in place:",
+    "items": [
+      "Standard Contractual Clauses for EU data transfers",
+      "Privacy Shield certification (where applicable)",
+      "Adequate data protection agreements"
+    ]
+  },
+  "contact": {
+    "title": "10. Contact Information",
+    "description": "For privacy-related questions or to exercise your rights, please contact our Data Protection Officer:",
+    "email": "privacy@retailplatform.com",
+    "phone": "+1 (888) 555-0123",
+    "address": {
+      "company": "Retail Platform, Inc.",
+      "attn": "Attn: Data Protection Officer",
+      "street": "123 Commerce Street",
+      "city": "San Francisco, CA 94105",
+      "country": "United States"
+    },
+    "euRep": {
+      "title": "EU Representative:",
+      "company": "Retail Platform Europe GmbH",
+      "street": "Friedrichstraße 123",
+      "city": "10117 Berlin, Germany",
+      "email": "eu-privacy@retailplatform.com"
+    }
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "app": {
+    "name": "blipee OS",
+    "subtitle": "Plataforma de Inteligência para Retalho"
+  },
+  "nav": {
+    "backToHome": "Voltar ao Início",
+    "signIn": "Entrar",
+    "signUp": "Iniciar Teste Gratuito",
+    "dashboard": "Painel de Controle",
+    "home": "Início",
+    "integrations": "Integrações",
+    "pricing": "Preços",
+    "docs": "Documentação",
+    "startFreeTrial": "Iniciar Teste Gratuito",
+    "features": "Funcionalidades",
+    "about": "Sobre",
+    "contact": "Contacto",
+    "blog": "Blog"
+  },
+  "auth": {
+    "welcomeTitle": "Bem-vindo ao",
+    "future": "Futuro",
+    "welcomeSubtitle": "Faça login para acessar seu painel de inteligência",
+    "emailLabel": "Endereço de E-mail",
+    "emailPlaceholder": "voce@empresa.com",
+    "passwordLabel": "Senha",
+    "passwordPlaceholder": "Digite sua senha",
+    "rememberMe": "Lembrar de mim",
+    "forgotPassword": "Esqueceu a senha?",
+    "signInButton": "Entrar no Painel",
+    "signingIn": "Entrando...",
+    "orContinueWith": "Ou continue com",
+    "noAccount": "Não tem uma conta?",
+    "startFreeTrial": "Iniciar teste gratuito",
+    "createAccount": "Crie Sua Conta",
+    "startYourFreeTrial": "Comece seu teste gratuito de 14 dias",
+    "organizationInfo": "Informações da Organização",
+    "organizationName": "Nome da Organização",
+    "organizationNamePlaceholder": "Acme Retalho Lda.",
+    "organizationUrl": "URL da Organização",
+    "urlHint": "Apenas letras, números e hífens",
+    "personalInfo": "Informações Pessoais",
+    "fullName": "Nome Completo",
+    "fullNamePlaceholder": "João Silva",
+    "createPassword": "Crie uma senha",
+    "confirmPassword": "Confirmar Senha",
+    "confirmPasswordPlaceholder": "Digite novamente sua senha",
+    "agreeToTerms": "Eu concordo com os",
+    "termsOfService": "Termos de Serviço",
+    "and": "e",
+    "privacyPolicy": "Política de Privacidade",
+    "createAccountButton": "Criar Conta e Iniciar Teste",
+    "creatingAccount": "Criando conta...",
+    "alreadyHaveAccount": "Já tem uma conta?",
+    "signInHere": "Entre aqui",
+    "features": {
+      "secure": "Segurança Empresarial",
+      "analytics": "Análises em Tempo Real",
+      "trial": "Teste Gratuito de 14 Dias"
+    },
+    "errors": {
+      "unexpected": "Ocorreu um erro inesperado",
+      "invalidCredentials": "E-mail ou senha inválidos",
+      "nameRequired": "Nome completo é obrigatório",
+      "organizationRequired": "Nome da organização é obrigatório",
+      "slugRequired": "URL da organização é obrigatória",
+      "passwordMismatch": "As senhas não coincidem",
+      "passwordTooShort": "A senha deve ter pelo menos 6 caracteres",
+      "mustAgreeToTerms": "Você deve concordar com os termos e condições"
+    }
+  },
+  "features": {
+    "title": "Análises em Tempo Real ao Seu Alcance",
+    "subtitle": "Monitore o tráfego de pessoas, analise padrões e tome decisões baseadas em dados com nossa plataforma de IA.",
+    "analytics": "Análises e relatórios avançados",
+    "heatmaps": "Mapas de calor e insights em tempo real",
+    "predictions": "Previsões e alertas com IA"
+  },
+  "footer": {
+    "copyright": "Todos os direitos reservados.",
+    "certifications": "Certificado SOC 2 | Conformidade RGPD",
+    "links": {
+      "terms": "Termos de Serviço",
+      "privacy": "Política de Privacidade",
+      "aboutUs": "Sobre Nós"
+    }
+  }
+}

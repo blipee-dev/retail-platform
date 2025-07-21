@@ -1,0 +1,187 @@
+{
+  "header": {
+    "title": "Política de Privacidad",
+    "effectiveDate": "Fecha de Vigencia: 1 de Enero de 2024",
+    "lastUpdated": "Última Actualización: 1 de Enero de 2024"
+  },
+  "introduction": {
+    "title": "1. Introducción",
+    "text": "Retail Platform (\"nosotros\", \"nuestro\" o \"nos\") está comprometido a proteger su privacidad. Esta Política de Privacidad explica cómo recopilamos, usamos, divulgamos y protegemos su información cuando utiliza nuestra plataforma de análisis minorista y servicios relacionados (colectivamente, el \"Servicio\").",
+    "compliance": "Cumplimos con las leyes de protección de datos aplicables, incluido el Reglamento General de Protección de Datos (RGPD) para residentes de la Unión Europea y la Ley de Privacidad del Consumidor de California (CCPA) para residentes de California."
+  },
+  "information": {
+    "title": "2. Información que Recopilamos",
+    "provided": {
+      "title": "2.1 Información que Proporciona",
+      "items": [
+        "Información de cuenta (nombre, correo electrónico, detalles de la empresa)",
+        "Información de pago y facturación",
+        "Comunicaciones con nuestro equipo de soporte",
+        "Comentarios y respuestas a encuestas"
+      ]
+    },
+    "automatic": {
+      "title": "2.2 Información Recopilada Automáticamente",
+      "items": [
+        "Datos de uso y análisis",
+        "Información del dispositivo y navegador",
+        "Dirección IP y datos de ubicación",
+        "Cookies y tecnologías de seguimiento similares"
+      ]
+    },
+    "analytics": {
+      "title": "2.3 Datos de Análisis Minorista",
+      "description": "Nuestra plataforma procesa datos anonimizados de tráfico de clientes de sus ubicaciones minoristas. Esto incluye:",
+      "items": [
+        "Patrones y conteos de tráfico peatonal",
+        "Tiempo de permanencia y datos de mapa de calor",
+        "Métricas de rendimiento de zona",
+        "Insights de comportamiento agregados"
+      ],
+      "important": "Importante: No recopilamos ni almacenamos información de identificación personal sobre sus clientes. Todos los datos de análisis están anonimizados y agregados."
+    }
+  },
+  "usage": {
+    "title": "3. Cómo Usamos Su Información",
+    "description": "Usamos la información que recopilamos para:",
+    "items": [
+      "Proporcionar y mantener nuestro Servicio",
+      "Procesar transacciones y enviar información de facturación",
+      "Enviar información administrativa y actualizaciones",
+      "Responder a solicitudes de servicio al cliente",
+      "Enviar comunicaciones de marketing (con su consentimiento)",
+      "Monitorear y analizar patrones de uso",
+      "Detectar y prevenir fraudes o problemas de seguridad",
+      "Cumplir con obligaciones legales"
+    ]
+  },
+  "sharing": {
+    "title": "4. Compartir Información",
+    "description": "No vendemos, intercambiamos ni alquilamos su información personal. Podemos compartir su información solo en las siguientes circunstancias:",
+    "items": [
+      {
+        "title": "Proveedores de Servicios:",
+        "text": "Con terceros de confianza que ayudan a operar nuestra plataforma"
+      },
+      {
+        "title": "Requisitos Legales:",
+        "text": "Cuando lo exija la ley o para proteger nuestros derechos"
+      },
+      {
+        "title": "Transferencias Comerciales:",
+        "text": "En conexión con una fusión o adquisición"
+      },
+      {
+        "title": "Con Su Consentimiento:",
+        "text": "Cuando usted acepta explícitamente compartir"
+      }
+    ]
+  },
+  "security": {
+    "title": "5. Seguridad de Datos",
+    "description": "Implementamos medidas de seguridad estándar de la industria para proteger sus datos:",
+    "items": [
+      "Cifrado SSL de 256 bits para todos los datos en tránsito",
+      "Cifrado en reposo para datos sensibles",
+      "Auditorías de seguridad regulares y pruebas de penetración",
+      "Certificación SOC 2 Tipo II",
+      "Controles de acceso y medidas de autenticación",
+      "Capacitación regular de seguridad para empleados"
+    ]
+  },
+  "retention": {
+    "title": "6. Retención de Datos",
+    "description": "Retenemos su información durante el tiempo necesario para proporcionar nuestros servicios y cumplir con las obligaciones legales:",
+    "table": {
+      "headers": ["Tipo de Datos", "Período de Retención"],
+      "rows": [
+        ["Información de Cuenta", "Duración de la cuenta + 90 días"],
+        ["Datos de Análisis", "24 meses (configurable)"],
+        ["Registros de Facturación", "7 años (requisito legal)"],
+        ["Comunicaciones de Soporte", "3 años"]
+      ]
+    }
+  },
+  "rights": {
+    "title": "7. Sus Derechos",
+    "description": "Dependiendo de su ubicación, puede tener los siguientes derechos:",
+    "gdpr": {
+      "title": "7.1 Derechos RGPD (Residentes de la UE)",
+      "items": [
+        {
+          "title": "Acceso:",
+          "text": "Solicitar una copia de sus datos personales"
+        },
+        {
+          "title": "Rectificación:",
+          "text": "Corregir datos inexactos"
+        },
+        {
+          "title": "Supresión:",
+          "text": "Solicitar la eliminación de sus datos"
+        },
+        {
+          "title": "Portabilidad:",
+          "text": "Recibir sus datos en un formato portátil"
+        },
+        {
+          "title": "Oposición:",
+          "text": "Optar por no participar en ciertas actividades de procesamiento"
+        },
+        {
+          "title": "Restricción:",
+          "text": "Limitar cómo usamos sus datos"
+        }
+      ]
+    },
+    "ccpa": {
+      "title": "7.2 Derechos CCPA (Residentes de California)",
+      "items": [
+        "Saber qué información personal recopilamos",
+        "Solicitar la eliminación de su información",
+        "Optar por no vender información personal (no vendemos datos)",
+        "No discriminación por ejercer sus derechos"
+      ]
+    }
+  },
+  "cookies": {
+    "title": "8. Cookies y Seguimiento",
+    "description": "Usamos cookies y tecnologías similares para:",
+    "items": [
+      "Mantener su sesión y preferencias",
+      "Analizar el uso y rendimiento de la plataforma",
+      "Proporcionar experiencias personalizadas",
+      "Prevenir fraudes y mejorar la seguridad"
+    ],
+    "control": "Puede controlar las cookies a través de la configuración de su navegador. Tenga en cuenta que deshabilitar las cookies puede afectar la funcionalidad de la plataforma."
+  },
+  "international": {
+    "title": "9. Transferencias Internacionales de Datos",
+    "description": "Su información puede ser transferida y procesada en países diferentes al suyo. Garantizamos que existen salvaguardas apropiadas:",
+    "items": [
+      "Cláusulas Contractuales Estándar para transferencias de datos de la UE",
+      "Certificación Privacy Shield (cuando sea aplicable)",
+      "Acuerdos adecuados de protección de datos"
+    ]
+  },
+  "contact": {
+    "title": "10. Información de Contacto",
+    "description": "Para preguntas relacionadas con la privacidad o para ejercer sus derechos, comuníquese con nuestro Oficial de Protección de Datos:",
+    "email": "privacidad@retailplatform.com",
+    "phone": "+34 900 555 123",
+    "address": {
+      "company": "Retail Platform, Inc.",
+      "attn": "Attn: Oficial de Protección de Datos",
+      "street": "123 Commerce Street",
+      "city": "San Francisco, CA 94105",
+      "country": "Estados Unidos"
+    },
+    "euRep": {
+      "title": "Representante en la UE:",
+      "company": "Retail Platform Europe GmbH",
+      "street": "Friedrichstraße 123",
+      "city": "10117 Berlín, Alemania",
+      "email": "ue-privacidad@retailplatform.com"
+    }
+  }
+}

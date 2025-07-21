@@ -1,25 +1,41 @@
-# Authentication Implementation Plan
+# Authentication & Multi-Tenant Implementation Plan
 
 ## Overview
 
-This document outlines the implementation plan for the authentication system with role hierarchies for the Retail Platform. We're implementing the essential role structure from the enterprise RBAC specification while keeping the initial implementation simple and extensible.
+This document outlines the implementation plan for a multi-tenant authentication system with role hierarchies for the Retail Platform. We're implementing a complete multi-tenant architecture from the start to support multiple organizations (tenants) with proper data isolation.
 
 ## Implementation Scope
 
 ### ✅ What We're Building (MVP)
 
-1. **Email/Password Authentication** using Supabase Auth
-2. **6 Role Hierarchies** as defined in the enterprise spec:
-   - Tenant Admin
+1. **Multi-Tenant Architecture**
+   - Complete tenant isolation using Row Level Security (RLS)
+   - Organization-based data segregation
+   - Tenant-specific URLs (subdomain or slug-based)
+   
+2. **Email/Password Authentication** using Supabase Auth
+   - Tenant-aware signup process
+   - Organization creation during first admin signup
+
+3. **6 Role Hierarchies** per organization:
+   - Tenant Admin (Organization owner)
    - Regional Manager  
    - Store Manager
    - Analyst
    - Store Staff
    - Viewer
-3. **Tenant Isolation** with Row Level Security
-4. **User Management Interface** for admins
-5. **Permission Inheritance** based on hierarchy
-6. **Basic Audit Logging**
+
+4. **Tenant Management**
+   - Organization settings and profile
+   - User invitation system
+   - Billing/subscription management hooks
+
+5. **Complete Data Isolation**
+   - All data scoped to organizations
+   - RLS policies enforcing tenant boundaries
+   - No cross-tenant data leakage
+
+6. **Basic Audit Logging** per tenant
 
 ### ⏸️ What We're Deferring (Future Phases)
 

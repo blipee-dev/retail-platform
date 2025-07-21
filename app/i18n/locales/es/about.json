@@ -1,0 +1,85 @@
+{
+  "header": {
+    "title": "Acerca de blipee OS",
+    "subtitle": "Estamos construyendo el futuro de la inteligencia minorista, un insight a la vez."
+  },
+  "mission": {
+    "title": "Nuestra Misión",
+    "content": {
+      "p1": "En blipee OS, creemos que cada minorista merece acceso a las mismas análisis poderosas que impulsan las tiendas más exitosas del mundo. Nuestra misión es democratizar la inteligencia minorista, haciendo que la IA y análisis avanzados sean accesibles para empresas de todos los tamaños.",
+      "p2": "Creamos blipee OS porque vimos una brecha en el mercado. Mientras los minoristas empresariales tenían sistemas de análisis de millones de dólares, los minoristas más pequeños se quedaban con hojas de cálculo y conjeturas. Sabíamos que tenía que haber una mejor manera.",
+      "p3": "Hoy, estamos orgullosos de servir a cientos de minoristas en todo el mundo, desde boutiques familiares hasta empresas de mil millones de dólares."
+    },
+    "visual": {
+      "title": "Inteligencia Minorista para Todos",
+      "subtitle": "Haciendo que las decisiones basadas en datos sean accesibles para minoristas de todos los tamaños"
+    }
+  },
+  "values": {
+    "title": "Nuestros Valores",
+    "innovation": {
+      "title": "Innovación Primero",
+      "description": "Empujamos los límites de lo posible en análisis minorista, innovando constantemente para estar por delante de las necesidades de la industria."
+    },
+    "customerSuccess": {
+      "title": "Éxito del Cliente",
+      "description": "Tu éxito es nuestro éxito. Estamos comprometidos a entregar valor y apoyar a nuestros clientes en cada paso del camino."
+    },
+    "privacy": {
+      "title": "Privacidad y Seguridad",
+      "description": "Priorizamos la privacidad y seguridad de datos, asegurando que los datos de tu negocio estén protegidos con salvaguardas de nivel empresarial."
+    },
+    "simplicity": {
+      "title": "Simplicidad",
+      "description": "Análisis complejos hechos simples. Creemos que los insights poderosos deben ser accesibles sin requerir un título en ciencia de datos."
+    }
+  },
+  "team": {
+    "title": "Conoce a Nuestro Equipo",
+    "members": {
+      "ceo": {
+        "name": "Alex Chen",
+        "role": "CEO y Co-Fundador",
+        "bio": "Ex-VP de Análisis en una importante cadena minorista. Más de 15 años de experiencia en tecnología minorista y ciencia de datos."
+      },
+      "cto": {
+        "name": "Sarah Martinez",
+        "role": "CTO y Co-Fundadora",
+        "bio": "Ex-investigadora de IA en Google especializada en visión por computadora y análisis en tiempo real a escala."
+      },
+      "aiHead": {
+        "name": "David Kim",
+        "role": "Jefe de IA",
+        "bio": "PhD en Machine Learning de Stanford. Lideró iniciativas de IA en Amazon y Microsoft Azure."
+      },
+      "designHead": {
+        "name": "Emily Johnson",
+        "role": "Jefa de Diseño",
+        "bio": "Diseñadora UX galardonada con más de 10 años creando interfaces intuitivas para productos de datos complejos."
+      }
+    }
+  },
+  "stats": {
+    "partners": {
+      "value": "500+",
+      "label": "Socios Minoristas"
+    },
+    "events": {
+      "value": "50M+",
+      "label": "Eventos de Análisis Diarios"
+    },
+    "uptime": {
+      "value": "99.9%",
+      "label": "Tiempo de Actividad"
+    },
+    "support": {
+      "value": "24/7",
+      "label": "Soporte Global"
+    }
+  },
+  "cta": {
+    "title": "¿Listo para Transformar tu Inteligencia Minorista?",
+    "subtitle": "Únete a cientos de minoristas que ya usan blipee OS para tomar decisiones más inteligentes",
+    "button": "Inicia tu Prueba Gratuita"
+  }
+}

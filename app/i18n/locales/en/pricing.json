@@ -1,0 +1,111 @@
+{
+  "header": {
+    "title": "Simple Pricing,",
+    "titleHighlight": "Powerful Results",
+    "subtitle": "Choose the perfect plan for your retail intelligence needs. All plans include our core AI technology and world-class support."
+  },
+  "plans": {
+    "essential": {
+      "name": "Essential",
+      "description": "Perfect for single stores starting their intelligence journey",
+      "price": "$49",
+      "period": "/month per store",
+      "subtext": "Everything you need to understand your customers",
+      "features": [
+        "Real-time people counting with 98% accuracy",
+        "Automatic capture rate calculation",
+        "Hourly, daily & historical trend analysis",
+        "Mobile-optimized dashboard",
+        "Basic email alerts & notifications",
+        "Export reports (PDF & CSV)"
+      ],
+      "cta": "Start Free Trial"
+    },
+    "professional": {
+      "badge": "Most Popular",
+      "name": "Professional",
+      "description": "For growing retailers who want deeper insights",
+      "price": "$99",
+      "period": "/month per store",
+      "subtext": "Unlock the power of zones and heatmaps",
+      "features": [
+        "Everything in Essential, plus:",
+        "Interactive zone heatmaps",
+        "Dwell time analysis by area",
+        "Dead zone identification & alerts",
+        "A/B testing for store layouts",
+        "Multi-store comparison dashboard",
+        "Priority support & onboarding"
+      ],
+      "cta": "Start Free Trial"
+    },
+    "intelligence": {
+      "name": "Intelligence",
+      "description": "Full AI power for data-driven enterprises",
+      "price": "$199",
+      "period": "/month per store",
+      "subtext": "Complete retail intelligence platform",
+      "features": [
+        "Everything in Professional, plus:",
+        "AI-powered traffic predictions",
+        "Customer journey mapping",
+        "POS, CRM & inventory integration",
+        "Custom AI models for your business",
+        "API access & webhooks",
+        "Dedicated success manager"
+      ],
+      "cta": "Contact Sales"
+    }
+  },
+  "comparison": {
+    "title": "Compare",
+    "titleHighlight": "Features",
+    "headers": {
+      "feature": "Feature",
+      "essential": "Essential",
+      "professional": "Professional",
+      "intelligence": "Intelligence"
+    },
+    "sections": {
+      "coreAnalytics": "Core Analytics",
+      "advancedAnalytics": "Advanced Analytics",
+      "aiPredictions": "AI & Predictions",
+      "integrations": "Integrations",
+      "support": "Support"
+    },
+    "features": {
+      "peopleCountingCaptureRate": "People counting & capture rate",
+      "realTimeDashboards": "Real-time dashboards",
+      "historicalTrends": "Historical trends & comparisons",
+      "zoneHeatmaps": "Zone heatmaps",
+      "dwellTimeAnalysis": "Dwell time analysis",
+      "customerJourneyMapping": "Customer journey mapping",
+      "trafficPredictions": "Traffic predictions",
+      "anomalyDetection": "Anomaly detection",
+      "customAiModels": "Custom AI models",
+      "emailSlackNotifications": "Email & Slack notifications",
+      "posIntegration": "POS integration",
+      "crmInventoryIntegration": "CRM & inventory systems",
+      "apiAccess": "API access",
+      "supportLevel": "Support level",
+      "onboarding": "Onboarding"
+    },
+    "values": {
+      "basic": "Basic",
+      "advancedAi": "Advanced AI",
+      "readOnly": "Read-only",
+      "fullAccess": "Full access",
+      "standard": "Standard",
+      "priority": "Priority",
+      "dedicatedManager": "Dedicated manager",
+      "selfService": "Self-service",
+      "guidedSetup": "Guided setup",
+      "whiteGlove": "White-glove service"
+    }
+  },
+  "cta": {
+    "title": "Ready to Transform Your Retail Operations?",
+    "subtitle": "Start your 30-day free trial today. No credit card required.",
+    "button": "Start Free Trial"
+  }
+}

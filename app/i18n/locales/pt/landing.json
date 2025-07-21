@@ -1,0 +1,97 @@
+{
+  "hero": {
+    "badge": "A Plataforma de Inteligência que os Retalhistas Adoram",
+    "title": "O Futuro do Retalho é",
+    "titleHighlight": "Inteligente",
+    "subtitle": "Imagine saber exatamente o que os seus clientes querem, quando o querem e onde o vão encontrar. O blipee OS transforma montanhas de dados em momentos de clareza — transformando cada insight em oportunidade, cada padrão em lucro.",
+    "subtitleBold": "Esta é a inteligência desenhada para a excelência no retalho.",
+    "ctaPrimary": "Comece o Seu Teste Gratuito Agora",
+    "ctaSecondary": "Ver Demonstração"
+  },
+  "features": {
+    "ai": {
+      "title": "Inteligência Preditiva que Aprende",
+      "description": "A nossa IA proprietária não apenas analisa — ela compreende. Veja como o blipee aprende os seus padrões únicos, adapta-se aos seus clientes e fornece previsões que parecem magia mas são pura ciência."
+    },
+    "vision": {
+      "title": "Visão Além das Câmaras",
+      "description": "O blipee vê o que outros não conseguem — a história por trás de cada movimento, o significado em cada pausa. A nossa IA de visão cria um mapa vivo de oportunidades, mostrando-lhe não apenas onde os clientes vão, mas porquê."
+    },
+    "realtime": {
+      "title": "Brilhantismo em Tempo Real",
+      "description": "No tempo que demora a piscar os olhos, o blipee processa milhões de sinais em insights acionáveis. Experimente a emoção de saber agora, não depois — porque o retalho acontece em tempo real."
+    }
+  },
+  "intelligence": {
+    "title": "Inteligência que",
+    "titleHighlight": "Aprende e Adapta-se",
+    "subtitle": "O nosso motor de IA proprietário não apenas analisa - compreende, aprende e evolui com o seu negócio.",
+    "features": {
+      "anomaly": {
+        "title": "Deteção de Anomalias",
+        "description": "Identifica instantaneamente padrões incomuns e alerta-o para oportunidades ou riscos"
+      },
+      "sentiment": {
+        "title": "Análise de Sentimento",
+        "description": "Compreenda as emoções e satisfação dos clientes em tempo real"
+      },
+      "optimization": {
+        "title": "Otimização Autónoma",
+        "description": "A IA ajusta automaticamente as estratégias com base nas métricas de desempenho"
+      }
+    }
+  },
+  "stats": {
+    "accuracy": {
+      "value": "98,5%",
+      "label": "Precisão de Previsão"
+    },
+    "response": {
+      "value": "150ms",
+      "label": "Resposta em Tempo Real"
+    },
+    "predictions": {
+      "value": "10M+",
+      "label": "Previsões Diárias"
+    },
+    "roi": {
+      "value": "42%",
+      "label": "Aumento Médio de ROI"
+    }
+  },
+  "cta": {
+    "title": "Experimente a",
+    "titleHighlight": "Diferença blipee",
+    "subtitle": "Junte-se a retalhistas progressistas que descobriram o que acontece quando a inteligência artificial encontra a ambição humana. Os seus dados têm histórias para contar — deixe o blipee ajudá-lo a ouvi-las.",
+    "button": "Comece a Sua Jornada Hoje",
+    "secondary": "Ver blipee em Ação"
+  },
+  "footer": {
+    "sections": {
+      "product": "Produto",
+      "company": "Empresa",
+      "support": "Suporte",
+      "legal": "Legal"
+    },
+    "links": {
+      "features": "Funcionalidades",
+      "integrations": "Integrações",
+      "pricing": "Preços",
+      "documentation": "Documentação",
+      "aboutUs": "Sobre Nós",
+      "contact": "Contacto",
+      "careers": "Carreiras",
+      "blog": "Blog",
+      "helpCenter": "Centro de Ajuda",
+      "contactSupport": "Contactar Suporte",
+      "statusPage": "Página de Estado",
+      "apiStatus": "Estado da API",
+      "terms": "Termos de Serviço",
+      "privacy": "Política de Privacidade",
+      "security": "Segurança",
+      "compliance": "Conformidade"
+    },
+    "copyright": "Todos os direitos reservados.",
+    "certifications": "Certificado SOC 2 | Conformidade RGPD"
+  }
+}

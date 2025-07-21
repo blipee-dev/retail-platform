@@ -1,0 +1,118 @@
+{
+  "header": {
+    "title": "Seguridad y Cumplimiento",
+    "subtitle": "Seguridad de nivel empresarial y certificaciones de cumplimiento para proteger sus datos de retail"
+  },
+  "overview": {
+    "cards": {
+      "dataProtection": {
+        "title": "Protección de Datos",
+        "description": "Cifrado de extremo a extremo y prácticas seguras de manejo de datos"
+      },
+      "enterpriseSecurity": {
+        "title": "Seguridad Empresarial",
+        "description": "Infraestructura de seguridad y monitoreo de nivel bancario"
+      },
+      "globalStandards": {
+        "title": "Estándares Globales",
+        "description": "Cumplimiento con regulaciones internacionales de privacidad"
+      },
+      "industrySpecific": {
+        "title": "Específico del Sector",
+        "description": "Cumplimiento adaptado a los requisitos del sector retail"
+      }
+    }
+  },
+  "frameworks": {
+    "title": "Marcos de Cumplimiento",
+    "items": {
+      "soc2": {
+        "name": "SOC 2 Tipo II",
+        "status": "Certificado",
+        "description": "Auditorías independientes anuales verifican nuestros controles de seguridad, disponibilidad, integridad del procesamiento, confidencialidad y privacidad",
+        "details": [
+          "Controles de seguridad auditados anualmente",
+          "Monitoreo y mejora continua",
+          "Procesos validados por terceros",
+          "Evaluaciones integrales de riesgos"
+        ]
+      },
+      "gdpr": {
+        "name": "Cumplimiento GDPR",
+        "status": "Cumple",
+        "description": "Cumplimiento total con las regulaciones europeas de protección de datos, incluyendo derechos de los sujetos de datos y privacidad por diseño",
+        "details": [
+          "Arquitectura de privacidad por diseño",
+          "Gestión de derechos de los sujetos de datos",
+          "Acuerdos de procesamiento de datos",
+          "Revisiones regulares de cumplimiento"
+        ]
+      },
+      "iso27001": {
+        "name": "ISO 27001",
+        "status": "En Progreso",
+        "description": "Trabajando hacia la certificación ISO 27001 para sistemas de gestión de seguridad de la información",
+        "details": [
+          "Gestión de seguridad de la información",
+          "Enfoque basado en riesgos",
+          "Proceso de mejora continua",
+          "Finalización esperada T2 2024"
+        ]
+      }
+    }
+  },
+  "reports": {
+    "title": "Informes de Seguridad y Documentación",
+    "cards": {
+      "penetrationTesting": {
+        "title": "Pruebas de Penetración",
+        "description": "Evaluaciones de seguridad anuales por terceros",
+        "link": "Solicitar Informe"
+      },
+      "securityWhitepaper": {
+        "title": "Documento Técnico de Seguridad",
+        "description": "Descripción detallada de nuestra arquitectura de seguridad",
+        "link": "Descargar"
+      },
+      "privacyPolicy": {
+        "title": "Política de Privacidad",
+        "description": "Cómo recopilamos, usamos y protegemos sus datos",
+        "link": "Ver Política"
+      },
+      "dataProcessing": {
+        "title": "Acuerdo de Procesamiento de Datos",
+        "description": "Cláusulas contractuales estándar para protección de datos",
+        "link": "Descargar APD"
+      }
+    }
+  },
+  "dataHandling": {
+    "title": "Principios de Manejo de Datos",
+    "principles": {
+      "encryption": {
+        "title": "Cifrado",
+        "description": "Todos los datos cifrados en reposo y en tránsito usando protocolos estándar de la industria"
+      },
+      "access": {
+        "title": "Control de Acceso",
+        "description": "Control de acceso basado en roles con autenticación multifactor"
+      },
+      "retention": {
+        "title": "Retención de Datos",
+        "description": "Políticas automatizadas de retención de datos alineadas con requisitos regulatorios"
+      },
+      "sovereignty": {
+        "title": "Soberanía de Datos",
+        "description": "Sus datos permanecen en su región elegida sin transferencias transfronterizas"
+      }
+    }
+  },
+  "contact": {
+    "title": "Equipo de Seguridad y Cumplimiento",
+    "subtitle": "¿Tiene preguntas sobre nuestras prácticas de seguridad o necesita documentación específica de cumplimiento?",
+    "buttons": {
+      "contact": "Contactar Equipo de Seguridad",
+      "request": "Solicitar Documentación"
+    }
+  }
+}

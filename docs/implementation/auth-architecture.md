@@ -51,6 +51,20 @@ This document describes how the authentication system integrates with the existi
 
 ### 1. Frontend Integration
 
+#### Internationalization (i18n) Requirements
+All authentication and dashboard pages must support multiple languages:
+- **Supported Languages**: English (en), Portuguese (pt), Spanish (es)
+- **Auto-detection**: Browser language preference detected automatically
+- **Persistence**: Language choice saved in cookies
+- **Fallback**: English as default when translation missing
+
+```typescript
+// app/i18n/settings.ts
+export const languages = ['en', 'pt', 'es']
+export const defaultNS = 'common'
+export const cookieName = 'i18next'
+```
+
 #### Auth Context Provider
 ```typescript
 // app/providers/auth-provider.tsx

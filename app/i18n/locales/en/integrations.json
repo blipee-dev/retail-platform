@@ -1,0 +1,118 @@
+{
+  "header": {
+    "title": "Connect Your Data",
+    "subtitle": "Send your retail data to blipee OS in minutes. Choose between our no-code integrations or use our powerful API for custom implementations."
+  },
+  "toggle": {
+    "noCode": "No-Code Integrations",
+    "api": "Developer API"
+  },
+  "integrations": {
+    "square": {
+      "title": "Square POS",
+      "status": "One-Click Setup",
+      "description": "Connect your Square account with a single click. Automatically sync transactions, customer data, and inventory levels in real-time.",
+      "button": "Connect Square"
+    },
+    "shopify": {
+      "title": "Shopify",
+      "status": "App Store Integration",
+      "description": "Install the blipee OS app from Shopify App Store. Seamlessly integrates with your store's analytics and customer behavior data.",
+      "button": "Install App"
+    },
+    "clover": {
+      "title": "Clover POS",
+      "status": "OAuth Connection",
+      "description": "Authorize blipee OS to access your Clover data. Sync sales, inventory, and customer insights automatically.",
+      "button": "Authorize Clover"
+    },
+    "csv": {
+      "title": "CSV/Excel Upload",
+      "status": "Drag & Drop",
+      "description": "Simply drag and drop your CSV or Excel files. Our smart mapper automatically identifies and maps your data columns.",
+      "button": "Upload Files"
+    },
+    "camera": {
+      "title": "Camera Systems",
+      "status": "RTSP/Plugin",
+      "description": "Connect existing security cameras via RTSP streams or install our lightweight plugin for supported camera systems.",
+      "button": "Setup Cameras"
+    },
+    "zapier": {
+      "title": "Zapier Integration",
+      "status": "1000+ Apps",
+      "description": "Connect blipee OS with thousands of apps through Zapier. Create automated workflows without any coding.",
+      "button": "Browse Zaps"
+    }
+  },
+  "api": {
+    "title": "blipee OS Data Ingestion API",
+    "description": "Our RESTful API allows you to send retail data from any source. Built for developers, designed for scale, and optimized for real-time analytics.",
+    "features": [
+      "RESTful JSON API",
+      "Real-time & Batch Processing",
+      "OAuth 2.0 Authentication",
+      "Webhook Notifications",
+      "99.99% Uptime SLA",
+      "Rate Limiting: 1000 req/min"
+    ],
+    "docsButton": "View Full API Documentation",
+    "examples": {
+      "title": "Quick Start Examples",
+      "tabs": {
+        "curl": "cURL",
+        "python": "Python",
+        "nodejs": "Node.js",
+        "php": "PHP"
+      }
+    },
+    "dataTypes": {
+      "title": "Supported Data Types",
+      "subtitle": "Send any of these data types to blipee OS for instant analytics:",
+      "table": {
+        "headers": {
+          "type": "Data Type",
+          "endpoint": "Endpoint",
+          "fields": "Required Fields"
+        },
+        "rows": [
+          {
+            "type": "Sales Transactions",
+            "endpoint": "/v1/data/sales",
+            "fields": "store_id, timestamp, amount, transaction_id"
+          },
+          {
+            "type": "People Counting",
+            "endpoint": "/v1/data/traffic",
+            "fields": "store_id, timestamp, zone_id, count"
+          },
+          {
+            "type": "Heatmap Data",
+            "endpoint": "/v1/data/heatmap",
+            "fields": "store_id, timestamp, coordinates[], intensity"
+          },
+          {
+            "type": "Zone Analytics",
+            "endpoint": "/v1/data/zones",
+            "fields": "store_id, timestamp, zone_id, dwell_time, visitors"
+          },
+          {
+            "type": "Inventory Levels",
+            "endpoint": "/v1/data/inventory",
+            "fields": "store_id, sku, quantity, location"
+          },
+          {
+            "type": "Customer Data",
+            "endpoint": "/v1/data/customers",
+            "fields": "customer_id, store_id, timestamp"
+          }
+        ]
+      }
+    }
+  },
+  "cta": {
+    "title": "Ready to Connect Your Data?",
+    "subtitle": "Start sending data to blipee OS today and see insights in real-time",
+    "button": "Start Free Trial"
+  }
+}

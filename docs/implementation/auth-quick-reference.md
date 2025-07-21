@@ -29,6 +29,25 @@ Need to see all organization data?
 
 ## Common Patterns
 
+### Internationalization in Components
+```typescript
+// Client component
+import { useTranslation } from '@/app/i18n/client'
+
+export default function MyComponent() {
+  const { t } = useTranslation('common')
+  return <h1>{t('welcome.title')}</h1>
+}
+
+// Server component
+import { useTranslation } from '@/app/i18n'
+
+export default async function ServerComponent({ params: { lng } }) {
+  const { t } = await useTranslation(lng, 'common')
+  return <h1>{t('welcome.title')}</h1>
+}
+```
+
 ### Check User Role in Frontend
 ```typescript
 const { role } = useAuth();

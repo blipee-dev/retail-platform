@@ -1,0 +1,97 @@
+{
+  "hero": {
+    "badge": "The Intelligence Platform Retailers Love",
+    "title": "The Future of Retail is",
+    "titleHighlight": "Intelligent",
+    "subtitle": "Imagine knowing exactly what your customers want, when they want it, and where they'll find it. blipee OS transforms mountains of data into moments of clarity — turning every insight into opportunity, every pattern into profit.",
+    "subtitleBold": "This is intelligence designed for retail excellence.",
+    "ctaPrimary": "Start Your Free Trial Now",
+    "ctaSecondary": "Watch Demo"
+  },
+  "features": {
+    "ai": {
+      "title": "Predictive Intelligence That Learns",
+      "description": "Our proprietary AI doesn't just analyze — it understands. Watch as blipee learns your unique patterns, adapts to your customers, and delivers predictions that feel like magic but are pure science."
+    },
+    "vision": {
+      "title": "Vision Beyond Cameras",
+      "description": "blipee sees what others can't — the story behind every movement, the meaning in every pause. Our vision AI creates a living map of opportunity, showing you not just where customers go, but why."
+    },
+    "realtime": {
+      "title": "Real-Time Brilliance",
+      "description": "In the time it takes to blink, blipee processes millions of signals into actionable insights. Experience the thrill of knowing now, not later — because retail happens in real-time."
+    }
+  },
+  "intelligence": {
+    "title": "Intelligence That",
+    "titleHighlight": "Learns & Adapts",
+    "subtitle": "Our proprietary AI engine doesn't just analyze - it understands, learns, and evolves with your business.",
+    "features": {
+      "anomaly": {
+        "title": "Anomaly Detection",
+        "description": "Instantly identifies unusual patterns and alerts you to opportunities or risks"
+      },
+      "sentiment": {
+        "title": "Sentiment Analysis",
+        "description": "Understand customer emotions and satisfaction in real-time"
+      },
+      "optimization": {
+        "title": "Autonomous Optimization",
+        "description": "AI automatically adjusts strategies based on performance metrics"
+      }
+    }
+  },
+  "stats": {
+    "accuracy": {
+      "value": "98.5%",
+      "label": "Prediction Accuracy"
+    },
+    "response": {
+      "value": "150ms",
+      "label": "Real-time Response"
+    },
+    "predictions": {
+      "value": "10M+",
+      "label": "Daily Predictions"
+    },
+    "roi": {
+      "value": "42%",
+      "label": "Average ROI Increase"
+    }
+  },
+  "cta": {
+    "title": "Experience the",
+    "titleHighlight": "blipee Difference",
+    "subtitle": "Join forward-thinking retailers who've discovered what happens when artificial intelligence meets human ambition. Your data has stories to tell — let blipee help you hear them.",
+    "button": "Start Your Journey Today",
+    "secondary": "See blipee in Action"
+  },
+  "footer": {
+    "sections": {
+      "product": "Product",
+      "company": "Company",
+      "support": "Support",
+      "legal": "Legal"
+    },
+    "links": {
+      "features": "Features",
+      "integrations": "Integrations",
+      "pricing": "Pricing",
+      "documentation": "Documentation",
+      "aboutUs": "About Us",
+      "contact": "Contact",
+      "careers": "Careers",
+      "blog": "Blog",
+      "helpCenter": "Help Center",
+      "contactSupport": "Contact Support",
+      "statusPage": "Status Page",
+      "apiStatus": "API Status",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy",
+      "security": "Security",
+      "compliance": "Compliance"
+    },
+    "copyright": "All rights reserved.",
+    "certifications": "SOC 2 Certified | GDPR Compliant"
+  }
+}

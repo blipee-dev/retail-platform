@@ -1,0 +1,106 @@
+{
+  "header": {
+    "title": "Entre em Contacto",
+    "subtitle": "Precisa de ajuda? Tem questões? A nossa equipa está aqui para apoiar a sua jornada de inteligência no retalho."
+  },
+  "methods": {
+    "chat": {
+      "title": "Chat ao Vivo",
+      "description": "Obtenha respostas instantâneas às suas perguntas com o nosso suporte por chat ao vivo.",
+      "action": "Iniciar Chat"
+    },
+    "email": {
+      "title": "Suporte por E-mail",
+      "description": "Envie-nos uma mensagem detalhada e responderemos em 24 horas.",
+      "action": "support@blipee.com"
+    },
+    "phone": {
+      "title": "Suporte Telefónico",
+      "description": "Fale diretamente com a nossa equipa de suporte para questões urgentes.",
+      "action": "+1 (555) 254-7331"
+    }
+  },
+  "form": {
+    "title": "Envie-nos uma Mensagem",
+    "subtitle": "Preencha o formulário e a nossa equipa entrará em contacto consigo em 24 horas. Para pedidos de suporte urgentes, utilize o nosso chat ao vivo ou suporte telefónico.",
+    "benefits": {
+      "response": "Resposta em 24 horas",
+      "manager": "Gestor de conta dedicado para Empresas",
+      "onboarding": "Integração e formação gratuitas",
+      "support": "Suporte 24/7 para questões críticas"
+    },
+    "fields": {
+      "name": {
+        "label": "Nome Completo",
+        "placeholder": "João Silva"
+      },
+      "email": {
+        "label": "Endereço de E-mail",
+        "placeholder": "joao@empresa.com"
+      },
+      "company": {
+        "label": "Empresa",
+        "placeholder": "A Sua Empresa"
+      },
+      "subject": {
+        "label": "Assunto",
+        "placeholder": "Selecione um tópico",
+        "options": {
+          "sales": "Questão Comercial",
+          "support": "Suporte Técnico",
+          "billing": "Questão de Faturação",
+          "integration": "Ajuda com Integração",
+          "demo": "Solicitar Demonstração",
+          "other": "Outro"
+        }
+      },
+      "message": {
+        "label": "Mensagem",
+        "placeholder": "Diga-nos como podemos ajudá-lo..."
+      }
+    },
+    "submit": "Enviar Mensagem",
+    "success": "Obrigado pela sua mensagem! Responderemos em 24 horas."
+  },
+  "faq": {
+    "title": "Perguntas Frequentes",
+    "items": [
+      {
+        "question": "Quão rapidamente posso começar com o blipee OS?",
+        "answer": "A maioria dos clientes está operacional em 24 horas. As nossas integrações sem código podem ser configuradas em minutos, enquanto as integrações API personalizadas normalmente levam 1-2 semanas dependendo da complexidade."
+      },
+      {
+        "question": "Oferecem formação e integração?",
+        "answer": "Sim! Todos os planos incluem integração gratuita, sessões de formação e acesso à nossa documentação completa. Os clientes Empresariais têm gestores de sucesso dedicados e programas de formação personalizados."
+      },
+      {
+        "question": "Que tipo de suporte oferecem?",
+        "answer": "Oferecemos múltiplos canais de suporte: chat ao vivo, e-mail, telefone e videochamadas. Os planos Profissional e Empresarial incluem suporte prioritário com tempos de resposta mais rápidos e gestores de conta dedicados."
+      },
+      {
+        "question": "Posso integrar o blipee OS com os meus sistemas existentes?",
+        "answer": "Absolutamente! Suportamos integrações com os principais sistemas POS, câmaras, plataformas CRM e muito mais. A nossa API permite integrações personalizadas e oferecemos conectores pré-construídos para plataformas populares."
+      },
+      {
+        "question": "Os meus dados estão seguros com o blipee OS?",
+        "answer": "Sim, a segurança é a nossa principal prioridade. Somos certificados SOC 2, em conformidade com o RGPD e usamos encriptação de nível empresarial. Todos os dados são processados anonimamente e nunca armazenamos informações pessoais identificáveis dos clientes."
+      }
+    ]
+  },
+  "hours": {
+    "title": "Horário de Suporte",
+    "subtitle": "A nossa equipa de suporte global está disponível para ajudá-lo a ter sucesso",
+    "chat": {
+      "label": "Chat ao Vivo e E-mail",
+      "time": "24/7 Disponível"
+    },
+    "phone": {
+      "label": "Suporte Telefónico",
+      "time": "Seg-Sex, 6h-18h PST"
+    },
+    "emergency": {
+      "label": "Suporte de Emergência",
+      "time": "24/7 para Empresas"
+    }
+  }
+}

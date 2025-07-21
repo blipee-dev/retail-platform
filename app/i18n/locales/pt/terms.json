@@ -1,0 +1,136 @@
+{
+  "header": {
+    "title": "Termos de Serviço",
+    "effectiveDate": "Data de Vigência: 1 de Janeiro de 2024",
+    "lastUpdated": "Última Atualização: 1 de Janeiro de 2024"
+  },
+  "sections": {
+    "agreement": {
+      "title": "1. Acordo de Termos",
+      "text": "Ao aceder ou utilizar o serviço Retail Platform (\"Serviço\"), concorda em estar vinculado a estes Termos de Serviço (\"Termos\"). Se discordar de qualquer parte destes termos, não poderá aceder ao Serviço."
+    },
+    "definitions": {
+      "title": "2. Definições",
+      "items": [
+        {
+          "term": "Serviço",
+          "definition": "refere-se à plataforma de análise Retail Platform, incluindo todas as funcionalidades, ferramentas e serviços fornecidos"
+        },
+        {
+          "term": "Conta",
+          "definition": "significa uma conta única criada para si para aceder ao nosso Serviço"
+        },
+        {
+          "term": "Conteúdo",
+          "definition": "refere-se a conteúdo como texto, imagens ou outras informações que podem ser publicadas, carregadas, ligadas ou disponibilizadas através do Serviço"
+        },
+        {
+          "term": "Utilizador",
+          "definition": "refere-se à pessoa individual, empresa ou organização que acede ou utiliza o Serviço"
+        }
+      ]
+    },
+    "use": {
+      "title": "3. Utilização Aceitável",
+      "description": "Concorda em utilizar o Serviço apenas para fins legais e de acordo com estes Termos. Concorda em não:",
+      "items": [
+        "Violar quaisquer leis ou regulamentos aplicáveis",
+        "Infringir os direitos de outros",
+        "Transmitir qualquer código malicioso ou vírus",
+        "Tentar obter acesso não autorizado a qualquer parte do Serviço",
+        "Utilizar o Serviço para recolher ou rastrear informações pessoais de outros",
+        "Interferir ou interromper o Serviço ou servidores",
+        "Utilizar o Serviço para qualquer propósito ilegal ou não autorizado"
+      ]
+    },
+    "account": {
+      "title": "4. Termos da Conta",
+      "creation": {
+        "title": "4.1 Criação de Conta",
+        "text": "Deve fornecer informações precisas, completas e atuais ao criar uma conta. É responsável por manter a segurança das suas credenciais de conta."
+      },
+      "responsibility": {
+        "title": "4.2 Responsabilidade da Conta",
+        "text": "É responsável por todas as atividades que ocorrem na sua conta. Deve notificar-nos imediatamente sobre qualquer uso não autorizado da sua conta."
+      },
+      "requirements": {
+        "title": "4.3 Requisitos da Conta",
+        "text": "Deve ter pelo menos 18 anos para utilizar este Serviço. Ao concordar com estes Termos, declara que tem capacidade legal para celebrar um acordo vinculativo."
+      }
+    },
+    "payment": {
+      "title": "5. Termos de Pagamento",
+      "pricing": {
+        "title": "5.1 Preços",
+        "text": "A Retail Platform oferece vários planos de subscrição conforme detalhado na nossa página de preços. Todos os preços estão em USD, salvo indicação em contrário."
+      },
+      "billing": {
+        "title": "5.2 Faturação",
+        "text": "As subscrições são faturadas mensalmente ou anualmente com antecedência. Autoriza-nos a cobrar o seu método de pagamento numa base recorrente."
+      },
+      "trial": {
+        "title": "5.3 Teste Gratuito",
+        "text": "Oferecemos um teste gratuito de 30 dias. Não é necessário cartão de crédito para começar. Pode cancelar a qualquer momento durante o período de teste sem custos."
+      }
+    },
+    "data": {
+      "title": "6. Privacidade e Segurança de Dados",
+      "description": "Levamos a privacidade de dados a sério. O nosso tratamento dos seus dados é regido pela nossa Política de Privacidade. Implementamos medidas de segurança padrão do setor, incluindo:",
+      "items": [
+        "Encriptação SSL de 256 bits para toda a transmissão de dados",
+        "Certificação SOC 2 Tipo II",
+        "Conformidade RGPD para clientes da UE",
+        "Auditorias de segurança regulares e testes de penetração"
+      ]
+    },
+    "intellectual": {
+      "title": "7. Propriedade Intelectual",
+      "ownership": "O Serviço e o seu conteúdo original, funcionalidades e funcionalidade são propriedade da Retail Platform e estão protegidos por leis internacionais de direitos de autor, marca registada, patente, segredo comercial e outras leis de propriedade intelectual.",
+      "license": "Mantém a propriedade de quaisquer dados que carregue para o Serviço. Ao utilizar o Serviço, concede-nos uma licença para utilizar estes dados exclusivamente para fornecer o Serviço a si."
+    },
+    "termination": {
+      "title": "8. Rescisão",
+      "description": "Qualquer parte pode rescindir este acordo a qualquer momento. Após a rescisão:",
+      "items": [
+        "O seu acesso ao Serviço será desativado",
+        "Pode solicitar a exportação dos seus dados dentro de 30 dias",
+        "Eliminaremos os seus dados após 90 dias, a menos que sejamos legalmente obrigados a retê-los",
+        "Não serão fornecidos reembolsos para períodos de faturação parciais"
+      ]
+    },
+    "disclaimer": {
+      "title": "9. Isenção de Garantias",
+      "text": "O SERVIÇO É FORNECIDO \"COMO ESTÁ\" E \"CONFORME DISPONÍVEL\" SEM GARANTIAS DE QUALQUER TIPO, EXPRESSAS OU IMPLÍCITAS. NÃO GARANTIMOS QUE O SERVIÇO SERÁ ININTERRUPTO, LIVRE DE ERROS OU COMPLETAMENTE SEGURO."
+    },
+    "limitation": {
+      "title": "10. Limitação de Responsabilidade",
+      "text": "NA MÁXIMA EXTENSÃO PERMITIDA POR LEI, A RETAIL PLATFORM NÃO SERÁ RESPONSÁVEL POR QUAISQUER DANOS INDIRETOS, INCIDENTAIS, ESPECIAIS, CONSEQUENCIAIS OU PUNITIVOS, OU QUALQUER PERDA DE LUCROS OU RECEITAS."
+    },
+    "general": {
+      "title": "11. Termos Gerais",
+      "governing": {
+        "title": "11.1 Lei Aplicável",
+        "text": "Estes Termos serão regidos pelas leis do Estado da Califórnia, sem consideração às suas disposições sobre conflitos de leis."
+      },
+      "changes": {
+        "title": "11.2 Alterações aos Termos",
+        "text": "Reservamo-nos o direito de modificar estes Termos a qualquer momento. Notificaremos sobre quaisquer alterações publicando os novos Termos nesta página."
+      },
+      "entire": {
+        "title": "11.3 Acordo Integral",
+        "text": "Estes Termos constituem o acordo integral entre si e a Retail Platform relativamente ao uso do Serviço."
+      }
+    }
+  },
+  "contact": {
+    "title": "Contacte-nos",
+    "description": "Se tiver alguma questão sobre estes Termos de Serviço, contacte-nos através de:",
+    "email": "legal@retailplatform.com",
+    "address": {
+      "company": "Retail Platform, Inc.",
+      "street": "123 Commerce Street",
+      "city": "San Francisco, CA 94105",
+      "country": "Estados Unidos"
+    }
+  }
+}

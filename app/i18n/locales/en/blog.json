@@ -1,0 +1,78 @@
+{
+  "header": {
+    "title": "blipee OS Blog",
+    "subtitle": "Insights, updates, and thought leadership from the retail intelligence frontier"
+  },
+  "categories": {
+    "all": "All Posts",
+    "productUpdates": "Product Updates",
+    "industryInsights": "Industry Insights",
+    "caseStudies": "Case Studies",
+    "engineering": "Engineering",
+    "companyNews": "Company News"
+  },
+  "featured": {
+    "category": "Industry Insights",
+    "date": "December 15, 2024",
+    "readTime": "8 min read",
+    "title": "The Future of Retail: How AI is Transforming Physical Stores",
+    "excerpt": "As e-commerce continues to evolve, physical retail stores are leveraging artificial intelligence to create personalized, data-driven shopping experiences. Discover the technologies and strategies that are reshaping the retail landscape and driving unprecedented customer insights.",
+    "readMore": "Read Full Article"
+  },
+  "posts": [
+    {
+      "category": "Product Updates",
+      "date": "Dec 12, 2024",
+      "title": "Introducing Real-Time Zone Analytics",
+      "excerpt": "Our latest release brings real-time zone analytics to help retailers understand customer behavior patterns across different areas of their store.",
+      "author": "Sarah Martinez",
+      "role": "CTO"
+    },
+    {
+      "category": "Case Studies",
+      "date": "Dec 10, 2024",
+      "title": "How RetailMax Increased Sales by 23% with blipee OS",
+      "excerpt": "Learn how RetailMax used our people counting and heatmap analytics to optimize their store layout and improve customer conversion rates.",
+      "author": "Alex Chen",
+      "role": "CEO"
+    },
+    {
+      "category": "Engineering",
+      "date": "Dec 8, 2024",
+      "title": "Building Scalable Computer Vision at 50M+ Events Daily",
+      "excerpt": "A deep dive into our engineering challenges and solutions for processing millions of analytics events in real-time with 99.9% uptime.",
+      "author": "David Kim",
+      "role": "Head of AI"
+    },
+    {
+      "category": "Industry Insights",
+      "date": "Dec 5, 2024",
+      "title": "2024 Retail Analytics Trends: What the Data Shows",
+      "excerpt": "Analyzing aggregated data from 500+ retail partners to uncover the biggest trends shaping the industry this year.",
+      "author": "Emily Johnson",
+      "role": "Head of Design"
+    },
+    {
+      "category": "Company News",
+      "date": "Dec 3, 2024",
+      "title": "blipee OS Raises $50M Series B to Accelerate AI Development",
+      "excerpt": "We're excited to announce our Series B funding round, which will help us expand our AI capabilities and global reach.",
+      "author": "Alex Chen",
+      "role": "CEO"
+    },
+    {
+      "category": "Product Updates",
+      "date": "Nov 30, 2024",
+      "title": "Enhanced Privacy Controls and GDPR Compliance Updates",
+      "excerpt": "New privacy features and compliance tools to help retailers meet the highest standards of data protection and customer privacy.",
+      "author": "Sarah Martinez",
+      "role": "CTO"
+    }
+  ],
+  "newsletter": {
+    "title": "Stay Updated",
+    "subtitle": "Get the latest insights, product updates, and industry trends delivered to your inbox",
+    "placeholder": "Enter your email",
+    "button": "Subscribe"
+  }
+}

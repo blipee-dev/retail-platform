@@ -1,0 +1,69 @@
+{
+  "common": {
+    "signOut": "Cerrar Sesión",
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "add": "Agregar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "export": "Exportar",
+    "import": "Importar"
+  },
+  "roles": {
+    "tenant_admin": "Administrador",
+    "regional_manager": "Gerente Regional",
+    "store_manager": "Gerente de Tienda",
+    "analyst": "Analista",
+    "store_staff": "Personal de Tienda",
+    "viewer": "Observador"
+  },
+  "navigation": {
+    "dashboard": "Panel",
+    "stores": "Tiendas",
+    "users": "Usuarios",
+    "analytics": "Análisis",
+    "settings": "Configuración",
+    "reports": "Informes",
+    "sensors": "Sensores"
+  },
+  "admin": {
+    "title": "Panel de Administración",
+    "stats": {
+      "totalStores": "Total de Tiendas",
+      "activeStores": "Tiendas Activas",
+      "totalUsers": "Total de Usuarios",
+      "recentActivity": "Actividad Reciente"
+    },
+    "quickActions": {
+      "title": "Acciones Rápidas",
+      "manageUsers": "Administrar Usuarios",
+      "manageStores": "Administrar Tiendas",
+      "viewAnalytics": "Ver Análisis",
+      "settings": "Configuración"
+    },
+    "stores": {
+      "title": "Tus Tiendas",
+      "addStore": "Agregar Tienda",
+      "noStores": "Sin tiendas aún",
+      "createFirst": "Crea Tu Primera Tienda",
+      "columns": {
+        "name": "Nombre",
+        "code": "Código",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "status": {
+        "active": "Activa",
+        "inactive": "Inactiva"
+      },
+      "actions": {
+        "manage": "Administrar",
+        "view": "Ver"
+      }
+    }
+  }
+}

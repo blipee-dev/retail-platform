@@ -1,0 +1,97 @@
+{
+  "hero": {
+    "badge": "La Plataforma de Inteligencia que los Minoristas Adoran",
+    "title": "El Futuro del Retail es",
+    "titleHighlight": "Inteligente",
+    "subtitle": "Imagina saber exactamente lo que tus clientes quieren, cuándo lo quieren y dónde lo encontrarán. blipee OS transforma montañas de datos en momentos de claridad — convirtiendo cada insight en oportunidad, cada patrón en ganancia.",
+    "subtitleBold": "Esta es inteligencia diseñada para la excelencia en retail.",
+    "ctaPrimary": "Comienza Tu Prueba Gratuita Ahora",
+    "ctaSecondary": "Ver Demostración"
+  },
+  "features": {
+    "ai": {
+      "title": "Inteligencia Predictiva que Aprende",
+      "description": "Nuestra IA propietaria no solo analiza — comprende. Observa cómo blipee aprende tus patrones únicos, se adapta a tus clientes y ofrece predicciones que parecen magia pero son pura ciencia."
+    },
+    "vision": {
+      "title": "Visión Más Allá de las Cámaras",
+      "description": "blipee ve lo que otros no pueden — la historia detrás de cada movimiento, el significado en cada pausa. Nuestra IA de visión crea un mapa vivo de oportunidades, mostrándote no solo dónde van los clientes, sino por qué."
+    },
+    "realtime": {
+      "title": "Brillantez en Tiempo Real",
+      "description": "En el tiempo que toma parpadear, blipee procesa millones de señales en insights accionables. Experimenta la emoción de saber ahora, no después — porque el retail sucede en tiempo real."
+    }
+  },
+  "intelligence": {
+    "title": "Inteligencia que",
+    "titleHighlight": "Aprende y se Adapta",
+    "subtitle": "Nuestro motor de IA propietario no solo analiza - comprende, aprende y evoluciona con tu negocio.",
+    "features": {
+      "anomaly": {
+        "title": "Detección de Anomalías",
+        "description": "Identifica instantáneamente patrones inusuales y te alerta sobre oportunidades o riesgos"
+      },
+      "sentiment": {
+        "title": "Análisis de Sentimiento",
+        "description": "Comprende las emociones y satisfacción del cliente en tiempo real"
+      },
+      "optimization": {
+        "title": "Optimización Autónoma",
+        "description": "La IA ajusta automáticamente las estrategias basándose en las métricas de rendimiento"
+      }
+    }
+  },
+  "stats": {
+    "accuracy": {
+      "value": "98,5%",
+      "label": "Precisión de Predicción"
+    },
+    "response": {
+      "value": "150ms",
+      "label": "Respuesta en Tiempo Real"
+    },
+    "predictions": {
+      "value": "10M+",
+      "label": "Predicciones Diarias"
+    },
+    "roi": {
+      "value": "42%",
+      "label": "Aumento Promedio de ROI"
+    }
+  },
+  "cta": {
+    "title": "Experimenta la",
+    "titleHighlight": "Diferencia blipee",
+    "subtitle": "Únete a minoristas progresistas que han descubierto lo que sucede cuando la inteligencia artificial se encuentra con la ambición humana. Tus datos tienen historias que contar — deja que blipee te ayude a escucharlas.",
+    "button": "Comienza Tu Viaje Hoy",
+    "secondary": "Ver blipee en Acción"
+  },
+  "footer": {
+    "sections": {
+      "product": "Producto",
+      "company": "Empresa",
+      "support": "Soporte",
+      "legal": "Legal"
+    },
+    "links": {
+      "features": "Características",
+      "integrations": "Integraciones",
+      "pricing": "Precios",
+      "documentation": "Documentación",
+      "aboutUs": "Acerca de Nosotros",
+      "contact": "Contacto",
+      "careers": "Carreras",
+      "blog": "Blog",
+      "helpCenter": "Centro de Ayuda",
+      "contactSupport": "Contactar Soporte",
+      "statusPage": "Página de Estado",
+      "apiStatus": "Estado de API",
+      "terms": "Términos de Servicio",
+      "privacy": "Política de Privacidad",
+      "security": "Seguridad",
+      "compliance": "Cumplimiento"
+    },
+    "copyright": "Todos los derechos reservados.",
+    "certifications": "Certificado SOC 2 | Cumplimiento GDPR"
+  }
+}

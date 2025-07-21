@@ -1,0 +1,145 @@
+{
+  "header": {
+    "title": "Segurança e Conformidade",
+    "subtitle": "A segurança dos seus dados é a nossa principal prioridade. Conheça as nossas medidas de segurança abrangentes e certificações de conformidade."
+  },
+  "overview": {
+    "title": "Segurança de Nível Empresarial",
+    "paragraph1": "Implementamos práticas de segurança líderes do setor para proteger os seus dados de retalho e garantir a continuidade do negócio.",
+    "paragraph2": "A nossa plataforma foi construída com segurança no seu núcleo, apresentando múltiplas camadas de proteção e monitorização contínua.",
+    "badge": {
+      "title": "Segurança de Nível Bancário",
+      "description": "Encriptação AES de 256 bits"
+    }
+  },
+  "certifications": {
+    "title": "Conformidade e Certificações",
+    "items": [
+      {
+        "icon": "📋",
+        "title": "SOC 2 Tipo II",
+        "description": "Auditorias anuais garantem que os nossos controlos de segurança cumprem os mais altos padrões de proteção e disponibilidade de dados.",
+        "status": "Certificado"
+      },
+      {
+        "icon": "🌐",
+        "title": "Conformidade RGPD",
+        "description": "Total conformidade com os regulamentos europeus de proteção de dados, garantindo que os dados dos seus clientes são tratados de forma responsável.",
+        "status": "Conforme"
+      },
+      {
+        "icon": "🔒",
+        "title": "ISO 27001",
+        "description": "Certificação internacionalmente reconhecida para sistemas de gestão de segurança da informação.",
+        "status": "Certificado"
+      },
+      {
+        "icon": "🏪",
+        "title": "PCI DSS Nível 1",
+        "description": "Nível mais alto de segurança de dados de cartões de pagamento para processar transações de clientes.",
+        "status": "Certificado"
+      }
+    ]
+  },
+  "measures": {
+    "title": "Medidas de Segurança",
+    "items": [
+      {
+        "icon": "🔐",
+        "title": "Encriptação de Dados",
+        "description": "Todos os dados são encriptados em repouso e em trânsito usando encriptação AES-256",
+        "features": [
+          "Encriptação ponta a ponta",
+          "TLS 1.3 para dados em trânsito",
+          "Cópias de segurança encriptadas",
+          "Políticas de rotação de chaves"
+        ]
+      },
+      {
+        "icon": "👤",
+        "title": "Controlo de Acesso",
+        "description": "Sistemas de autenticação e autorização multicamadas",
+        "features": [
+          "Autenticação multifator",
+          "Controlo de acesso baseado em funções",
+          "Single sign-on (SSO)",
+          "Gestão de sessões"
+        ]
+      },
+      {
+        "icon": "🔍",
+        "title": "Monitorização 24/7",
+        "description": "Monitorização contínua de segurança e deteção de ameaças",
+        "features": [
+          "Deteção de ameaças em tempo real",
+          "Deteção de anomalias",
+          "Resposta a incidentes de segurança",
+          "Registo de auditoria"
+        ]
+      },
+      {
+        "icon": "🏗️",
+        "title": "Segurança da Infraestrutura",
+        "description": "Infraestrutura de nível empresarial com múltiplas camadas de segurança",
+        "features": [
+          "Alojamento AWS/Azure",
+          "Proteção DDoS",
+          "Firewall de aplicações web",
+          "Isolamento de rede"
+        ]
+      },
+      {
+        "icon": "🎯",
+        "title": "Privacidade de Dados",
+        "description": "Controlos abrangentes de proteção e privacidade de dados",
+        "features": [
+          "Minimização de dados",
+          "Direito ao esquecimento",
+          "Portabilidade de dados",
+          "Privacidade por design"
+        ]
+      },
+      {
+        "icon": "🧪",
+        "title": "Testes de Segurança",
+        "description": "Avaliações regulares de segurança e testes de penetração",
+        "features": [
+          "Testes de penetração anuais",
+          "Análise de vulnerabilidades",
+          "Revisões de segurança de código",
+          "Auditorias de terceiros"
+        ]
+      }
+    ]
+  },
+  "reporting": {
+    "title": "Comunicação de Incidentes de Segurança",
+    "description": "Mantemos transparência sobre incidentes de segurança e fornecemos notificações atempadas de acordo com os regulamentos aplicáveis.",
+    "buttons": {
+      "documentation": "Documentação de Segurança",
+      "reports": "Relatórios de Conformidade",
+      "status": "Estado de Segurança"
+    }
+  },
+  "contact": {
+    "title": "Questões de Segurança?",
+    "subtitle": "A nossa equipa de segurança está aqui para ajudar a esclarecer quaisquer preocupações ou questões sobre as nossas práticas de segurança.",
+    "methods": [
+      {
+        "icon": "🚨",
+        "title": "Questões de Segurança",
+        "text": "seguranca@retailplatform.com"
+      },
+      {
+        "icon": "📞",
+        "title": "Linha de Segurança",
+        "text": "+351 808 555 123"
+      },
+      {
+        "icon": "💬",
+        "title": "Questões Gerais",
+        "text": "Suporte por chat"
+      }
+    ]
+  }
+}

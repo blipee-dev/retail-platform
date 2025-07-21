@@ -1,0 +1,111 @@
+{
+  "header": {
+    "title": "Precios Simples,",
+    "titleHighlight": "Resultados Poderosos",
+    "subtitle": "Elige el plan perfecto para tus necesidades de inteligencia en retail. Todos los planes incluyen nuestra tecnología AI principal y soporte de clase mundial."
+  },
+  "plans": {
+    "essential": {
+      "name": "Esencial",
+      "description": "Perfecto para tiendas individuales que comienzan su viaje de inteligencia",
+      "price": "$49",
+      "period": "/mes por tienda",
+      "subtext": "Todo lo que necesitas para entender a tus clientes",
+      "features": [
+        "Conteo de personas en tiempo real con 98% de precisión",
+        "Cálculo automático de tasa de captura",
+        "Análisis de tendencias horarias, diarias e históricas",
+        "Panel optimizado para móviles",
+        "Alertas básicas por correo y notificaciones",
+        "Exportar informes (PDF y CSV)"
+      ],
+      "cta": "Iniciar Prueba Gratuita"
+    },
+    "professional": {
+      "badge": "Más Popular",
+      "name": "Profesional",
+      "description": "Para minoristas en crecimiento que quieren insights más profundos",
+      "price": "$99",
+      "period": "/mes por tienda",
+      "subtext": "Desbloquea el poder de las zonas y mapas de calor",
+      "features": [
+        "Todo en Esencial, más:",
+        "Mapas de calor de zonas interactivos",
+        "Análisis de tiempo de permanencia por área",
+        "Identificación y alertas de zonas muertas",
+        "Pruebas A/B para diseños de tienda",
+        "Panel de comparación multi-tienda",
+        "Soporte prioritario e incorporación"
+      ],
+      "cta": "Iniciar Prueba Gratuita"
+    },
+    "intelligence": {
+      "name": "Inteligencia",
+      "description": "Poder completo de IA para empresas impulsadas por datos",
+      "price": "$199",
+      "period": "/mes por tienda",
+      "subtext": "Plataforma completa de inteligencia retail",
+      "features": [
+        "Todo en Profesional, más:",
+        "Predicciones de tráfico con IA",
+        "Mapeo del viaje del cliente",
+        "Integración con POS, CRM e inventario",
+        "Modelos de IA personalizados para tu negocio",
+        "Acceso a API y webhooks",
+        "Gerente de éxito dedicado"
+      ],
+      "cta": "Contactar Ventas"
+    }
+  },
+  "comparison": {
+    "title": "Compara",
+    "titleHighlight": "Características",
+    "headers": {
+      "feature": "Característica",
+      "essential": "Esencial",
+      "professional": "Profesional",
+      "intelligence": "Inteligencia"
+    },
+    "sections": {
+      "coreAnalytics": "Análisis Principal",
+      "advancedAnalytics": "Análisis Avanzado",
+      "aiPredictions": "IA y Predicciones",
+      "integrations": "Integraciones",
+      "support": "Soporte"
+    },
+    "features": {
+      "peopleCountingCaptureRate": "Conteo de personas y tasa de captura",
+      "realTimeDashboards": "Paneles en tiempo real",
+      "historicalTrends": "Tendencias históricas y comparaciones",
+      "zoneHeatmaps": "Mapas de calor de zonas",
+      "dwellTimeAnalysis": "Análisis de tiempo de permanencia",
+      "customerJourneyMapping": "Mapeo del viaje del cliente",
+      "trafficPredictions": "Predicciones de tráfico",
+      "anomalyDetection": "Detección de anomalías",
+      "customAiModels": "Modelos de IA personalizados",
+      "emailSlackNotifications": "Notificaciones por correo y Slack",
+      "posIntegration": "Integración POS",
+      "crmInventoryIntegration": "Sistemas CRM e inventario",
+      "apiAccess": "Acceso a API",
+      "supportLevel": "Nivel de soporte",
+      "onboarding": "Incorporación"
+    },
+    "values": {
+      "basic": "Básico",
+      "advancedAi": "IA Avanzada",
+      "readOnly": "Solo lectura",
+      "fullAccess": "Acceso completo",
+      "standard": "Estándar",
+      "priority": "Prioritario",
+      "dedicatedManager": "Gerente dedicado",
+      "selfService": "Autoservicio",
+      "guidedSetup": "Configuración guiada",
+      "whiteGlove": "Servicio premium"
+    }
+  },
+  "cta": {
+    "title": "¿Listo para Transformar tus Operaciones de Retail?",
+    "subtitle": "Comienza tu prueba gratuita de 30 días hoy. No se requiere tarjeta de crédito.",
+    "button": "Iniciar Prueba Gratuita"
+  }
+}

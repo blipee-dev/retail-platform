@@ -1,0 +1,85 @@
+{
+  "header": {
+    "title": "Sobre a blipee OS",
+    "subtitle": "Estamos a construir o futuro da inteligência no retalho, um insight de cada vez."
+  },
+  "mission": {
+    "title": "A Nossa Missão",
+    "content": {
+      "p1": "Na blipee OS, acreditamos que todos os retalhistas merecem acesso às mesmas análises poderosas que impulsionam as lojas mais bem-sucedidas do mundo. A nossa missão é democratizar a inteligência no retalho, tornando a IA e análises avançadas acessíveis a empresas de todas as dimensões.",
+      "p2": "Criámos a blipee OS porque vimos uma lacuna no mercado. Enquanto os grandes retalhistas tinham sistemas de análise de milhões de euros, os retalhistas mais pequenos ficavam com folhas de cálculo e suposições. Sabíamos que tinha de haver uma maneira melhor.",
+      "p3": "Hoje, temos orgulho em servir centenas de retalhistas em todo o mundo, desde boutiques familiares a empresas de mil milhões de euros."
+    },
+    "visual": {
+      "title": "Inteligência no Retalho para Todos",
+      "subtitle": "Tornando as decisões baseadas em dados acessíveis a retalhistas de todas as dimensões"
+    }
+  },
+  "values": {
+    "title": "Os Nossos Valores",
+    "innovation": {
+      "title": "Inovação em Primeiro",
+      "description": "Ultrapassamos os limites do que é possível em análises de retalho, inovando constantemente para estar à frente das necessidades da indústria."
+    },
+    "customerSuccess": {
+      "title": "Sucesso do Cliente",
+      "description": "O seu sucesso é o nosso sucesso. Estamos empenhados em fornecer valor e apoiar os nossos clientes a cada passo do caminho."
+    },
+    "privacy": {
+      "title": "Privacidade e Segurança",
+      "description": "Priorizamos a privacidade e segurança dos dados, garantindo que os dados do seu negócio estão protegidos com salvaguardas de nível empresarial."
+    },
+    "simplicity": {
+      "title": "Simplicidade",
+      "description": "Análises complexas tornadas simples. Acreditamos que insights poderosos devem ser acessíveis sem necessitar de um curso em ciência de dados."
+    }
+  },
+  "team": {
+    "title": "Conheça a Nossa Equipa",
+    "members": {
+      "ceo": {
+        "name": "Alex Chen",
+        "role": "CEO e Co-Fundador",
+        "bio": "Ex-VP de Análises numa grande cadeia de retalho. Mais de 15 anos de experiência em tecnologia de retalho e ciência de dados."
+      },
+      "cto": {
+        "name": "Sarah Martinez",
+        "role": "CTO e Co-Fundadora",
+        "bio": "Ex-investigadora de IA na Google especializada em visão computacional e análises em tempo real em escala."
+      },
+      "aiHead": {
+        "name": "David Kim",
+        "role": "Diretor de IA",
+        "bio": "Doutoramento em Machine Learning por Stanford. Liderou iniciativas de IA na Amazon e Microsoft Azure."
+      },
+      "designHead": {
+        "name": "Emily Johnson",
+        "role": "Diretora de Design",
+        "bio": "Designer UX premiada com mais de 10 anos a criar interfaces intuitivas para produtos de dados complexos."
+      }
+    }
+  },
+  "stats": {
+    "partners": {
+      "value": "500+",
+      "label": "Parceiros de Retalho"
+    },
+    "events": {
+      "value": "50M+",
+      "label": "Eventos de Análise Diários"
+    },
+    "uptime": {
+      "value": "99.9%",
+      "label": "Tempo de Atividade"
+    },
+    "support": {
+      "value": "24/7",
+      "label": "Suporte Global"
+    }
+  },
+  "cta": {
+    "title": "Pronto para Transformar a Sua Inteligência no Retalho?",
+    "subtitle": "Junte-se a centenas de retalhistas que já usam a blipee OS para tomar decisões mais inteligentes",
+    "button": "Iniciar Teste Gratuito"
+  }
+}

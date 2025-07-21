@@ -1,0 +1,89 @@
+{
+  "app": {
+    "name": "blipee OS",
+    "subtitle": "Retail Intelligence Platform"
+  },
+  "nav": {
+    "backToHome": "Back to Home",
+    "signIn": "Sign In",
+    "signUp": "Start Free Trial",
+    "dashboard": "Dashboard",
+    "home": "Home",
+    "integrations": "Integrations",
+    "pricing": "Pricing",
+    "docs": "Docs",
+    "startFreeTrial": "Start Free Trial",
+    "features": "Features",
+    "about": "About",
+    "contact": "Contact",
+    "blog": "Blog"
+  },
+  "auth": {
+    "welcomeTitle": "Welcome to the",
+    "future": "Future",
+    "welcomeSubtitle": "Sign in to access your intelligence dashboard",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "you@company.com",
+    "passwordLabel": "Password", 
+    "passwordPlaceholder": "Enter your password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "signInButton": "Sign In to Dashboard",
+    "signingIn": "Signing in...",
+    "orContinueWith": "Or continue with",
+    "noAccount": "Don't have an account?",
+    "startFreeTrial": "Start free trial",
+    "createAccount": "Create Your Account",
+    "startYourFreeTrial": "Start your 14-day free trial",
+    "organizationInfo": "Organization Information",
+    "organizationName": "Organization Name",
+    "organizationNamePlaceholder": "Acme Retail Inc.",
+    "organizationUrl": "Organization URL",
+    "urlHint": "Letters, numbers, and hyphens only",
+    "personalInfo": "Personal Information",
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "John Doe",
+    "createPassword": "Create a password",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Re-enter your password",
+    "agreeToTerms": "I agree to the",
+    "termsOfService": "Terms of Service",
+    "and": "and",
+    "privacyPolicy": "Privacy Policy",
+    "createAccountButton": "Create Account & Start Trial",
+    "creatingAccount": "Creating account...",
+    "alreadyHaveAccount": "Already have an account?",
+    "signInHere": "Sign in here",
+    "features": {
+      "secure": "Enterprise Security",
+      "analytics": "Real-time Analytics",
+      "trial": "14-Day Free Trial"
+    },
+    "errors": {
+      "unexpected": "An unexpected error occurred",
+      "invalidCredentials": "Invalid email or password",
+      "nameRequired": "Full name is required",
+      "organizationRequired": "Organization name is required",
+      "slugRequired": "Organization URL is required",
+      "passwordMismatch": "Passwords do not match",
+      "passwordTooShort": "Password must be at least 6 characters",
+      "mustAgreeToTerms": "You must agree to the terms and conditions"
+    }
+  },
+  "features": {
+    "title": "Real-Time Analytics at Your Fingertips",
+    "subtitle": "Monitor foot traffic, analyze patterns, and make data-driven decisions with our AI-powered platform.",
+    "analytics": "Advanced analytics and reporting",
+    "heatmaps": "Real-time heat maps and insights",
+    "predictions": "AI-powered predictions and alerts"
+  },
+  "footer": {
+    "copyright": "All rights reserved.",
+    "certifications": "SOC 2 Certified | GDPR Compliant",
+    "links": {
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy",
+      "aboutUs": "About Us"
+    }
+  }
+}

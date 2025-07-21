@@ -1,0 +1,85 @@
+{
+  "header": {
+    "title": "About blipee OS",
+    "subtitle": "We're building the future of retail intelligence, one insight at a time."
+  },
+  "mission": {
+    "title": "Our Mission",
+    "content": {
+      "p1": "At blipee OS, we believe every retailer deserves access to the same powerful analytics that drive the world's most successful stores. Our mission is to democratize retail intelligence, making advanced AI and analytics accessible to businesses of all sizes.",
+      "p2": "We started blipee OS because we saw a gap in the market. While enterprise retailers had million-dollar analytics systems, smaller retailers were left with spreadsheets and guesswork. We knew there had to be a better way.",
+      "p3": "Today, we're proud to serve hundreds of retailers worldwide, from family-owned boutiques to billion-dollar businesses."
+    },
+    "visual": {
+      "title": "Retail Intelligence for Everyone",
+      "subtitle": "Making data-driven decisions accessible to retailers of all sizes"
+    }
+  },
+  "values": {
+    "title": "Our Values",
+    "innovation": {
+      "title": "Innovation First",
+      "description": "We push the boundaries of what's possible in retail analytics, constantly innovating to stay ahead of industry needs."
+    },
+    "customerSuccess": {
+      "title": "Customer Success",
+      "description": "Your success is our success. We're committed to delivering value and supporting our customers every step of the way."
+    },
+    "privacy": {
+      "title": "Privacy & Security",
+      "description": "We prioritize data privacy and security, ensuring your business data is protected with enterprise-grade safeguards."
+    },
+    "simplicity": {
+      "title": "Simplicity",
+      "description": "Complex analytics made simple. We believe powerful insights should be accessible without requiring a data science degree."
+    }
+  },
+  "team": {
+    "title": "Meet Our Team",
+    "members": {
+      "ceo": {
+        "name": "Alex Chen",
+        "role": "CEO & Co-Founder",
+        "bio": "Former VP of Analytics at major retail chain. 15+ years experience in retail technology and data science."
+      },
+      "cto": {
+        "name": "Sarah Martinez",
+        "role": "CTO & Co-Founder",
+        "bio": "Ex-Google AI researcher specializing in computer vision and real-time analytics at scale."
+      },
+      "aiHead": {
+        "name": "David Kim",
+        "role": "Head of AI",
+        "bio": "PhD in Machine Learning from Stanford. Led AI initiatives at Amazon and Microsoft Azure."
+      },
+      "designHead": {
+        "name": "Emily Johnson",
+        "role": "Head of Design",
+        "bio": "Award-winning UX designer with 10+ years creating intuitive interfaces for complex data products."
+      }
+    }
+  },
+  "stats": {
+    "partners": {
+      "value": "500+",
+      "label": "Retail Partners"
+    },
+    "events": {
+      "value": "50M+",
+      "label": "Daily Analytics Events"
+    },
+    "uptime": {
+      "value": "99.9%",
+      "label": "Platform Uptime"
+    },
+    "support": {
+      "value": "24/7",
+      "label": "Global Support"
+    }
+  },
+  "cta": {
+    "title": "Ready to Transform Your Retail Intelligence?",
+    "subtitle": "Join hundreds of retailers already using blipee OS to make smarter decisions",
+    "button": "Start Your Free Trial"
+  }
+}

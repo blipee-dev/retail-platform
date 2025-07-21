@@ -6,7 +6,7 @@ This file provides context for AI assistants (like Claude) working on the Retail
 
 **Retail Platform** is a comprehensive retail analytics system that integrates with people counting sensors (primarily Milesight) to provide real-time analytics, heatmaps, and customer flow insights for retail environments.
 
-## Current Project State (Last Updated: 2025-07-20)
+## Current Project State (Last Updated: 2025-07-21)
 
 ### ✅ Completed
 - Basic connector system for Milesight sensors
@@ -20,11 +20,20 @@ This file provides context for AI assistants (like Claude) working on the Retail
 - Vercel deployment with automatic branch deployments
 - Environment-specific configurations
 - CI/CD pipeline with GitHub Actions
+- Internationalization (i18n) with support for EN/PT/ES (European Portuguese)
+- Authentication system with 6-tier RBAC (tenant_admin, regional_manager, store_manager, analyst, store_staff, viewer)
+- Multi-tenant Row Level Security (RLS) policies
+- Server-side API architecture for secure database access
+- All static pages converted to Next.js with full i18n support
+- Database schema with organizations, stores, regions, and sensor tables
+- Test user creation and authentication flow verification
 
 ### 🚧 In Progress
-- Real-time data processing
-- Advanced analytics features
-- API standardization
+- API endpoints for sensor data ingestion
+- Real-time data pipeline implementation
+- Python connector integration with Next.js API
+- Live data visualization in dashboards
+- Heat map implementation
 - Custom domain configuration
 
 ## Project Structure
@@ -97,10 +106,10 @@ python scripts/analysis/comprehensive_analysis.py
 
 ## Current Issues & Priorities
 
-1. **Import Paths**: All imports now use `src.connector_system` format after reorganization
+1. **Browser Networking in Codespaces**: Direct Supabase database queries timeout in browser environment. Implemented server-side API pattern as workaround.
 2. **Real-time Data**: Need to implement WebSocket or polling for real-time updates
-3. **Authentication**: Auth system exists but needs integration with frontend
-4. **Deployment**: No production deployment setup yet
+3. **Sensor Integration**: Python connectors need to be connected to Next.js API endpoints
+4. **Production Deployment**: Ready for production deployment to main branch
 
 ## Code Style Guidelines
 
@@ -145,7 +154,17 @@ python scripts/analysis/analyze_customer_pathways.py
 - Configuration is JSON-based for easy modification
 - Frontend and backend are currently separate (not fully integrated)
 
-## Recent Changes (2025-07-20)
+## Recent Changes
+
+### 2025-07-21
+- Completed authentication system implementation with 6-tier RBAC
+- Implemented comprehensive Row Level Security (RLS) policies
+- Fixed browser networking issues in Codespaces with server-side API pattern
+- Converted all remaining static pages to Next.js with i18n
+- Created test authentication flow and verified functionality
+- Fixed hydration errors and European Portuguese translations
+
+### 2025-07-20
 
 - Reorganized entire repository structure
 - Created logical folder hierarchy
@@ -184,12 +203,48 @@ git push origin develop  # Auto-deploys to development
 git push origin main     # Auto-deploys to production
 ```
 
+## Internationalization (i18n) Guidelines
+
+### Supported Languages
+- **English (en)** - Default language
+- **Portuguese (pt)** - European Portuguese  
+- **Spanish (es)** - Latin American Spanish
+
+### Implementation Requirements
+1. **All new pages and components must include translations**
+2. **Use the useTranslation hook in client components**
+3. **Browser language is auto-detected, with cookie persistence**
+4. **Language switcher must be available on all public pages**
+
+### Quick i18n Implementation
+```typescript
+// Client Component
+import { useTranslation } from '@/app/i18n/client'
+
+export default function MyComponent() {
+  const { t } = useTranslation('common')
+  return <h1>{t('title')}</h1>
+}
+```
+
+### Translation File Structure
+```
+app/i18n/locales/
+├── en/
+│   ├── common.json    # Shared UI elements
+│   ├── auth.json      # Authentication pages
+│   └── dashboard.json # Dashboard content
+├── pt/                # Portuguese translations
+└── es/                # Spanish translations
+```
+
 ## Contact & Support
 
 - Check `docs/ROADMAP.md` for development priorities
 - See `docs/CHANGELOG.md` for recent changes
 - Review `docs/api/` for API documentation
+- See `docs/implementation/i18n-guidelines.md` for detailed i18n documentation
 
 ---
 
-**Note for AI Assistants**: When working on this project, prioritize maintaining the existing structure and patterns. Always run tests after making changes. The connector system is the core of the application - handle with care.
+**Note for AI Assistants**: When working on this project, prioritize maintaining the existing structure and patterns. Always run tests after making changes. The connector system is the core of the application - handle with care. **All user-facing pages must support internationalization.**

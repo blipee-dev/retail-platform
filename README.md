@@ -1,6 +1,6 @@
 # Retail Platform
 
-A comprehensive retail analytics platform with people counting, sensor integration, and advanced analytics capabilities.
+A comprehensive retail analytics platform with people counting, sensor integration, and advanced analytics capabilities. Built with Next.js 14, TypeScript, and Supabase, featuring multi-tenant support and real-time data visualization.
 
 ## 📁 Project Structure
 
@@ -52,14 +52,34 @@ retail-platform/
 │   ├── specifications/   # Technical specifications
 │   ├── project/          # Project-level docs
 │   ├── summaries/        # Analysis summaries
+│   ├── implementation/   # Implementation guides
 │   └── ...               # Other documentation
 │
-├── CLAUDE.md            # AI assistant context
+├── app/                 # Next.js 14 application (App Router)
+│   ├── api/            # API routes for sensor data
+│   ├── auth/           # Authentication pages
+│   ├── components/     # Reusable components
+│   ├── dashboard/      # Dashboard pages
+│   ├── i18n/           # Internationalization setup
+│   ├── lib/            # Utility libraries
+│   ├── providers/      # React context providers
+│   └── types/          # TypeScript type definitions
+├── supabase/           # Database migrations and setup
+├── CLAUDE.md           # AI assistant context
 ├── package.json         # Node.js dependencies
 ├── LICENSE              # MIT License
 ├── .env.example         # Environment variables template
 └── README.md            # This file
 ```
+
+## 🌍 Internationalization
+
+The platform supports multiple languages out of the box:
+- **English** (en) - Default
+- **Portuguese** (pt) - European Portuguese
+- **Spanish** (es) - Español
+
+Language is automatically detected from the browser and can be changed using the language switcher available on all pages.
 
 ## 🚀 Getting Started
 
@@ -71,8 +91,8 @@ retail-platform/
 
 2. **Setup environment**
    ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
+   cp .env.example .env.development
+   # Edit .env.development with your Supabase configuration
    ```
 
 3. **Install dependencies**
@@ -82,6 +102,14 @@ retail-platform/
    # pip install -r requirements.txt
    ```
 
+4. **Setup database**
+   ```bash
+   # Run migrations in Supabase Dashboard SQL Editor
+   # 1. Run supabase/migrations/combined_migrations.sql
+   # 2. Run supabase/migrations/20240120000007_create_sensor_tables.sql
+   # 3. Run implement-rls-correct.sql for Row Level Security
+   ```
+
 4. **Configure sensors**
    - Edit configuration files in `config/sensors/` directory
    - See example configurations in `config/examples/`
@@ -89,19 +117,26 @@ retail-platform/
 
 5. **Run tests**
    ```bash
-   # Run all tests
+   # Run all Python tests
    python -m pytest tests/
    
    # Run specific test category
    python -m pytest tests/connectors/
+   
+   # Run Next.js lint and typecheck
+   npm run lint
+   npm run typecheck
    ```
 
 6. **Start development**
    ```bash
-   # Run a demo
+   # Start Next.js development server
+   npm run dev
+   
+   # Run Python sensor demo
    python scripts/demos/quick_sensor_test.py
    
-   # Start analysis
+   # Run analysis scripts
    python scripts/analysis/comprehensive_analysis.py
    ```
 
@@ -112,6 +147,10 @@ retail-platform/
 - **Heatmap Generation**: Spatial and temporal analysis
 - **Multi-sensor Support**: Flexible connector system
 - **Web Dashboard**: Interactive frontend for data visualization
+- **Multi-tenant Architecture**: 6-tier RBAC with Row Level Security
+- **Authentication**: Secure authentication with Supabase Auth
+- **Internationalization**: Full i18n support for global deployment
+- **API-First Design**: RESTful API for sensor data ingestion
 
 ## 📚 Documentation
 
@@ -119,6 +158,25 @@ retail-platform/
 - [API Documentation](docs/api/README.md)
 - [Architecture Overview](docs/architecture/overview.md)
 - [Deployment Guide](docs/deployment/README.md)
+- [Authentication Architecture](docs/implementation/auth-architecture.md)
+- [Database Schema](docs/implementation/multi-tenant-schema.sql)
+- [I18n Guidelines](docs/implementation/i18n-guidelines.md)
+
+## 🔐 Authentication & Security
+
+The platform implements a comprehensive 6-tier Role-Based Access Control (RBAC) system:
+- **Tenant Admin**: Full access to organization
+- **Regional Manager**: Access to assigned regions
+- **Store Manager**: Access to assigned stores
+- **Analyst**: Read-only access to all data
+- **Store Staff**: Limited access to store operations
+- **Viewer**: Read-only access to assigned stores
+
+## 🌐 Deployment
+
+- **Production**: Deploy to main branch → Vercel auto-deployment
+- **Staging**: Deploy to staging branch → Preview deployment
+- **Development**: Deploy to develop branch → Development deployment
 
 ## 🤝 Contributing
 

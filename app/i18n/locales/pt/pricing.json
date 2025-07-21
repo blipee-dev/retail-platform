@@ -1,0 +1,111 @@
+{
+  "header": {
+    "title": "Preços Simples,",
+    "titleHighlight": "Resultados Poderosos",
+    "subtitle": "Escolha o plano perfeito para as suas necessidades de inteligência no retalho. Todos os planos incluem a nossa tecnologia AI principal e suporte de classe mundial."
+  },
+  "plans": {
+    "essential": {
+      "name": "Essencial",
+      "description": "Perfeito para lojas individuais que iniciam a sua jornada de inteligência",
+      "price": "€49",
+      "period": "/mês por loja",
+      "subtext": "Tudo o que precisa para compreender os seus clientes",
+      "features": [
+        "Contagem de pessoas em tempo real com 98% de precisão",
+        "Cálculo automático da taxa de captura",
+        "Análise de tendências horárias, diárias e históricas",
+        "Painel otimizado para dispositivos móveis",
+        "Alertas básicos por e-mail e notificações",
+        "Exportar relatórios (PDF e CSV)"
+      ],
+      "cta": "Iniciar Teste Gratuito"
+    },
+    "professional": {
+      "badge": "Mais Popular",
+      "name": "Profissional",
+      "description": "Para retalhistas em crescimento que querem insights mais profundos",
+      "price": "€99",
+      "period": "/mês por loja",
+      "subtext": "Desbloqueie o poder das zonas e mapas de calor",
+      "features": [
+        "Tudo no Essencial, mais:",
+        "Mapas de calor de zonas interativos",
+        "Análise de tempo de permanência por área",
+        "Identificação e alertas de zonas mortas",
+        "Testes A/B para layouts de loja",
+        "Painel de comparação multi-loja",
+        "Suporte prioritário e integração"
+      ],
+      "cta": "Iniciar Teste Gratuito"
+    },
+    "intelligence": {
+      "name": "Inteligência",
+      "description": "Poder total de IA para empresas orientadas por dados",
+      "price": "€199",
+      "period": "/mês por loja",
+      "subtext": "Plataforma completa de inteligência para retalho",
+      "features": [
+        "Tudo no Profissional, mais:",
+        "Previsões de tráfego com IA",
+        "Mapeamento da jornada do cliente",
+        "Integração com POS, CRM e inventário",
+        "Modelos de IA personalizados para o seu negócio",
+        "Acesso à API e webhooks",
+        "Gestor de sucesso dedicado"
+      ],
+      "cta": "Contactar Vendas"
+    }
+  },
+  "comparison": {
+    "title": "Compare",
+    "titleHighlight": "Funcionalidades",
+    "headers": {
+      "feature": "Funcionalidade",
+      "essential": "Essencial",
+      "professional": "Profissional",
+      "intelligence": "Inteligência"
+    },
+    "sections": {
+      "coreAnalytics": "Análises Principais",
+      "advancedAnalytics": "Análises Avançadas",
+      "aiPredictions": "IA e Previsões",
+      "integrations": "Integrações",
+      "support": "Suporte"
+    },
+    "features": {
+      "peopleCountingCaptureRate": "Contagem de pessoas e taxa de captura",
+      "realTimeDashboards": "Painéis em tempo real",
+      "historicalTrends": "Tendências históricas e comparações",
+      "zoneHeatmaps": "Mapas de calor de zonas",
+      "dwellTimeAnalysis": "Análise de tempo de permanência",
+      "customerJourneyMapping": "Mapeamento da jornada do cliente",
+      "trafficPredictions": "Previsões de tráfego",
+      "anomalyDetection": "Deteção de anomalias",
+      "customAiModels": "Modelos de IA personalizados",
+      "emailSlackNotifications": "Notificações por e-mail e Slack",
+      "posIntegration": "Integração POS",
+      "crmInventoryIntegration": "Sistemas CRM e inventário",
+      "apiAccess": "Acesso à API",
+      "supportLevel": "Nível de suporte",
+      "onboarding": "Integração"
+    },
+    "values": {
+      "basic": "Básico",
+      "advancedAi": "IA Avançada",
+      "readOnly": "Apenas leitura",
+      "fullAccess": "Acesso total",
+      "standard": "Padrão",
+      "priority": "Prioritário",
+      "dedicatedManager": "Gestor dedicado",
+      "selfService": "Autoatendimento",
+      "guidedSetup": "Configuração guiada",
+      "whiteGlove": "Serviço premium"
+    }
+  },
+  "cta": {
+    "title": "Pronto para Transformar as Suas Operações de Retalho?",
+    "subtitle": "Inicie o seu teste gratuito de 30 dias hoje. Não é necessário cartão de crédito.",
+    "button": "Iniciar Teste Gratuito"
+  }
+}

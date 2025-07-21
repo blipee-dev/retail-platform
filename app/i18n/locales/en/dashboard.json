@@ -1,0 +1,69 @@
+{
+  "common": {
+    "signOut": "Sign Out",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "import": "Import"
+  },
+  "roles": {
+    "tenant_admin": "Administrator",
+    "regional_manager": "Regional Manager",
+    "store_manager": "Store Manager",
+    "analyst": "Analyst",
+    "store_staff": "Store Staff",
+    "viewer": "Viewer"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "stores": "Stores",
+    "users": "Users",
+    "analytics": "Analytics",
+    "settings": "Settings",
+    "reports": "Reports",
+    "sensors": "Sensors"
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "stats": {
+      "totalStores": "Total Stores",
+      "activeStores": "Active Stores",
+      "totalUsers": "Total Users",
+      "recentActivity": "Recent Activity"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "manageUsers": "Manage Users",
+      "manageStores": "Manage Stores",
+      "viewAnalytics": "View Analytics",
+      "settings": "Settings"
+    },
+    "stores": {
+      "title": "Your Stores",
+      "addStore": "Add Store",
+      "noStores": "No stores yet",
+      "createFirst": "Create Your First Store",
+      "columns": {
+        "name": "Name",
+        "code": "Code",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "actions": {
+        "manage": "Manage",
+        "view": "View"
+      }
+    }
+  }
+}

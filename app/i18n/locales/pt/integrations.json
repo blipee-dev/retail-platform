@@ -1,0 +1,118 @@
+{
+  "header": {
+    "title": "Conecte os Seus Dados",
+    "subtitle": "Envie os seus dados de retalho para o blipee OS em minutos. Escolha entre as nossas integra\u00e7\u00f5es sem c\u00f3digo ou use a nossa poderosa API para implementa\u00e7\u00f5es personalizadas."
+  },
+  "toggle": {
+    "noCode": "Integra\u00e7\u00f5es Sem C\u00f3digo",
+    "api": "API para Programadores"
+  },
+  "integrations": {
+    "square": {
+      "title": "Square POS",
+      "status": "Configura\u00e7\u00e3o com Um Clique",
+      "description": "Conecte a sua conta Square com um \u00fanico clique. Sincronize automaticamente transa\u00e7\u00f5es, dados de clientes e n\u00edveis de invent\u00e1rio em tempo real.",
+      "button": "Conectar Square"
+    },
+    "shopify": {
+      "title": "Shopify",
+      "status": "Integra\u00e7\u00e3o App Store",
+      "description": "Instale a aplica\u00e7\u00e3o blipee OS da Shopify App Store. Integra-se perfeitamente com as an\u00e1lises da sua loja e dados de comportamento do cliente.",
+      "button": "Instalar App"
+    },
+    "clover": {
+      "title": "Clover POS",
+      "status": "Liga\u00e7\u00e3o OAuth",
+      "description": "Autorize o blipee OS a aceder aos seus dados Clover. Sincronize vendas, invent\u00e1rio e insights de clientes automaticamente.",
+      "button": "Autorizar Clover"
+    },
+    "csv": {
+      "title": "Upload CSV/Excel",
+      "status": "Arrastar e Soltar",
+      "description": "Simplesmente arraste e solte os seus ficheiros CSV ou Excel. O nosso mapeador inteligente identifica e mapeia automaticamente as suas colunas de dados.",
+      "button": "Carregar Ficheiros"
+    },
+    "camera": {
+      "title": "Sistemas de C\u00e2maras",
+      "status": "RTSP/Plugin",
+      "description": "Conecte c\u00e2maras de seguran\u00e7a existentes via streams RTSP ou instale o nosso plugin leve para sistemas de c\u00e2maras suportados.",
+      "button": "Configurar C\u00e2maras"
+    },
+    "zapier": {
+      "title": "Integra\u00e7\u00e3o Zapier",
+      "status": "1000+ Apps",
+      "description": "Conecte o blipee OS com milhares de aplica\u00e7\u00f5es atrav\u00e9s do Zapier. Crie fluxos de trabalho automatizados sem qualquer programa\u00e7\u00e3o.",
+      "button": "Explorar Zaps"
+    }
+  },
+  "api": {
+    "title": "API de Ingest\u00e3o de Dados blipee OS",
+    "description": "A nossa API RESTful permite enviar dados de retalho de qualquer fonte. Constru\u00edda para programadores, desenhada para escala e otimizada para an\u00e1lises em tempo real.",
+    "features": [
+      "API JSON RESTful",
+      "Processamento em Tempo Real e Lote",
+      "Autentica\u00e7\u00e3o OAuth 2.0",
+      "Notifica\u00e7\u00f5es Webhook",
+      "SLA de 99.99% de Disponibilidade",
+      "Limite de Taxa: 1000 req/min"
+    ],
+    "docsButton": "Ver Documenta\u00e7\u00e3o Completa da API",
+    "examples": {
+      "title": "Exemplos de In\u00edcio R\u00e1pido",
+      "tabs": {
+        "curl": "cURL",
+        "python": "Python",
+        "nodejs": "Node.js",
+        "php": "PHP"
+      }
+    },
+    "dataTypes": {
+      "title": "Tipos de Dados Suportados",
+      "subtitle": "Envie qualquer um destes tipos de dados para o blipee OS para an\u00e1lises instant\u00e2neas:",
+      "table": {
+        "headers": {
+          "type": "Tipo de Dados",
+          "endpoint": "Endpoint",
+          "fields": "Campos Obrigat\u00f3rios"
+        },
+        "rows": [
+          {
+            "type": "Transa\u00e7\u00f5es de Vendas",
+            "endpoint": "/v1/data/sales",
+            "fields": "store_id, timestamp, amount, transaction_id"
+          },
+          {
+            "type": "Contagem de Pessoas",
+            "endpoint": "/v1/data/traffic",
+            "fields": "store_id, timestamp, zone_id, count"
+          },
+          {
+            "type": "Dados de Mapa de Calor",
+            "endpoint": "/v1/data/heatmap",
+            "fields": "store_id, timestamp, coordinates[], intensity"
+          },
+          {
+            "type": "An\u00e1lise de Zonas",
+            "endpoint": "/v1/data/zones",
+            "fields": "store_id, timestamp, zone_id, dwell_time, visitors"
+          },
+          {
+            "type": "N\u00edveis de Invent\u00e1rio",
+            "endpoint": "/v1/data/inventory",
+            "fields": "store_id, sku, quantity, location"
+          },
+          {
+            "type": "Dados de Clientes",
+            "endpoint": "/v1/data/customers",
+            "fields": "customer_id, store_id, timestamp"
+          }
+        ]
+      }
+    }
+  },
+  "cta": {
+    "title": "Pronto para Conectar os Seus Dados?",
+    "subtitle": "Comece a enviar dados para o blipee OS hoje e veja insights em tempo real",
+    "button": "Iniciar Teste Gratuito"
+  }
+}
