@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
 
     // Validate sensor exists and belongs to organization
     const sensorIds = Array.isArray(data) 
-      ? [...new Set(data.map((d: any) => d.sensor_id))]
+      ? Array.from(new Set(data.map((d: any) => d.sensor_id)))
       : [data.sensor_id]
 
     const { data: sensors, error: sensorError } = await supabaseAdmin

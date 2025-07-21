@@ -2,37 +2,41 @@
 
 All notable changes to the Retail Platform project will be documented in this file.
 
-## [Unreleased] - 2025-07-21
+## [0.2.0] - 2025-07-21
 
 ### Added
 - Complete authentication system with 6-tier RBAC (tenant_admin, regional_manager, store_manager, analyst, store_staff, viewer)
 - Multi-tenant Row Level Security (RLS) policies for all database tables
 - Server-side API architecture for secure database access
-- Authentication middleware with JWT validation and role-based access control
-- Test authentication page for verifying auth flow
-- All static HTML pages converted to Next.js with full internationalization support:
-  - About page
-  - Contact page
-  - Blog page
-  - Documentation page
-  - Integrations page
-  - Compliance page
-  - Security page
-  - Privacy and Terms pages
-- European Portuguese translations (corrected from Brazilian Portuguese)
-- Comprehensive database schema documentation
-- API authorization middleware for secure endpoints
+- Comprehensive API endpoints for sensor data ingestion:
+  - `/api/sensors` - CRUD operations for sensor management
+  - `/api/sensors/data` - Data ingestion and queries
+  - `/api/sensors/bulk-ingest` - Bulk data ingestion from Python connectors
+  - `/api/sensors/status` - Real-time sensor health monitoring
+  - `/api/analytics` - Pre-calculated analytics (hourly, daily, comparison)
+- Python-to-API bridge script (`sensor_data_bridge.py`) for continuous data collection
+- Systemd service configuration for Linux deployment
+- Complete internationalization (i18n) support for EN/PT/ES
+- All static pages converted to Next.js with i18n support
+- Force-dynamic exports to fix Vercel build issues
+- Mock Supabase client for build-time compatibility
+- Comprehensive sensor integration documentation
 
 ### Changed
-- Updated Portuguese translations from Brazilian to European Portuguese
-- Modified AuthProvider to use simplified profile loading to bypass Codespaces networking issues
-- Enhanced documentation with current project state and authentication details
-- Updated README.md with authentication and deployment information
+- Updated authentication to use server-side API pattern to work around Codespaces browser networking limitations
+- Migrated all HTML mockup pages to Next.js components
+- Improved environment variable handling for Vercel deployments
+- Enhanced TypeScript type safety in translation components
 
 ### Fixed
-- Hydration errors in i18n implementation
-- Browser networking timeouts in Codespaces environment for Supabase queries
-- RLS infinite recursion issues with proper policy implementation
+- Browser networking timeouts in Codespaces by implementing server-side API routes
+- Vercel build errors with missing environment variables
+- TypeScript errors in translation array/object handling
+- Hydration mismatches in i18n implementation
+- European Portuguese translation formatting issues
+
+### Removed
+- Duplicate/unsuccessful migration files (combined_migrations.sql, safe_migrations.sql, fix-rls-policies.sql, fix-rls-final.sql)
 - Authentication flow hanging on getSession() calls
 - Cookie provider warnings in Next.js
 - Favicon loading errors

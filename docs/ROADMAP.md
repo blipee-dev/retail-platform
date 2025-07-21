@@ -4,7 +4,7 @@
 
 This roadmap outlines the development phases for the Retail Platform, focusing on sensor integration, analytics, and visualization capabilities.
 
-## Current State (2025-07-20)
+## Current State (2025-07-21)
 
 ### ✅ Completed Components
 - **Connector System**: Modular sensor integration framework
@@ -14,14 +14,19 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 - **Analysis Scripts**: Customer pathway and heatmap visualization
 - **Repository Organization**: Clean, well-structured codebase
 - **Multi-Environment Deployment**: Staging and development environments live
-- **Next.js 14 Setup**: Basic app structure with App Router
-- **Supabase Integration**: Database credentials configured
+- **Next.js 14 Setup**: Full app structure with App Router
+- **Supabase Integration**: Database with complete schema and RLS
 - **CI/CD Pipeline**: GitHub Actions and Vercel auto-deployments
+- **Authentication System**: 6-tier RBAC with tenant isolation (2025-07-21)
+- **Internationalization**: Full i18n support for EN/PT/ES (2025-07-21)
+- **API Endpoints**: Complete sensor data ingestion API (2025-07-21)
+- **Python Bridge**: Connector-to-API integration script (2025-07-21)
+- **All Static Pages**: Converted to Next.js with i18n (2025-07-21)
 
 ### 🚧 In Progress
 - **Real-time Data Processing**: Need WebSocket/polling implementation
-- **Frontend Integration**: Connect mockups to backend
-- **Authentication Integration**: Auth exists but not connected
+- **Live Dashboard Integration**: Connect real data to dashboard components
+- **Heat Map Visualization**: Implement interactive heat maps
 - **Custom Domain Configuration**: Need to set up domain aliases
 
 ## Development Phases
@@ -43,21 +48,21 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 - [x] Multi-environment deployment (staging/dev/prod) (2025-07-20)
 - [ ] Docker configuration for local development
 
-#### Week 3-4: Authentication & Multi-tenancy (MVP)
-- [ ] Supabase Auth implementation with email/password only
-- [ ] 6-tier role hierarchy implementation:
-  - [ ] Tenant Admin (full organization control)
-  - [ ] Regional Manager (multi-store oversight)
-  - [ ] Store Manager (single store control)
-  - [ ] Analyst (cross-store read-only analytics)
-  - [ ] Store Staff (operational access)
-  - [ ] Viewer (dashboard read-only)
-- [ ] Organization (tenant) management
-- [ ] User profile system with role assignments
-- [ ] Store and region assignment tables
-- [ ] Row Level Security (RLS) policies for tenant isolation
-- [ ] Basic user management UI (admin only)
-- [ ] Audit logging for auth events
+#### Week 3-4: Authentication & Multi-tenancy (MVP) ✅ COMPLETED (2025-07-21)
+- [x] Supabase Auth implementation with email/password only
+- [x] 6-tier role hierarchy implementation:
+  - [x] Tenant Admin (full organization control)
+  - [x] Regional Manager (multi-store oversight)
+  - [x] Store Manager (single store control)
+  - [x] Analyst (cross-store read-only analytics)
+  - [x] Store Staff (operational access)
+  - [x] Viewer (dashboard read-only)
+- [x] Organization (tenant) management
+- [x] User profile system with role assignments
+- [x] Store and region assignment tables
+- [x] Row Level Security (RLS) policies for tenant isolation
+- [x] Basic user management UI (admin only)
+- [ ] Audit logging for auth events (deferred)
 
 **Deliverables**: Working auth system with complete role hierarchy and tenant isolation
 
@@ -73,13 +78,13 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 ### 📊 Phase 2: Core Analytics (Weeks 5-8)
 **Goal**: Basic people counting and analytics
 
-#### Week 5-6: Data Ingestion
-- [ ] Sensor data models
-- [ ] API endpoints for data collection
-- [ ] CSV/HTTP data ingestion
-- [ ] Data validation and processing
-- [ ] Batch import functionality
-- [ ] Real-time data pipeline
+#### Week 5-6: Data Ingestion ✅ COMPLETED (2025-07-21)
+- [x] Sensor data models
+- [x] API endpoints for data collection
+- [x] CSV/HTTP data ingestion
+- [x] Data validation and processing
+- [x] Batch import functionality
+- [ ] Real-time data pipeline (WebSocket - in progress)
 
 #### Week 7-8: Dashboard & Visualization
 - [ ] Main dashboard layout
@@ -189,13 +194,16 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 
 ## Feature Rollout Schedule
 
-### MVP Features (Month 1-2)
-- ✅ Email/password authentication
-- ✅ 6-tier role hierarchy (Admin → Viewer)
-- ✅ Multi-tenancy with RLS
-- ✅ Basic people counting
-- ✅ Real-time dashboard
-- ✅ User management (admin only)
+### MVP Features (Month 1-2) ✅ CORE COMPLETED
+- ✅ Email/password authentication (2025-07-21)
+- ✅ 6-tier role hierarchy (Admin → Viewer) (2025-07-21)
+- ✅ Multi-tenancy with RLS (2025-07-21)
+- ✅ Basic people counting API (2025-07-21)
+- ✅ Sensor data ingestion (2025-07-21)
+- ✅ User management (admin only) (2025-07-21)
+- ✅ Internationalization (EN/PT/ES) (2025-07-21)
+- 🚧 Real-time dashboard (frontend integration needed)
+- 🚧 Live data visualization
 
 ### Beta Features (Month 3-4)
 - 🚧 Sales integration
@@ -328,35 +336,36 @@ total_estimate: ~$500-800/month
 
 **Note**: This roadmap is a living document and will be updated based on customer feedback, technical discoveries, and business priorities.
 
-**Last Updated**: 2025-07-20  
-**Version**: 1.1  
+**Last Updated**: 2025-07-21  
+**Version**: 1.2  
 **Owner**: blipee Product Team
 
-## Next Activities (Starting 2025-07-20)
+## Next Activities (Updated 2025-07-21)
 
-Based on the roadmap, the next immediate priorities are:
+Based on completed work and roadmap, the next immediate priorities are:
 
-### 1. Authentication MVP (Week 3-4)
-- Implement Supabase Auth with email/password only
-- Create 6-tier role hierarchy system
-- Build organization (tenant) management
-- Implement Row Level Security policies
-- Create user management UI for admins
-- Set up audit logging
+### 1. ✅ Authentication MVP (Week 3-4) - COMPLETED
+- ✅ Implemented Supabase Auth with email/password
+- ✅ Created 6-tier role hierarchy system
+- ✅ Built organization (tenant) management
+- ✅ Implemented Row Level Security policies
+- ✅ Created user management UI for admins
+- ⏸️ Audit logging (deferred to later phase)
 
-### 2. Connect Frontend to Backend (Week 5-6)
-- Convert HTML mockups to Next.js components
-- Create protected routes based on roles
-- Build role-aware dashboards
-- Implement API authentication
-- Connect sensor data to UI
+### 2. ✅ Data Ingestion Pipeline (Week 5-6) - COMPLETED
+- ✅ Created sensor data models in Supabase
+- ✅ Built authenticated API endpoints
+- ✅ Applied RLS to sensor data
+- ✅ Created data validation layer
+- ✅ Built Python-to-API bridge
+- 🚧 Real-time updates (WebSocket implementation needed)
 
-### 3. Data Ingestion Pipeline (Week 7-8)
-- Create sensor data models in Supabase
-- Build authenticated API endpoints
-- Apply RLS to sensor data
-- Implement real-time updates
-- Create data validation layer
+### 3. 🚧 Connect Frontend to Backend (Week 7-8) - IN PROGRESS
+- ✅ Converted HTML mockups to Next.js components
+- ✅ Created protected routes based on roles
+- 🚧 Connect live sensor data to dashboards
+- 🚧 Implement real-time data updates
+- 🚧 Build interactive heat map visualization
 
 ### 4. Future Authentication Enhancements (Phase 6)
 **Documented but deferred:**
