@@ -68,7 +68,7 @@ export async function authenticateRequest(
     // Get user profile with organization info
     const { data: profile, error: profileError } = await adminClient
       .from('user_profiles')
-      .select('*, organization:organizations(*)')
+      .select('*')
       .eq('id', user.id)
       .single()
 
@@ -76,21 +76,32 @@ export async function authenticateRequest(
       throw new AuthError('User profile not found', 404)
     }
 
+    // Type assertion for the profile
+    const typedProfile = profile as any as {
+      id: string
+      role: UserRole
+      organization_id: string
+      is_active: boolean
+      email: string
+      full_name: string
+      [key: string]: any
+    }
+
     // Check if user is active
-    if (!profile.is_active) {
+    if (!typedProfile.is_active) {
       throw new AuthError('Account is deactivated', 403)
     }
 
     // Check role requirements
-    if (requiredRole && !hasRequiredRole(profile.role, requiredRole)) {
+    if (requiredRole && !hasRequiredRole(typedProfile.role, requiredRole)) {
       throw new AuthError(`Insufficient permissions. Required: ${requiredRole}`, 403)
     }
 
     return {
       userId: user.id,
-      userRole: profile.role,
-      organizationId: profile.organization_id,
-      userProfile: profile
+      userRole: typedProfile.role,
+      organizationId: typedProfile.organization_id,
+      userProfile: typedProfile
     }
 
   } catch (error) {
