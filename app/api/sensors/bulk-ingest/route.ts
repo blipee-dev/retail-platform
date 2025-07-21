@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Enrich records with sensor metadata
-      const enrichedRecords = records.map(record => ({
+      const enrichedRecords = records.map((record: any) => ({
         ...record,
         sensor_id: sensor.id,
         organization_id: sensor.organization_id,
@@ -140,8 +140,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ 
       message: 'Bulk data ingestion completed',
       results,
-      total_inserted: Object.values(results).reduce((sum, r) => sum + r.inserted, 0),
-      total_errors: Object.values(results).reduce((sum, r) => sum + r.errors, 0)
+      total_inserted: Object.values(results).reduce((sum: number, r: any) => sum + r.inserted, 0),
+      total_errors: Object.values(results).reduce((sum: number, r: any) => sum + r.errors, 0)
     }, { status: 201 })
 
   } catch (error) {
@@ -179,18 +179,33 @@ async function calculateHourlyAnalytics(sensorId: string, organizationId: string
     }
 
     // Calculate metrics
-    const totalEntries = peopleData.reduce((sum, d) => sum + (d.total_in || 0), 0)
-    const totalExits = peopleData.reduce((sum, d) => sum + (d.total_out || 0), 0)
+    const totalEntries = peopleData.reduce((sum: number, d: any) => sum + (d.total_in || 0), 0)
+    const totalExits = peopleData.reduce((sum: number, d: any) => sum + (d.total_out || 0), 0)
     const netFlow = totalEntries - totalExits
+    
+    // Capture rate metrics
+    const totalPassingTraffic = peopleData.reduce((sum: number, d: any) => sum + (d.passing_traffic || 0), 0)
+    const avgCaptureRate = totalPassingTraffic > 0 
+      ? (totalEntries / totalPassingTraffic) * 100 
+      : 0
+    const dominantDirections = peopleData
+      .filter((d: any) => d.dominant_direction)
+      .map((d: any) => d.dominant_direction)
+    const dominantTrafficDirection = dominantDirections.length > 0
+      ? dominantDirections.sort((a: any, b: any) => 
+          dominantDirections.filter((v: any) => v === a).length - 
+          dominantDirections.filter((v: any) => v === b).length
+        ).pop()
+      : null
 
     // Line distribution
     const lineStats = {
-      line1: peopleData.reduce((sum, d) => sum + (d.line1_in || 0) + (d.line1_out || 0), 0),
-      line2: peopleData.reduce((sum, d) => sum + (d.line2_in || 0) + (d.line2_out || 0), 0),
-      line3: peopleData.reduce((sum, d) => sum + (d.line3_in || 0) + (d.line3_out || 0), 0),
-      line4: peopleData.reduce((sum, d) => sum + (d.line4_in || 0) + (d.line4_out || 0), 0)
+      line1: peopleData.reduce((sum: number, d: any) => sum + (d.line1_in || 0) + (d.line1_out || 0), 0),
+      line2: peopleData.reduce((sum: number, d: any) => sum + (d.line2_in || 0) + (d.line2_out || 0), 0),
+      line3: peopleData.reduce((sum: number, d: any) => sum + (d.line3_in || 0) + (d.line3_out || 0), 0),
+      line4: peopleData.reduce((sum: number, d: any) => sum + (d.line4_in || 0) + (d.line4_out || 0), 0)
     }
-    const totalLineTraffic = Object.values(lineStats).reduce((sum, val) => sum + val, 0)
+    const totalLineTraffic = Object.values(lineStats).reduce((sum: number, val: number) => sum + val, 0)
     const lineDistribution = totalLineTraffic > 0 ? {
       line1: lineStats.line1 / totalLineTraffic,
       line2: lineStats.line2 / totalLineTraffic,
@@ -203,16 +218,16 @@ async function calculateHourlyAnalytics(sensorId: string, organizationId: string
     let regionMaxOccupancy = {}
     if (regionalData && regionalData.length > 0) {
       regionAvgOccupancy = {
-        region1: regionalData.reduce((sum, d) => sum + (d.region1_count || 0), 0) / regionalData.length,
-        region2: regionalData.reduce((sum, d) => sum + (d.region2_count || 0), 0) / regionalData.length,
-        region3: regionalData.reduce((sum, d) => sum + (d.region3_count || 0), 0) / regionalData.length,
-        region4: regionalData.reduce((sum, d) => sum + (d.region4_count || 0), 0) / regionalData.length
+        region1: regionalData.reduce((sum: number, d: any) => sum + (d.region1_count || 0), 0) / regionalData.length,
+        region2: regionalData.reduce((sum: number, d: any) => sum + (d.region2_count || 0), 0) / regionalData.length,
+        region3: regionalData.reduce((sum: number, d: any) => sum + (d.region3_count || 0), 0) / regionalData.length,
+        region4: regionalData.reduce((sum: number, d: any) => sum + (d.region4_count || 0), 0) / regionalData.length
       }
       regionMaxOccupancy = {
-        region1: Math.max(...regionalData.map(d => d.region1_count || 0)),
-        region2: Math.max(...regionalData.map(d => d.region2_count || 0)),
-        region3: Math.max(...regionalData.map(d => d.region3_count || 0)),
-        region4: Math.max(...regionalData.map(d => d.region4_count || 0))
+        region1: Math.max(...regionalData.map((d: any) => d.region1_count || 0)),
+        region2: Math.max(...regionalData.map((d: any) => d.region2_count || 0)),
+        region3: Math.max(...regionalData.map((d: any) => d.region3_count || 0)),
+        region4: Math.max(...regionalData.map((d: any) => d.region4_count || 0))
       }
     }
 
@@ -239,6 +254,9 @@ async function calculateHourlyAnalytics(sensorId: string, organizationId: string
         total_entries: totalEntries,
         total_exits: totalExits,
         net_flow: netFlow,
+        avg_capture_rate: avgCaptureRate,
+        total_passing_traffic: totalPassingTraffic,
+        dominant_traffic_direction: dominantTrafficDirection,
         line_distribution: lineDistribution,
         region_avg_occupancy: regionAvgOccupancy,
         region_max_occupancy: regionMaxOccupancy,
