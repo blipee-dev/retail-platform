@@ -104,10 +104,14 @@ Language is automatically detected from the browser and can be changed using the
 
 4. **Setup database**
    ```bash
-   # Run migrations in Supabase Dashboard SQL Editor
-   # 1. Run supabase/migrations/combined_migrations.sql
-   # 2. Run supabase/migrations/20240120000007_create_sensor_tables.sql
-   # 3. Run implement-rls-correct.sql for Row Level Security
+   # Run migrations in Supabase Dashboard SQL Editor in order:
+   # 1. supabase/migrations/20240120000001_create_user_roles_enum.sql
+   # 2. supabase/migrations/20240120000002_create_organizations_table.sql
+   # 3. supabase/migrations/20240120000003_create_user_profiles_table.sql
+   # 4. supabase/migrations/20240120000004_create_store_hierarchy_tables.sql
+   # 5. supabase/migrations/20240120000005_create_helper_functions.sql
+   # 6. supabase/migrations/20240120000006_create_rls_policies.sql
+   # 7. supabase/migrations/20240120000007_create_sensor_tables.sql
    ```
 
 4. **Configure sensors**
@@ -147,10 +151,35 @@ Language is automatically detected from the browser and can be changed using the
 - **Heatmap Generation**: Spatial and temporal analysis
 - **Multi-sensor Support**: Flexible connector system
 - **Web Dashboard**: Interactive frontend for data visualization
-- **Multi-tenant Architecture**: 6-tier RBAC with Row Level Security
-- **Authentication**: Secure authentication with Supabase Auth
-- **Internationalization**: Full i18n support for global deployment
-- **API-First Design**: RESTful API for sensor data ingestion
+- **RESTful API**: Comprehensive API for sensor data ingestion
+- **Multi-tenant**: Row-level security with organization isolation
+- **Internationalization**: Support for EN/PT/ES languages
+- **Role-Based Access**: 6-tier RBAC system
+
+## 🔌 API Endpoints
+
+### Authentication
+- `POST /api/auth/signin` - User authentication
+- `POST /api/auth/signup` - User registration
+- `POST /api/auth/signout` - Sign out
+- `GET /api/auth/profile` - Get user profile
+
+### Sensor Management
+- `GET /api/sensors` - List all sensors
+- `POST /api/sensors` - Create new sensor
+- `PATCH /api/sensors` - Update sensor
+- `DELETE /api/sensors` - Delete sensor
+
+### Data Ingestion
+- `POST /api/sensors/data` - Ingest sensor data
+- `POST /api/sensors/bulk-ingest` - Bulk data ingestion
+- `GET /api/sensors/data` - Query historical data
+- `GET /api/sensors/status` - Real-time sensor status
+
+### Analytics
+- `GET /api/analytics?type=hourly` - Hourly analytics
+- `GET /api/analytics?type=daily` - Daily summaries
+- `GET /api/analytics?type=comparison` - Multi-store comparison
 
 ## 📚 Documentation
 

@@ -27,11 +27,14 @@ This file provides context for AI assistants (like Claude) working on the Retail
 - All static pages converted to Next.js with full i18n support
 - Database schema with organizations, stores, regions, and sensor tables
 - Test user creation and authentication flow verification
+- API endpoints for sensor data ingestion (2025-07-21)
+- Python connector integration with Next.js API (2025-07-21)
+- Comprehensive sensor management and analytics APIs
+- Python bridge script for continuous data collection
+- Migration cleanup - removed duplicate/unsuccessful migrations
 
 ### 🚧 In Progress
-- API endpoints for sensor data ingestion
-- Real-time data pipeline implementation
-- Python connector integration with Next.js API
+- Real-time data pipeline implementation (WebSocket/polling)
 - Live data visualization in dashboards
 - Heat map implementation
 - Custom domain configuration
@@ -163,6 +166,12 @@ python scripts/analysis/analyze_customer_pathways.py
 - Converted all remaining static pages to Next.js with i18n
 - Created test authentication flow and verified functionality
 - Fixed hydration errors and European Portuguese translations
+- Implemented comprehensive sensor data ingestion API endpoints
+- Created Python-to-API bridge for connecting Milesight sensors
+- Added sensor management endpoints (CRUD operations)
+- Built analytics API with hourly/daily/comparison views
+- Cleaned up duplicate/unsuccessful migration files
+- Fixed Vercel build errors with force-dynamic exports
 
 ### 2025-07-20
 
