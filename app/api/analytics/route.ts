@@ -211,13 +211,7 @@ export async function GET(request: NextRequest) {
 
       const { data, error } = await supabaseAdmin
         .from('daily_summary')
-        .select(`
-          *,
-          stores (
-            id,
-            name
-          )
-        `)
+        .select('*')
         .in('store_id', stores)
         .eq('organization_id', auth.organizationId)
         .gte('date', startDate)
@@ -229,7 +223,7 @@ export async function GET(request: NextRequest) {
       // Group by store
       const storeData = stores.map(storeId => {
         const storeRecords = data?.filter((d: any) => d.store_id === storeId) || []
-        const storeName = storeRecords[0]?.stores?.name || storeId
+        const storeName = `Store ${storeId}`
         
         return {
           store_id: storeId,
