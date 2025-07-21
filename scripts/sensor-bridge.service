@@ -1,0 +1,28 @@
+[Unit]
+Description=Retail Platform Sensor Data Bridge
+After=network.target
+
+[Service]
+Type=simple
+User=retail
+Group=retail
+WorkingDirectory=/opt/retail-platform
+Environment="PYTHONPATH=/opt/retail-platform"
+ExecStart=/usr/bin/python3 /opt/retail-platform/scripts/sensor_data_bridge.py \
+    --config /opt/retail-platform/config/sensors/milesight_main_entrance.json \
+    --api-url https://retail-platform.vercel.app \
+    --api-token ${SENSOR_API_TOKEN} \
+    --store-id ${STORE_ID} \
+    --interval 300 \
+    --backfill-hours 24
+
+# Restart configuration
+Restart=always
+RestartSec=30
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
