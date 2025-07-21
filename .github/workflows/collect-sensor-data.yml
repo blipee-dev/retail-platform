@@ -1,0 +1,48 @@
+name: Collect Sensor Data
+
+on:
+  schedule:
+    # Run every 30 minutes
+    - cron: '*/30 * * * *'
+  workflow_dispatch:  # Allow manual triggers for testing
+
+jobs:
+  collect-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+      - name: Trigger Supabase Edge Function
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          echo "🚀 Starting sensor data collection..."
+          
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            "${SUPABASE_URL}/functions/v1/collect-sensor-data" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+            -H "Content-Type: application/json" \
+            -d '{}')
+          
+          # Extract body and status code
+          body=$(echo "$response" | head -n -1)
+          status_code=$(echo "$response" | tail -n 1)
+          
+          # Log the response
+          echo "Response Status: $status_code"
+          echo "Response Body: $body"
+          
+          # Check if successful
+          if [ "$status_code" != "200" ]; then
+            echo "❌ Failed to collect sensor data"
+            exit 1
+          fi
+          
+          echo "✅ Sensor data collection completed successfully"
+      
+      - name: Send notification on failure
+        if: failure()
+        run: |
+          echo "⚠️ Sensor data collection failed. Check the logs for details."
+          # You can add additional notification logic here (e.g., send email, Slack message)
