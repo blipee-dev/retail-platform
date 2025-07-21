@@ -2,18 +2,26 @@ import { createClient } from '@supabase/supabase-js'
 import { NextRequest } from 'next/server'
 import type { UserRole } from '@/app/types/auth'
 
-// Server-side Supabase client with service role
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.BLIPEE_NEXT_PUBLIC_SUPABASE_URL || ''
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.BLIPEE_SUPABASE_SERVICE_ROLE_KEY || ''
+// Server-side Supabase client with service role - lazily initialized
+let supabaseAdmin: ReturnType<typeof createClient> | null = null
 
-if (!supabaseUrl || !serviceRoleKey) {
-  console.error('Missing Supabase environment variables for admin client')
+function getSupabaseAdmin() {
+  if (!supabaseAdmin) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.BLIPEE_NEXT_PUBLIC_SUPABASE_URL || ''
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.BLIPEE_SUPABASE_SERVICE_ROLE_KEY || ''
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      console.error('Missing Supabase environment variables for admin client')
+      return null
+    }
+
+    supabaseAdmin = createClient(
+      supabaseUrl.trim(),
+      serviceRoleKey.trim()
+    )
+  }
+  return supabaseAdmin
 }
-
-const supabaseAdmin = supabaseUrl && serviceRoleKey ? createClient(
-  supabaseUrl.trim(),
-  serviceRoleKey.trim()
-) : null
 
 export interface AuthContext {
   userId: string
@@ -37,7 +45,8 @@ export async function authenticateRequest(
   requiredRole?: UserRole
 ): Promise<AuthContext> {
   try {
-    if (!supabaseAdmin) {
+    const adminClient = getSupabaseAdmin()
+    if (!adminClient) {
       throw new AuthError('Supabase admin client not initialized', 500)
     }
 
@@ -50,14 +59,14 @@ export async function authenticateRequest(
     const token = authHeader.substring(7)
 
     // Verify the JWT token
-    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token)
+    const { data: { user }, error: authError } = await adminClient.auth.getUser(token)
     
     if (authError || !user) {
       throw new AuthError('Invalid or expired token', 401)
     }
 
     // Get user profile with organization info
-    const { data: profile, error: profileError } = await supabaseAdmin
+    const { data: profile, error: profileError } = await adminClient
       .from('user_profiles')
       .select('*, organization:organizations(*)')
       .eq('id', user.id)
@@ -116,10 +125,11 @@ function hasRequiredRole(userRole: UserRole, requiredRole: UserRole): boolean {
 export function getOrganizationScopedClient(organizationId: string) {
   // For now, return the admin client
   // In a more advanced setup, we could create RLS context here
-  if (!supabaseAdmin) {
+  const adminClient = getSupabaseAdmin()
+  if (!adminClient) {
     throw new AuthError('Supabase admin client not initialized', 500)
   }
-  return supabaseAdmin
+  return adminClient
 }
 
 /**
