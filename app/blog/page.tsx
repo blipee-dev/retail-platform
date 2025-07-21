@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import BlogContent from './blog-content'
 
 export default function BlogPage() {

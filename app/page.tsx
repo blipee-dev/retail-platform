@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import LandingPageContent from './components/landing-page'
 
 export default function LandingPage() {

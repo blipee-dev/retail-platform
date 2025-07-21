@@ -11,7 +11,7 @@ function getSupabaseAdmin() {
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.BLIPEE_SUPABASE_SERVICE_ROLE_KEY || ''
 
     if (!supabaseUrl || !serviceRoleKey) {
-      console.error('Missing Supabase environment variables for admin client')
+      // Return null during build, will throw error at runtime
       return null
     }
 

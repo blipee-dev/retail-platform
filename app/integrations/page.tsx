@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import IntegrationsContent from './integrations-content'
 
 export default function IntegrationsPage() {

@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import SecurityContent from './security-content'
 
 export default function SecurityPage() {

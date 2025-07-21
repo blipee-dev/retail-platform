@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import PrivacyContent from './privacy-content'
 
 export default function PrivacyPage() {

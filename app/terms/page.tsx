@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import TermsContent from './terms-content'
 
 export default function TermsPage() {

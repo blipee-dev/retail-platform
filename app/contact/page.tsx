@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import ContactContent from './contact-content'
 
 export default function ContactPage() {

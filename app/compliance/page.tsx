@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import ComplianceContent from './compliance-content'
 
 export default function CompliancePage() {

@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import PricingContent from './pricing-content'
 
 export default function PricingPage() {

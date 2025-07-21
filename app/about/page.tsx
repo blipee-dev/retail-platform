@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import AboutContent from './about-content'
 
 export default function AboutPage() {
