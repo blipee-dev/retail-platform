@@ -46,7 +46,7 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 - [x] Next.js app structure implementation (2025-07-20)
 - [x] CI/CD pipeline (GitHub Actions) (2025-07-20)
 - [x] Multi-environment deployment (staging/dev/prod) (2025-07-20)
-- [ ] Docker configuration for local development
+- [ ] Docker configuration for local development (moved to Week 9)
 
 #### Week 3-4: Authentication & Multi-tenancy (MVP) ✅ COMPLETED (2025-07-21)
 - [x] Supabase Auth implementation with email/password only
@@ -62,7 +62,7 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 - [x] Store and region assignment tables
 - [x] Row Level Security (RLS) policies for tenant isolation
 - [x] Basic user management UI (admin only)
-- [ ] Audit logging for auth events (deferred)
+- [ ] Audit logging for auth events (moved to Week 15-16)
 
 **Deliverables**: Working auth system with complete role hierarchy and tenant isolation
 
@@ -86,13 +86,15 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 - [x] Batch import functionality
 - [ ] Real-time data pipeline (WebSocket - in progress)
 
-#### Week 7-8: Dashboard & Visualization
+#### Week 7-8: Dashboard & Visualization (CURRENT PHASE)
 - [ ] Main dashboard layout
 - [ ] Real-time metrics display
 - [ ] Basic charts (footfall, occupancy)
 - [ ] Date range selectors
 - [ ] Site/store selector
 - [ ] Export functionality
+- [ ] Convert forgot-password page to Next.js
+- [ ] Implement password reset flow with email
 
 **Deliverables**: MVP with basic people counting analytics
 
@@ -101,7 +103,15 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 ### 💰 Phase 3: Sales Integration (Weeks 9-12)
 **Goal**: POS integration and conversion metrics
 
-#### Week 9-10: POS Connectivity
+#### Week 9: Infrastructure & DevOps
+- [ ] Docker configuration for local development
+- [ ] Docker Compose for full stack setup
+- [ ] Database migration automation
+- [ ] Environment configuration management
+- [ ] Basic monitoring setup (health checks)
+- [ ] Backup and restore procedures
+
+#### Week 10-11: POS Connectivity
 - [ ] Shopify integration
 - [ ] Square integration
 - [ ] Generic API framework
@@ -109,13 +119,16 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 - [ ] Webhook handlers
 - [ ] Data synchronization
 
-#### Week 11-12: Advanced Metrics
+#### Week 12: Advanced Metrics & Performance
 - [ ] Conversion rate calculations
 - [ ] Revenue analytics
 - [ ] Capture rate (mall traffic)
 - [ ] Staff performance metrics
 - [ ] Hourly/daily/weekly comparisons
 - [ ] Correlation analysis
+- [ ] Remove Codespaces database query workarounds
+- [ ] Implement Redis caching layer
+- [ ] API response optimization
 
 **Deliverables**: Full sales integration with advanced metrics
 
@@ -132,13 +145,17 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 - [ ] Target vs actual reporting
 - [ ] Forecast vs actual
 
-#### Week 15-16: Reporting & Alerts
+#### Week 15-16: Reporting, Alerts & Real-time
 - [ ] Report builder
 - [ ] Scheduled reports
 - [ ] Email notifications
 - [ ] SMS alerts (critical)
 - [ ] Slack/Teams integration
 - [ ] Custom alert rules
+- [ ] Audit logging for all auth events
+- [ ] WebSocket implementation for real-time data
+- [ ] Server-Sent Events (SSE) as fallback
+- [ ] Live sensor status updates dashboard
 
 **Deliverables**: Complete KPI management system
 
@@ -205,13 +222,15 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 - 🚧 Real-time dashboard (frontend integration needed)
 - 🚧 Live data visualization
 
-### Beta Features (Month 3-4)
-- 🚧 Sales integration
-- 🚧 Smart targets & KPIs
-- 🚧 Advanced analytics
-- 🚧 Alert system
-- 🚧 Report builder
-- 🚧 Mobile responsive
+### Beta Features (Month 2-3)
+- 🚧 Live dashboards (Week 7-8)
+- 🚧 Docker deployment (Week 9)
+- 🚧 Sales integration (Week 10-11)
+- 🚧 Performance optimization (Week 12)
+- 🚧 Smart targets & KPIs (Week 13-14)
+- 🚧 Real-time WebSocket (Week 15-16)
+- 🚧 Alert system (Week 15-16)
+- 🚧 Report builder (Week 15-16)
 
 ### GA Features (Month 5-6)
 - 📅 AI predictions & insights
@@ -367,10 +386,10 @@ Based on completed work and roadmap, the next immediate priorities are:
 - 🚧 Implement real-time data updates
 - 🚧 Build interactive heat map visualization
 
-### 4. Future Authentication Enhancements (Phase 6)
-**Documented but deferred:**
-- OAuth providers (Google, Microsoft)
-- Enterprise SSO (SAML 2.0)
-- Multi-Factor Authentication
-- Self-service invitation codes
-- Advanced compliance features
+### 4. Next Phase: Week 7-8 Dashboard & Visualization
+The immediate focus is on:
+- Connecting live sensor data to dashboards
+- Real-time metrics display
+- Heat map visualization
+- Forgot password functionality
+- Basic charts and export features
