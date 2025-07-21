@@ -6,7 +6,15 @@ import { NextRequest, NextResponse } from 'next/server'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.BLIPEE_NEXT_PUBLIC_SUPABASE_URL || ''
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.BLIPEE_SUPABASE_SERVICE_ROLE_KEY || ''
 
-const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey)
+// Only create client if we have valid credentials and URL
+let supabaseAdmin: ReturnType<typeof createClient> | null = null
+if (supabaseUrl && serviceRoleKey && supabaseUrl.startsWith('http')) {
+  try {
+    supabaseAdmin = createClient(supabaseUrl, serviceRoleKey)
+  } catch (error) {
+    console.error('Failed to initialize Supabase client:', error)
+  }
+}
 
 export const dynamic = 'force-dynamic'
 
@@ -24,6 +32,13 @@ interface BulkIngestRequest {
 // POST /api/sensors/bulk-ingest - Bulk ingest data from Python connectors
 export async function POST(request: NextRequest) {
   try {
+    if (!supabaseAdmin) {
+      return NextResponse.json(
+        { error: 'Database connection not configured' },
+        { status: 500 }
+      )
+    }
+
     const auth = await authenticateRequest(request, 'store_staff')
     const body: BulkIngestRequest = await request.json()
     

@@ -6,7 +6,15 @@ import { NextRequest, NextResponse } from 'next/server'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.BLIPEE_NEXT_PUBLIC_SUPABASE_URL || ''
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.BLIPEE_SUPABASE_SERVICE_ROLE_KEY || ''
 
-const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey)
+// Only create client if we have valid credentials and URL
+let supabaseAdmin: ReturnType<typeof createClient> | null = null
+if (supabaseUrl && serviceRoleKey && supabaseUrl.startsWith('http')) {
+  try {
+    supabaseAdmin = createClient(supabaseUrl, serviceRoleKey)
+  } catch (error) {
+    console.error('Failed to initialize Supabase client:', error)
+  }
+}
 
 export const dynamic = 'force-dynamic'
 
@@ -23,6 +31,13 @@ interface SensorConfig {
 // GET /api/sensors - List all sensors for the organization
 export async function GET(request: NextRequest) {
   try {
+    if (!supabaseAdmin) {
+      return NextResponse.json(
+        { error: 'Database connection not configured' },
+        { status: 500 }
+      )
+    }
+
     const auth = await authenticateRequest(request, 'viewer')
     
     const { data: sensors, error } = await supabaseAdmin
@@ -53,6 +68,13 @@ export async function GET(request: NextRequest) {
 // POST /api/sensors - Create a new sensor
 export async function POST(request: NextRequest) {
   try {
+    if (!supabaseAdmin) {
+      return NextResponse.json(
+        { error: 'Database connection not configured' },
+        { status: 500 }
+      )
+    }
+
     const auth = await authenticateRequest(request, 'store_manager')
     const body: SensorConfig & { store_id: string } = await request.json()
 
@@ -117,6 +139,13 @@ export async function POST(request: NextRequest) {
 // PATCH /api/sensors - Update a sensor
 export async function PATCH(request: NextRequest) {
   try {
+    if (!supabaseAdmin) {
+      return NextResponse.json(
+        { error: 'Database connection not configured' },
+        { status: 500 }
+      )
+    }
+
     const auth = await authenticateRequest(request, 'store_manager')
     const body = await request.json()
     const { sensor_id, ...updates } = body
@@ -163,8 +192,18 @@ export async function PATCH(request: NextRequest) {
 // DELETE /api/sensors - Delete a sensor
 export async function DELETE(request: NextRequest) {
   try {
+    if (!supabaseAdmin) {
+      return NextResponse.json(
+        { error: 'Database connection not configured' },
+        { status: 500 }
+      )
+    }
+
     const auth = await authenticateRequest(request, 'tenant_admin')
-    const { searchParams } = new URL(request.url)
+    const url = request.url.startsWith('http') 
+      ? request.url 
+      : `https://example.com${request.url}`
+    const { searchParams } = new URL(url)
     const sensorId = searchParams.get('sensor_id')
 
     if (!sensorId) {
