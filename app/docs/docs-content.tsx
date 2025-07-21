@@ -120,9 +120,9 @@ export default function DocsContent() {
               <h3 className="doc-card-title">{t(`categories.${category}.title`)}</h3>
               <p className="doc-card-description">{t(`categories.${category}.description`)}</p>
               <div className="doc-links">
-                {Object.entries(t(`categories.${category}.links`, { returnObjects: true }) as any).map(([key, value]) => (
+                {Object.entries(t(`categories.${category}.links`, { returnObjects: true }) as Record<string, string>).map(([key, value]) => (
                   <span key={key} className="doc-link">
-                    {value}
+                    {value as string}
                     <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"/>
                     </svg>

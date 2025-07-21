@@ -1,0 +1,9 @@
+-- Temporarily disable RLS to get auth working
+-- Run this in Supabase Dashboard SQL Editor
+
+ALTER TABLE user_profiles DISABLE ROW LEVEL SECURITY;
+ALTER TABLE organizations DISABLE ROW LEVEL SECURITY;
+ALTER TABLE stores DISABLE ROW LEVEL SECURITY;
+ALTER TABLE regions DISABLE ROW LEVEL SECURITY;
+ALTER TABLE user_stores DISABLE ROW LEVEL SECURITY;
+ALTER TABLE user_regions DISABLE ROW LEVEL SECURITY;

@@ -144,7 +144,7 @@ export default function ContactContent() {
         <div className="faq">
           <h2 className="section-title">{t('faq.title')}</h2>
           <div className="faq-grid">
-            {t('faq.items', { returnObjects: true }).map((item: any, index: number) => (
+            {(t('faq.items', { returnObjects: true }) as Array<{question: string, answer: string}>).map((item, index) => (
               <div key={index} className="faq-item">
                 <button className="faq-question" onClick={() => toggleFAQ(index)}>
                   {item.question}

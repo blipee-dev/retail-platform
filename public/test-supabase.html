@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Direct Supabase Test</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <h1>Direct Supabase Connection Test</h1>
+    <button onclick="testConnection()">Test Connection</button>
+    <div id="result"></div>
+
+    <script>
+        const supabaseUrl = 'https://amqxsmdcvhyaudzbmhaf.supabase.co'
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtcXhzbWRjdmh5YXVkemJtaGFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwMjQwODEsImV4cCI6MjA2ODYwMDA4MX0.5BlK9k_tdS1_C8xOnCO4glmFt4DQdPrki9JywocwXpU'
+        
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey)
+
+        async function testConnection() {
+            const resultDiv = document.getElementById('result')
+            resultDiv.innerHTML = 'Testing...'
+            
+            console.log('🔍 Testing direct Supabase connection...')
+            
+            try {
+                // Add timeout
+                const timeout = new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Timeout after 15 seconds')), 15000)
+                )
+                
+                const query = supabase
+                    .from('user_profiles')
+                    .select('id')
+                    .limit(1)
+                    
+                const result = await Promise.race([query, timeout])
+                
+                console.log('✅ Connection successful:', result)
+                resultDiv.innerHTML = `<div style="color: green;">Success! Found ${result.data?.length || 0} records</div>`
+                
+            } catch (error) {
+                console.error('❌ Connection failed:', error)
+                resultDiv.innerHTML = `<div style="color: red;">Failed: ${error.message}</div>`
+            }
+        }
+    </script>
+</body>
+</html>
