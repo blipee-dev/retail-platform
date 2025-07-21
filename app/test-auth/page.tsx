@@ -3,6 +3,8 @@
 import { useAuth } from '@/app/providers/auth-provider'
 import { useState } from 'react'
 
+export const dynamic = 'force-dynamic'
+
 export default function TestAuth() {
   const { user, profile, organization, signIn, signOut, loading } = useAuth()
   const [email, setEmail] = useState('admin@retailplatform.com')

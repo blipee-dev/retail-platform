@@ -3,10 +3,17 @@ import { NextRequest } from 'next/server'
 import type { UserRole } from '@/app/types/auth'
 
 // Server-side Supabase client with service role
-const supabaseAdmin = createClient(
-  process.env.BLIPEE_NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.BLIPEE_SUPABASE_SERVICE_ROLE_KEY!
-)
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.BLIPEE_NEXT_PUBLIC_SUPABASE_URL || ''
+const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.BLIPEE_SUPABASE_SERVICE_ROLE_KEY || ''
+
+if (!supabaseUrl || !serviceRoleKey) {
+  console.error('Missing Supabase environment variables for admin client')
+}
+
+const supabaseAdmin = supabaseUrl && serviceRoleKey ? createClient(
+  supabaseUrl.trim(),
+  serviceRoleKey.trim()
+) : null
 
 export interface AuthContext {
   userId: string
@@ -30,6 +37,10 @@ export async function authenticateRequest(
   requiredRole?: UserRole
 ): Promise<AuthContext> {
   try {
+    if (!supabaseAdmin) {
+      throw new AuthError('Supabase admin client not initialized', 500)
+    }
+
     // Get the authorization header
     const authHeader = request.headers.get('authorization')
     if (!authHeader?.startsWith('Bearer ')) {
@@ -105,6 +116,9 @@ function hasRequiredRole(userRole: UserRole, requiredRole: UserRole): boolean {
 export function getOrganizationScopedClient(organizationId: string) {
   // For now, return the admin client
   // In a more advanced setup, we could create RLS context here
+  if (!supabaseAdmin) {
+    throw new AuthError('Supabase admin client not initialized', 500)
+  }
   return supabaseAdmin
 }
 
