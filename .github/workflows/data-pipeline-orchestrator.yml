@@ -1,0 +1,259 @@
+name: Complete Data Pipeline Orchestrator
+
+on:
+  schedule:
+    # Run every hour at 15 minutes past to orchestrate the complete pipeline
+    - cron: '15 * * * *'
+  workflow_dispatch:  # Allow manual triggers
+    inputs:
+      skip_wait:
+        description: 'Skip waiting between steps (for testing)'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  orchestrate-pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: |
+          npm install node-fetch@2
+      
+      - name: Pipeline Status - Starting
+        run: |
+          echo "🚀 Starting Complete Data Pipeline"
+          echo "📅 Current UTC time: $(date -u '+%Y-%m-%d %H:%M:%S')"
+          echo ""
+          echo "Pipeline stages:"
+          echo "1. ⏳ Sensor Data Collection"
+          echo "2. ⏳ Regional Data Collection"
+          echo "3. ⏳ Analytics Aggregation"
+          echo "4. ⏳ Data Validation"
+      
+      - name: Stage 1 - Trigger Sensor Data Collection
+        id: sensor_collection
+        uses: actions/github-script@v6
+        with:
+          script: |
+            console.log('🔄 Triggering sensor data collection workflow...');
+            try {
+              const result = await github.rest.actions.createWorkflowDispatch({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: 'collect-sensor-data.yml',
+                ref: 'main'
+              });
+              console.log('✅ Sensor collection triggered successfully');
+              return { success: true };
+            } catch (error) {
+              console.error('❌ Failed to trigger sensor collection:', error.message);
+              return { success: false, error: error.message };
+            }
+      
+      - name: Wait for sensor collection to complete
+        if: steps.sensor_collection.outputs.result == 'true' && github.event.inputs.skip_wait != 'true'
+        run: |
+          echo "⏱️  Waiting 5 minutes for sensor collection to complete..."
+          sleep 300
+      
+      - name: Stage 2 - Trigger Regional Data Collection
+        id: regional_collection
+        uses: actions/github-script@v6
+        with:
+          script: |
+            console.log('🗺️  Triggering regional data collection workflow...');
+            try {
+              const result = await github.rest.actions.createWorkflowDispatch({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: 'collect-regional-data.yml',
+                ref: 'main'
+              });
+              console.log('✅ Regional collection triggered successfully');
+              return { success: true };
+            } catch (error) {
+              console.error('⚠️  Regional collection not available yet:', error.message);
+              return { success: false, error: error.message };
+            }
+      
+      - name: Wait for regional collection to complete
+        if: steps.regional_collection.outputs.result == 'true' && github.event.inputs.skip_wait != 'true'
+        run: |
+          echo "⏱️  Waiting 3 minutes for regional collection to complete..."
+          sleep 180
+      
+      - name: Stage 3 - Trigger Analytics Aggregation
+        id: analytics_aggregation
+        uses: actions/github-script@v6
+        with:
+          script: |
+            console.log('📊 Triggering analytics aggregation workflow...');
+            try {
+              const result = await github.rest.actions.createWorkflowDispatch({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: 'run-analytics-aggregation.yml',
+                ref: 'main'
+              });
+              console.log('✅ Analytics aggregation triggered successfully');
+              return { success: true };
+            } catch (error) {
+              console.error('❌ Failed to trigger analytics aggregation:', error.message);
+              return { success: false, error: error.message };
+            }
+      
+      - name: Wait for analytics aggregation
+        if: steps.analytics_aggregation.outputs.result == 'true' && github.event.inputs.skip_wait != 'true'
+        run: |
+          echo "⏱️  Waiting 2 minutes for analytics aggregation..."
+          sleep 120
+      
+      - name: Stage 4 - Validate Data Pipeline
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          node -e "
+          const fetch = require('node-fetch');
+          
+          async function validatePipeline() {
+            console.log('🔍 Validating data pipeline results...');
+            
+            const supabaseUrl = process.env.SUPABASE_URL;
+            const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+            
+            const checks = {
+              raw_data: false,
+              processed_data: false,
+              hourly_analytics: false,
+              daily_analytics: false,
+              regional_data: false
+            };
+            
+            try {
+              // Check raw data (last hour)
+              const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+              const rawResponse = await fetch(
+                \`\${supabaseUrl}/rest/v1/people_counting_raw?timestamp=gte.\${oneHourAgo}&select=count\`,
+                {
+                  headers: {
+                    'apikey': supabaseKey,
+                    'Authorization': \`Bearer \${supabaseKey}\`,
+                    'Prefer': 'count=exact'
+                  }
+                }
+              );
+              
+              if (rawResponse.ok) {
+                const count = parseInt(rawResponse.headers.get('content-range').split('/')[1]);
+                checks.raw_data = count > 0;
+                console.log(\`  📥 Raw data (last hour): \${count} records\`);
+              }
+              
+              // Check processed data
+              const processedResponse = await fetch(
+                \`\${supabaseUrl}/rest/v1/people_counting_data?timestamp=gte.\${oneHourAgo}&select=count\`,
+                {
+                  headers: {
+                    'apikey': supabaseKey,
+                    'Authorization': \`Bearer \${supabaseKey}\`,
+                    'Prefer': 'count=exact'
+                  }
+                }
+              );
+              
+              if (processedResponse.ok) {
+                const count = parseInt(processedResponse.headers.get('content-range').split('/')[1]);
+                checks.processed_data = count > 0;
+                console.log(\`  📊 Processed data (last hour): \${count} records\`);
+              }
+              
+              // Check hourly analytics
+              const today = new Date().toISOString().split('T')[0];
+              const hourlyResponse = await fetch(
+                \`\${supabaseUrl}/rest/v1/hourly_analytics?date=eq.\${today}&select=count\`,
+                {
+                  headers: {
+                    'apikey': supabaseKey,
+                    'Authorization': \`Bearer \${supabaseKey}\`,
+                    'Prefer': 'count=exact'
+                  }
+                }
+              );
+              
+              if (hourlyResponse.ok) {
+                const count = parseInt(hourlyResponse.headers.get('content-range').split('/')[1]);
+                checks.hourly_analytics = count > 0;
+                console.log(\`  📈 Hourly analytics (today): \${count} records\`);
+              }
+              
+              // Check daily analytics
+              const dailyResponse = await fetch(
+                \`\${supabaseUrl}/rest/v1/daily_analytics?date=eq.\${today}&select=count\`,
+                {
+                  headers: {
+                    'apikey': supabaseKey,
+                    'Authorization': \`Bearer \${supabaseKey}\`,
+                    'Prefer': 'count=exact'
+                  }
+                }
+              );
+              
+              if (dailyResponse.ok) {
+                const count = parseInt(dailyResponse.headers.get('content-range').split('/')[1]);
+                checks.daily_analytics = count > 0;
+                console.log(\`  📊 Daily analytics (today): \${count} records\`);
+              }
+              
+              // Summary
+              console.log('\\n📋 Pipeline Status Summary:');
+              console.log(\`  \${checks.raw_data ? '✅' : '❌'} Raw data collection\`);
+              console.log(\`  \${checks.processed_data ? '✅' : '❌'} Data processing\`);
+              console.log(\`  \${checks.hourly_analytics ? '✅' : '❌'} Hourly analytics\`);
+              console.log(\`  \${checks.daily_analytics ? '✅' : '❌'} Daily analytics\`);
+              console.log(\`  \${checks.regional_data ? '✅' : '⏳'} Regional data (coming soon)\`);
+              
+              const allChecks = Object.values(checks).filter(v => v).length;
+              if (allChecks >= 4) {
+                console.log('\\n✅ Data pipeline is working correctly!');
+              } else if (allChecks >= 2) {
+                console.log('\\n⚠️  Data pipeline is partially working');
+              } else {
+                console.log('\\n❌ Data pipeline has issues');
+                process.exit(1);
+              }
+              
+            } catch (error) {
+              console.error('\\n❌ Validation error:', error.message);
+              process.exit(1);
+            }
+          }
+          
+          validatePipeline()
+            .then(() => process.exit(0))
+            .catch(() => process.exit(1));
+          "
+      
+      - name: Pipeline Status - Complete
+        run: |
+          echo ""
+          echo "✅ Data Pipeline Orchestration Complete"
+          echo "📅 Completed at: $(date -u '+%Y-%m-%d %H:%M:%S') UTC"
+          echo ""
+          echo "Next run in 1 hour"
+      
+      - name: Send notification on failure
+        if: failure()
+        run: |
+          echo "⚠️ Data pipeline orchestration failed. Check the logs for details."

@@ -149,7 +149,72 @@ jobs:
                 
                 // Parse and insert regional data
                 console.log('  ✅ Found regional data columns!');
-                // TODO: Parse regional CSV and insert into regional_analytics table
+                // Parse CSV headers
+                const headerLine = lines[0];
+                const headers = headerLine.split(',').map(h => h.trim());
+                
+                // Find region columns (might be named region1-4, zone1-4, area1-4)
+                const regionColumns = headers.reduce((acc, header, index) => {
+                  const match = header.match(/^(region|zone|area)(\d+)$/i);
+                  if (match) {
+                    const regionNum = parseInt(match[2]);
+                    if (regionNum >= 1 && regionNum <= 4) {
+                      acc[`region${regionNum}`] = index;
+                    }
+                  }
+                  return acc;
+                }, {});
+                
+                console.log(`  📍 Found ${Object.keys(regionColumns).length} regions in data`);
+                
+                // Process each data line
+                const dataToInsert = [];
+                for (let i = 1; i < lines.length; i++) {
+                  const values = lines[i].split(',').map(v => v.trim());
+                  if (values.length < headers.length) continue;
+                  
+                  const timestamp = values[0]; // Assuming first column is timestamp
+                  
+                  // Extract data for each region
+                  for (const [regionKey, columnIndex] of Object.entries(regionColumns)) {
+                    const regionNum = parseInt(regionKey.replace('region', ''));
+                    const count = parseInt(values[columnIndex]) || 0;
+                    
+                    if (count > 0) {
+                      dataToInsert.push({
+                        sensor_id: sensor.id,
+                        region_id: `${sensor.id}_region_${regionNum}`,
+                        timestamp: timestamp,
+                        occupancy_count: count,
+                        entries: Math.max(0, count), // Simplified for now
+                        exits: 0
+                      });
+                    }
+                  }
+                }
+                
+                if (dataToInsert.length > 0) {
+                  console.log(`  💾 Inserting ${dataToInsert.length} regional data records...`);
+                  
+                  // Insert into regional_analytics table
+                  const insertResponse = await fetch(`${supabaseUrl}/rest/v1/regional_analytics`, {
+                    method: 'POST',
+                    headers: {
+                      'apikey': supabaseKey,
+                      'Authorization': `Bearer ${supabaseKey}`,
+                      'Content-Type': 'application/json',
+                      'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify(dataToInsert)
+                  });
+                  
+                  if (insertResponse.ok) {
+                    console.log('  ✅ Regional data inserted successfully');
+                  } else {
+                    const error = await insertResponse.text();
+                    console.error(`  ❌ Failed to insert regional data: ${error}`);
+                  }
+                }
                 
               } catch (error) {
                 console.error(\`  ❌ Error: \${error.message}\`);
