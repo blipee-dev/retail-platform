@@ -47,12 +47,7 @@ export default function SensorsPage() {
 
   const fetchSensors = async () => {
     try {
-      const token = await user?.getIdToken()
-      const response = await fetch('/api/sensors', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
+      const response = await fetch('/api/sensors')
 
       if (!response.ok) {
         throw new Error('Failed to fetch sensors')
@@ -72,11 +67,9 @@ export default function SensorsPage() {
     setError('')
 
     try {
-      const token = await user?.getIdToken()
       const response = await fetch('/api/sensors', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(jjSensorConfig)

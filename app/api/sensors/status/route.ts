@@ -107,7 +107,7 @@ export async function GET(request: NextRequest) {
 
         // Calculate sensor health
         const now = new Date()
-        const lastSeen = sensor.last_seen_at ? new Date(sensor.last_seen_at) : null
+        const lastSeen = sensor.last_seen_at ? new Date(sensor.last_seen_at as string) : null
         const minutesSinceLastSeen = lastSeen ? 
           Math.floor((now.getTime() - lastSeen.getTime()) / (1000 * 60)) : null
 
@@ -159,7 +159,7 @@ export async function GET(request: NextRequest) {
       error_sensors: sensorStatuses.filter(s => s.sensor.health === 'error').length,
       total_alerts: sensorStatuses.reduce((sum, s) => sum + s.active_alerts.length, 0),
       current_hour_traffic: sensorStatuses.reduce((sum, s) => 
-        sum + (s.current_hour_stats?.total_entries || 0), 0
+        sum + ((s.current_hour_stats?.total_entries as number) || 0), 0
       )
     }
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { AnalyticsService, OccupancyData, CaptureRateData, JourneyData, Alert } from '@/app/lib/services/analytics.service'
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card'
 import { AlertCircle, TrendingUp, TrendingDown, Users, ShoppingCart, Activity } from 'lucide-react'
