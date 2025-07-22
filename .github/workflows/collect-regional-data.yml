@@ -46,7 +46,7 @@ jobs:
                 name: 'OML01-PC',
                 ip: '93.108.96.96',
                 port: 21001,
-                auth: 'admin:OmniaOml01',
+                auth: 'admin:grnl.2024',
                 regions: {
                   region1: 'Entrance Area',
                   region2: 'Central Plaza',
@@ -59,7 +59,7 @@ jobs:
                 name: 'OML02-PC',
                 ip: '188.37.175.41',
                 port: 2201,
-                auth: 'admin:OmniaOml02',
+                auth: 'admin:grnl.2024',
                 regions: {
                   region1: 'Entrance Zone',
                   region2: 'Main Shopping Area',
@@ -72,7 +72,7 @@ jobs:
                 name: 'OML03-PC',
                 ip: '188.37.124.33',
                 port: 21002,
-                auth: 'admin:OmniaOml03',
+                auth: 'admin:grnl.2024',
                 regions: {
                   region1: 'Mall Entrance',
                   region2: 'Central Corridor',
