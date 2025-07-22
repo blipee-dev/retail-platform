@@ -1,0 +1,67 @@
+{
+  "region_mapping": {
+    "region1": {
+      "name": "Entrance Zone",
+      "description": "Main store entrance area",
+      "associated_lines": [
+        1
+      ],
+      "metrics": [
+        "entry_rate",
+        "bounce_rate",
+        "morning_rush"
+      ]
+    },
+    "region2": {
+      "name": "Shopping Zone",
+      "description": "Main shopping floor",
+      "associated_lines": [
+        2,
+        3
+      ],
+      "metrics": [
+        "dwell_time",
+        "browsing_patterns",
+        "conversion_potential"
+      ]
+    },
+    "region3": {
+      "name": "Checkout Zone",
+      "description": "Payment and checkout area",
+      "associated_lines": [
+        2
+      ],
+      "metrics": [
+        "queue_length",
+        "transaction_time",
+        "abandonment_rate"
+      ]
+    },
+    "region4": {
+      "name": "Window Zone",
+      "description": "Storefront and window shopping",
+      "associated_lines": [
+        4
+      ],
+      "metrics": [
+        "capture_rate",
+        "window_effectiveness",
+        "passing_patterns"
+      ]
+    }
+  },
+  "zone_rules": {
+    "entrance_to_shopping": {
+      "trigger": "line1_in > 0",
+      "action": "increment region1 and region2 occupancy"
+    },
+    "shopping_to_checkout": {
+      "trigger": "line2_in > line2_out",
+      "action": "increment region3 occupancy, potential conversion"
+    },
+    "window_to_entrance": {
+      "trigger": "line4 activity followed by line1_in",
+      "action": "successful capture from window"
+    }
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "sensor_id": "oml01-guimaraes",
+  "sensor_name": "OML01-Omnia Guimarães Shopping",
+  "sensor_type": "milesight",
+  "api_config": {
+    "base_url": "http://93.108.96.96:21001",
+    "username": "admin",
+    "password": "grnl.2024",
+    "timeout": 30,
+    "verify_ssl": false
+  },
+  "endpoints": {
+    "people_counting": "/api/v1/data",
+    "report_parameters": {
+      "report_type": "line_counting",
+      "linetype": "dual",
+      "statistics_type": "device",
+      "data_type": "15min"
+    },
+    "regional_counting": "/api/v1/data",
+    "regional_parameters": {
+      "report_type": "regional_counting",
+      "data_type": "15min"
+    },
+    "heatmap": "/api/v1/data",
+    "heatmap_parameters": {
+      "report_type": "heatmap",
+      "data_type": "15min"
+    }
+  },
+  "data_collection": {
+    "interval_seconds": 300,
+    "batch_size": 100,
+    "retry_attempts": 3,
+    "retry_delay": 60
+  },
+  "line_configuration": {
+    "line1": {
+      "name": "Main Entrance",
+      "type": "entrance",
+      "direction": "bidirectional",
+      "count_in_store_traffic": true
+    },
+    "line2": {
+      "name": "Secondary Entrance",
+      "type": "entrance",
+      "direction": "bidirectional",
+      "count_in_store_traffic": true
+    },
+    "line3": {
+      "name": "Exit Gate",
+      "type": "exit",
+      "direction": "out",
+      "count_in_store_traffic": true
+    },
+    "line4": {
+      "name": "Street Passing",
+      "type": "passing",
+      "direction": "bidirectional",
+      "count_in_store_traffic": false,
+      "use_for_capture_rate": true
+    }
+  },
+  "region_configuration": {
+    "region1": {
+      "name": "Entrance Area",
+      "type": "entrance",
+      "capacity": 50
+    },
+    "region2": {
+      "name": "Central Plaza",
+      "type": "shopping",
+      "capacity": 200
+    },
+    "region3": {
+      "name": "Food Court Queue",
+      "type": "queue",
+      "capacity": 30,
+      "max_queue_length": 15
+    },
+    "region4": {
+      "name": "Premium Stores",
+      "type": "high-value",
+      "capacity": 80
+    }
+  },
+  "store_info": {
+    "store_id": "f1234567-89ab-cdef-0123-456789abcdef",
+    "organization_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "timezone": "Europe/Lisbon",
+    "opening_hour": 10,
+    "closing_hour": 22
+  },
+  "alerts": {
+    "occupancy_threshold": 0.85,
+    "queue_length_threshold": 10,
+    "capture_rate_min": 10,
+    "enable_notifications": true
+  }
+}

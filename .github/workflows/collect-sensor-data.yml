@@ -138,10 +138,12 @@ jobs:
                   // Skip if already collected
                   if (lastTimestamp && record.timestamp <= lastTimestamp) continue;
                   
-                  // Skip if all zeros
-                  const hasData = record.line1_in + record.line1_out + record.line2_in + record.line2_out +
-                                 record.line3_in + record.line3_out + record.line4_in + record.line4_out > 0;
-                  if (!hasData) continue;
+                  // Log zero data but don't skip - stores might genuinely have no traffic
+                  const totalMovement = record.line1_in + record.line1_out + record.line2_in + record.line2_out +
+                                       record.line3_in + record.line3_out + record.line4_in + record.line4_out;
+                  if (totalMovement === 0) {
+                    console.log(`  ⚠️  Zero movement data for ${record.timestamp.toISOString()}`);
+                  }
                   
                   recordsToInsert.push({
                     sensor_id: sensor.id,
