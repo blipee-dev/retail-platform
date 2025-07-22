@@ -1,0 +1,131 @@
+name: Test Regional Data Collection
+
+on:
+  workflow_dispatch:  # Manual trigger only for testing
+
+jobs:
+  test-regional:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Test regional data endpoints
+        run: |
+          node -e "
+          const http = require('http');
+          
+          async function testRegional() {
+            console.log('🔍 Testing Regional Data Endpoints');
+            console.log('=' + '='.repeat(60));
+            
+            // Test each Omnia sensor with correct auth
+            const sensors = [
+              {
+                name: 'OML01-PC',
+                ip: '93.108.96.96',
+                port: 21001,
+                auth: 'admin:OmniaOml01'
+              },
+              {
+                name: 'OML02-PC', 
+                ip: '188.37.175.41',
+                port: 2201,
+                auth: 'admin:OmniaOml02'
+              },
+              {
+                name: 'OML03-PC',
+                ip: '188.37.124.33', 
+                port: 21002,
+                auth: 'admin:OmniaOml03'
+              }
+            ];
+            
+            // Also test with common password
+            const commonAuth = 'admin:grnl.2024';
+            
+            for (const sensor of sensors) {
+              console.log(\`\\n📡 Testing \${sensor.name}\`);
+              console.log('-'.repeat(40));
+              
+              // Test with sensor-specific auth
+              console.log(\`Using auth: \${sensor.auth}\`);
+              await testEndpoint(sensor.ip, sensor.port, sensor.auth);
+              
+              // Also try common auth
+              console.log(\`\\nTrying common auth: \${commonAuth}\`);
+              await testEndpoint(sensor.ip, sensor.port, commonAuth);
+            }
+          }
+          
+          async function testEndpoint(ip, port, auth) {
+            const now = new Date();
+            const oneHourAgo = new Date(now - 60 * 60 * 1000);
+            
+            const formatDate = (d) => {
+              const pad = n => n.toString().padStart(2, '0');
+              return \`\${d.getFullYear()}-\${pad(d.getMonth()+1)}-\${pad(d.getDate())}-\${pad(d.getHours())}:\${pad(d.getMinutes())}:\${pad(d.getSeconds())}\`;
+            };
+            
+            // Try regional endpoint
+            const path = \`/dataloader.cgi?dw=vcalogcsv&report_type=0&statistics_type=3&linetype=0&time_start=\${formatDate(oneHourAgo)}&time_end=\${formatDate(now)}\`;
+            
+            return new Promise((resolve) => {
+              const req = http.request({
+                hostname: ip,
+                port: port,
+                path: path,
+                method: 'GET',
+                headers: {
+                  'Authorization': 'Basic ' + Buffer.from(auth).toString('base64')
+                },
+                timeout: 30000
+              }, (res) => {
+                let data = '';
+                res.on('data', chunk => data += chunk);
+                res.on('end', () => {
+                  if (res.statusCode === 200) {
+                    const lines = data.split('\\n');
+                    console.log(\`  ✅ Success! Got \${lines.length} lines\`);
+                    if (lines[0]) {
+                      console.log(\`  Headers: \${lines[0]}\`);
+                      const hasRegional = lines[0].toLowerCase().includes('region') || 
+                                         lines[0].toLowerCase().includes('zone');
+                      console.log(\`  Has regional data: \${hasRegional ? 'YES' : 'NO'}\`);
+                    }
+                  } else {
+                    console.log(\`  ❌ HTTP \${res.statusCode}\`);
+                  }
+                  resolve();
+                });
+              });
+              
+              req.on('error', (err) => {
+                console.log(\`  ❌ Error: \${err.message}\`);
+                resolve();
+              });
+              
+              req.on('timeout', () => {
+                req.destroy();
+                console.log('  ❌ Timeout');
+                resolve();
+              });
+              
+              req.end();
+            });
+          }
+          
+          testRegional().then(() => {
+            console.log('\\n✅ Test completed');
+          }).catch(err => {
+            console.error('Test failed:', err);
+            process.exit(1);
+          });
+          "

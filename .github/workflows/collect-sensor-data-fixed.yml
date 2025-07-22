@@ -1,0 +1,288 @@
+name: Sensor Data Collection with Proper UPSERT
+
+on:
+  schedule:
+    # Run every 30 minutes
+    - cron: '*/30 * * * *'
+  workflow_dispatch:  # Allow manual triggers for testing
+
+jobs:
+  collect-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: |
+          npm install node-fetch@2
+      
+      - name: Collect sensor data with proper UPSERT logic
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          node -e "
+          const fetch = require('node-fetch');
+          const http = require('http');
+          
+          async function collectSensorData() {
+            console.log('🚀 Starting sensor data collection with proper UPSERT...');
+            
+            // Initialize Supabase client
+            const supabaseUrl = process.env.SUPABASE_URL;
+            const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+            
+            // Get sensors from database
+            const sensorsResponse = await fetch(\`\${supabaseUrl}/rest/v1/sensor_metadata?is_active=eq.true&select=*,stores(id,name,organization_id)\`, {
+              headers: {
+                'apikey': supabaseKey,
+                'Authorization': \`Bearer \${supabaseKey}\`
+              }
+            });
+            
+            if (!sensorsResponse.ok) {
+              throw new Error(\`Failed to fetch sensors: \${sensorsResponse.status}\`);
+            }
+            
+            const sensors = await sensorsResponse.json();
+            console.log(\`Found \${sensors.length} active sensors\`);
+            
+            const results = [];
+            const now = new Date();
+            // For real-time data, we need to look at recent hours that might still be updating
+            const threeHoursAgo = new Date(now.getTime() - 3 * 60 * 60 * 1000);
+            
+            // Format date for sensors
+            const formatDate = (date) => {
+              const pad = (n) => n.toString().padStart(2, '0');
+              return \`\${date.getFullYear()}-\${pad(date.getMonth() + 1)}-\${pad(date.getDate())}-\${pad(date.getHours())}:\${pad(date.getMinutes())}:\${pad(date.getSeconds())}\`;
+            };
+            
+            // Process each sensor
+            for (const sensor of sensors) {
+              console.log(\`\\n📡 Processing \${sensor.sensor_name}...\`);
+              
+              try {
+                // Fetch data using http module
+                const data = await new Promise((resolve, reject) => {
+                  const path = \`/dataloader.cgi?dw=vcalogcsv&report_type=0&statistics_type=3&linetype=31&time_start=\${formatDate(threeHoursAgo)}&time_end=\${formatDate(now)}\`;
+                  
+                  const options = {
+                    hostname: sensor.sensor_ip,
+                    port: sensor.sensor_port,
+                    path: path,
+                    method: 'GET',
+                    headers: {
+                      'Authorization': 'Basic ' + Buffer.from('admin:grnl.2024').toString('base64')
+                    },
+                    timeout: 30000
+                  };
+                  
+                  const req = http.request(options, (res) => {
+                    let data = '';
+                    res.on('data', (chunk) => data += chunk);
+                    res.on('end', () => {
+                      if (res.statusCode === 200) {
+                        resolve(data);
+                      } else {
+                        reject(new Error(\`HTTP \${res.statusCode}: \${data}\`));
+                      }
+                    });
+                  });
+                  
+                  req.on('error', reject);
+                  req.on('timeout', () => {
+                    req.destroy();
+                    reject(new Error('Request timeout'));
+                  });
+                  
+                  req.end();
+                });
+                
+                // Parse CSV data
+                const records = parseCSV(data);
+                console.log(\`  ✅ Retrieved \${records.length} records\`);
+                
+                // Process all records within the last 3 hours
+                let processedCount = 0;
+                
+                for (const record of records) {
+                  // Skip future data
+                  if (record.timestamp > now) continue;
+                  
+                  // Only process recent data (last 3 hours)
+                  if (now.getTime() - record.timestamp.getTime() > 3 * 60 * 60 * 1000) continue;
+                  
+                  // For each record, we need to check if it exists and update or insert
+                  const recordData = {
+                    sensor_id: sensor.id,
+                    organization_id: sensor.organization_id,
+                    store_id: sensor.store_id,
+                    timestamp: record.timestamp.toISOString(),
+                    end_time: record.endTime.toISOString(),
+                    line1_in: record.line1_in,
+                    line1_out: record.line1_out,
+                    line2_in: record.line2_in,
+                    line2_out: record.line2_out,
+                    line3_in: record.line3_in,
+                    line3_out: record.line3_out,
+                    line4_in: record.line4_in,
+                    line4_out: record.line4_out
+                  };
+                  
+                  // First check if record exists
+                  const checkResponse = await fetch(
+                    \`\${supabaseUrl}/rest/v1/people_counting_raw?sensor_id=eq.\${sensor.id}&timestamp=eq.\${record.timestamp.toISOString()}&select=id\`,
+                    {
+                      headers: {
+                        'apikey': supabaseKey,
+                        'Authorization': \`Bearer \${supabaseKey}\`
+                      }
+                    }
+                  );
+                  
+                  const existing = await checkResponse.json();
+                  
+                  if (existing && existing.length > 0) {
+                    // Record exists, update it
+                    const updateResponse = await fetch(
+                      \`\${supabaseUrl}/rest/v1/people_counting_raw?sensor_id=eq.\${sensor.id}&timestamp=eq.\${record.timestamp.toISOString()}\`,
+                      {
+                        method: 'PATCH',
+                        headers: {
+                          'apikey': supabaseKey,
+                          'Authorization': \`Bearer \${supabaseKey}\`,
+                          'Content-Type': 'application/json',
+                          'Prefer': 'return=minimal'
+                        },
+                        body: JSON.stringify({
+                          line1_in: record.line1_in,
+                          line1_out: record.line1_out,
+                          line2_in: record.line2_in,
+                          line2_out: record.line2_out,
+                          line3_in: record.line3_in,
+                          line3_out: record.line3_out,
+                          line4_in: record.line4_in,
+                          line4_out: record.line4_out
+                        })
+                      }
+                    );
+                    
+                    if (updateResponse.ok) {
+                      console.log(\`  📝 Updated \${record.timestamp.toISOString()}\`);
+                    }
+                  } else {
+                    // Record doesn't exist, insert it
+                    const insertResponse = await fetch(\`\${supabaseUrl}/rest/v1/people_counting_raw\`, {
+                      method: 'POST',
+                      headers: {
+                        'apikey': supabaseKey,
+                        'Authorization': \`Bearer \${supabaseKey}\`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
+                      },
+                      body: JSON.stringify(recordData)
+                    });
+                    
+                    if (insertResponse.ok) {
+                      console.log(\`  ➕ Inserted \${record.timestamp.toISOString()}\`);
+                    }
+                  }
+                  
+                  processedCount++;
+                  
+                  // Log current hour data
+                  const currentHour = new Date(now);
+                  currentHour.setMinutes(0, 0, 0);
+                  if (record.timestamp.getTime() === currentHour.getTime()) {
+                    const totalIn = record.line1_in + record.line2_in + record.line3_in + record.line4_in;
+                    const totalOut = record.line1_out + record.line2_out + record.line3_out + record.line4_out;
+                    console.log(\`  📊 Current hour: \${totalIn} IN, \${totalOut} OUT\`);
+                  }
+                }
+                
+                results.push({
+                  sensor: sensor.sensor_name,
+                  status: 'success',
+                  records_processed: records.length,
+                  records_updated: processedCount
+                });
+                
+              } catch (error) {
+                console.error(\`  ❌ Error: \${error.message}\`);
+                results.push({
+                  sensor: sensor.sensor_name,
+                  status: 'error',
+                  error: error.message
+                });
+              }
+            }
+            
+            // Summary
+            console.log('\\n📊 Collection Summary:');
+            console.log('====================');
+            results.forEach(r => {
+              const status = r.status === 'success' ? '✅' : '❌';
+              console.log(\`\${status} \${r.sensor}: \${r.status} (\${r.records_updated || 0} records processed)\`);
+            });
+            
+            return results;
+          }
+          
+          function parseCSV(csv) {
+            const lines = csv.trim().split('\\n');
+            if (lines.length < 2) return [];
+            
+            const records = [];
+            
+            // Skip header, process data lines
+            for (let i = 1; i < lines.length; i++) {
+              const parts = lines[i].split(',').map(p => p.trim());
+              
+              if (parts.length >= 17) {
+                try {
+                  records.push({
+                    timestamp: new Date(parts[0].replace(/\\//g, '-')),
+                    endTime: new Date(parts[1].replace(/\\//g, '-')),
+                    line1_in: parseInt(parts[5]) || 0,
+                    line1_out: parseInt(parts[6]) || 0,
+                    line2_in: parseInt(parts[8]) || 0,
+                    line2_out: parseInt(parts[9]) || 0,
+                    line3_in: parseInt(parts[11]) || 0,
+                    line3_out: parseInt(parts[12]) || 0,
+                    line4_in: parseInt(parts[14]) || 0,
+                    line4_out: parseInt(parts[15]) || 0
+                  });
+                } catch (e) {
+                  console.error('Error parsing line:', lines[i]);
+                }
+              }
+            }
+            
+            return records;
+          }
+          
+          // Run the collection
+          collectSensorData()
+            .then(() => {
+              console.log('\\n✅ Data collection completed successfully!');
+              process.exit(0);
+            })
+            .catch((error) => {
+              console.error('\\n❌ Data collection failed:', error);
+              process.exit(1);
+            });
+          "
+      
+      - name: Send notification on failure
+        if: failure()
+        run: |
+          echo "⚠️ Sensor data collection failed. Check the logs for details."

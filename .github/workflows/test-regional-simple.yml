@@ -1,0 +1,33 @@
+name: Test Regional Data (Simple)
+
+on:
+  workflow_dispatch:  # Manual trigger only
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+      - name: Test Omnia sensors for regional data
+        run: |
+          echo "🔍 Testing Regional Data with Common Auth"
+          echo "========================================"
+          
+          # Test OML01 with common auth (same as working workflow)
+          echo -e "\n📡 Testing OML01-PC..."
+          curl -u admin:grnl.2024 -s -w "\nHTTP Status: %{http_code}\n" \
+            "http://93.108.96.96:21001/dataloader.cgi?dw=vcalogcsv&report_type=0&statistics_type=3&linetype=0&time_start=2025-07-22-09:00:00&time_end=2025-07-22-10:00:00" \
+            | head -20
+          
+          echo -e "\n📡 Testing OML02-PC..."
+          curl -u admin:grnl.2024 -s -w "\nHTTP Status: %{http_code}\n" \
+            "http://188.37.175.41:2201/dataloader.cgi?dw=vcalogcsv&report_type=0&statistics_type=3&linetype=0&time_start=2025-07-22-09:00:00&time_end=2025-07-22-10:00:00" \
+            | head -20
+            
+          echo -e "\n📡 Testing OML03-PC..."
+          curl -u admin:grnl.2024 -s -w "\nHTTP Status: %{http_code}\n" \
+            "http://188.37.124.33:21002/dataloader.cgi?dw=vcalogcsv&report_type=0&statistics_type=3&linetype=0&time_start=2025-07-22-09:00:00&time_end=2025-07-22-10:00:00" \
+            | head -20
+            
+          echo -e "\n✅ Test completed"

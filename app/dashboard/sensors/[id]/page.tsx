@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/app/providers/auth-provider'
 import { Line } from 'react-chartjs-2'
+import { formatSensorTime, formatTableDate, getStoreTimezone } from '@/app/lib/utils/date-formatter'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -117,8 +118,9 @@ export default function SensorDetailPage({ params }: { params: { id: string } })
   const getChartData = () => {
     if (!sensorData.length) return null
 
+    const sensorTimezone = sensor?.timezone || getStoreTimezone(null)
     const labels = sensorData.map(d => 
-      new Date(d.timestamp).toLocaleTimeString()
+      formatSensorTime(d.timestamp, sensorTimezone)
     )
 
     if (dataType === 'people_counting') {
@@ -223,7 +225,7 @@ export default function SensorDetailPage({ params }: { params: { id: string } })
                   {sensor?.sensor_name || 'Sensor Details'}
                 </h1>
                 <p className="mt-1 text-sm text-gray-500">
-                  {sensor?.location} • {sensor?.sensor_ip}:{sensor?.sensor_port}
+                  {sensor?.location} • {sensor?.sensor_ip}:{sensor?.sensor_port} • Timezone: {sensor?.timezone || 'UTC'}
                 </p>
               </div>
               <button

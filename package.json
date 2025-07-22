@@ -62,6 +62,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "date-fns": "^3.6.0",
+    "date-fns-tz": "^3.2.0",
     "framer-motion": "^11.3.0",
     "i18next": "^25.3.2",
     "i18next-browser-languagedetector": "^8.2.0",

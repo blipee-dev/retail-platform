@@ -1,0 +1,198 @@
+name: Collect Regional Data
+
+on:
+  schedule:
+    # Run every hour to collect regional data
+    - cron: '30 * * * *'  # Run at 30 minutes past each hour
+  workflow_dispatch:  # Allow manual triggers
+
+jobs:
+  collect-regional:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: |
+          npm install node-fetch@2
+      
+      - name: Collect regional data
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          node -e "
+          const fetch = require('node-fetch');
+          const http = require('http');
+          
+          async function collectRegionalData() {
+            console.log('🗺️  Starting Regional Data Collection...');
+            console.log('Note: Only collecting from sensors with native regional support');
+            
+            const supabaseUrl = process.env.SUPABASE_URL;
+            const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+            
+            // Get sensors with regional configurations
+            const configResponse = await fetch(
+              \`\${supabaseUrl}/rest/v1/region_configurations?select=sensor_id,store_id,region_number,region_name&is_active=eq.true\`,
+              {
+                headers: {
+                  'apikey': supabaseKey,
+                  'Authorization': \`Bearer \${supabaseKey}\`
+                }
+              }
+            );
+            
+            if (!configResponse.ok) {
+              throw new Error('Failed to get region configurations');
+            }
+            
+            const regionConfigs = await configResponse.json();
+            
+            // Get unique sensors that have regional configurations
+            const sensorsWithRegions = [...new Set(regionConfigs.map(r => r.sensor_id))];
+            
+            if (sensorsWithRegions.length === 0) {
+              console.log('⚠️  No sensors have regional configurations');
+              return;
+            }
+            
+            // Get sensor details
+            const sensorResponse = await fetch(
+              \`\${supabaseUrl}/rest/v1/sensor_metadata?id=in.(${sensorsWithRegions.join(',')})&select=*\`,
+              {
+                headers: {
+                  'apikey': supabaseKey,
+                  'Authorization': \`Bearer \${supabaseKey}\`
+                }
+              }
+            );
+            
+            if (!sensorResponse.ok) {
+              throw new Error('Failed to get sensor metadata');
+            }
+            
+            const sensors = await sensorResponse.json();
+            const omniaSensors = sensors.filter(s => s.sensor_name.includes('OML'));
+            
+            console.log(\`\\nFound \${omniaSensors.length} Omnia sensors with regional support\`);
+            
+            const now = new Date();
+            const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+            
+            const formatDate = (date) => {
+              const pad = (n) => n.toString().padStart(2, '0');
+              return \`\${date.getFullYear()}-\${pad(date.getMonth() + 1)}-\${pad(date.getDate())}-\${pad(date.getHours())}:\${pad(date.getMinutes())}:\${pad(date.getSeconds())}\`;
+            };
+            
+            let totalRegionalRecords = 0;
+            
+            for (const sensor of omniaSensors) {
+              console.log(\`\\n📡 Checking \${sensor.sensor_name} for regional data...\`);
+              
+              try {
+                // Try multiple endpoints for regional data
+                const endpoints = [
+                  { dw: 'regionalcountlogcsv', desc: 'Regional counting CSV' },
+                  { dw: 'vcalogcsv', desc: 'VCA log with linetype=0', params: '&linetype=0' }
+                ];
+                
+                let foundRegionalData = false;
+                
+                for (const endpoint of endpoints) {
+                  console.log(\`  Trying \${endpoint.desc}...\`);
+                  
+                  const data = await new Promise((resolve, reject) => {
+                    const path = \`/dataloader.cgi?dw=\${endpoint.dw}&report_type=0&statistics_type=3&time_start=\${formatDate(oneHourAgo)}&time_end=\${formatDate(now)}\${endpoint.params || ''}\`;
+                    
+                    const options = {
+                      hostname: sensor.sensor_ip,
+                      port: sensor.sensor_port,
+                      path: path,
+                      method: 'GET',
+                      headers: {
+                        'Authorization': 'Basic ' + Buffer.from('admin:grnl.2024').toString('base64')  // Same auth for all sensors
+                      },
+                      timeout: 30000
+                    };
+                    
+                    const req = http.request(options, (res) => {
+                      let data = '';
+                      res.on('data', (chunk) => data += chunk);
+                      res.on('end', () => {
+                        if (res.statusCode === 200) {
+                          resolve(data);
+                        } else {
+                          reject(new Error(\`HTTP \${res.statusCode}\`));
+                        }
+                      });
+                    });
+                    
+                    req.on('error', reject);
+                    req.on('timeout', () => {
+                      req.destroy();
+                      reject(new Error('Request timeout'));
+                    });
+                    
+                    req.end();
+                  }).catch(err => {
+                    console.log(\`    ❌ \${err.message}\`);
+                    return null;
+                  });
+                  
+                  if (!data) continue;
+                  
+                  const lines = data.trim().split('\\n');
+                  if (lines.length < 2) continue;
+                  
+                  const headers = lines[0].toLowerCase();
+                  if (headers.includes('region') || headers.includes('zone')) {
+                    console.log(\`    ✅ Found regional data! (\${lines.length - 1} records)\`);
+                    foundRegionalData = true;
+                    totalRegionalRecords += lines.length - 1;
+                    
+                    // TODO: Parse and insert regional data into regional_analytics table
+                    console.log('    TODO: Implement parsing and insertion of regional data');
+                    break;
+                  }
+                }
+                
+                if (!foundRegionalData) {
+                  console.log('  ℹ️  No regional data found - sensor may need configuration');
+                }
+                
+              } catch (error) {
+                console.error(\`  ❌ Error: \${error.message}\`);
+              }
+            }
+            
+            console.log(\`\\n📊 Summary:\`);
+            console.log(\`Total regional records found: \${totalRegionalRecords}\`);
+            
+            if (totalRegionalRecords === 0) {
+              console.log('\\n⚠️  No regional data collected. Possible reasons:');
+              console.log('- Regional counting not enabled on sensors');
+              console.log('- Sensors need configuration in web interface');
+              console.log('- Different API endpoint required');
+            }
+          }
+          
+          // Run the collection
+          collectRegionalData()
+            .then(() => {
+              console.log('\\n✅ Regional data collection check completed');
+              process.exit(0);
+            })
+            .catch((error) => {
+              console.error('❌ Regional data collection failed:', error);
+              process.exit(1);
+            });
+          "

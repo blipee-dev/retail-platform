@@ -1,4 +1,4 @@
-name: Fixed Sensor Data Collection
+name: Smart Sensor Data Collection
 
 on:
   schedule:
@@ -24,7 +24,7 @@ jobs:
         run: |
           npm install node-fetch@2
       
-      - name: Collect sensor data with proper timezone handling
+      - name: Collect sensor data intelligently
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
@@ -34,7 +34,7 @@ jobs:
           const http = require('http');
           
           async function collectSensorData() {
-            console.log('🚀 Starting sensor data collection with fixed timezone handling...');
+            console.log('🚀 Starting smart sensor data collection...');
             
             // Initialize Supabase client
             const supabaseUrl = process.env.SUPABASE_URL;
@@ -43,7 +43,6 @@ jobs:
             // Get current UTC time
             const nowUTC = new Date();
             console.log(\`📅 Current UTC time: \${nowUTC.toISOString()}\`);
-            console.log(\`📅 Current UTC hour: \${nowUTC.getUTCHours()}\`);
             
             // Get sensors from database
             const sensorsResponse = await fetch(\`\${supabaseUrl}/rest/v1/sensor_metadata?is_active=eq.true&select=*,stores(id,name,organization_id)\`, {
@@ -71,14 +70,9 @@ jobs:
                 const probeData = await probeSensorTime(sensor);
                 console.log(\`  🕐 Sensor timezone offset: \${probeData.offsetHours} hours from UTC\`);
                 
-                // Calculate the current time in sensor's local timezone
-                // If offset is -3, sensor is 3 hours behind UTC
-                // So when UTC is 14:00, sensor local time is 11:00
-                const sensorLocalNow = new Date(nowUTC.getTime() + (probeData.offsetHours * 60 * 60 * 1000));
-                const sensorLocalThreeHoursAgo = new Date(sensorLocalNow.getTime() - 3 * 60 * 60 * 1000);
-                
-                console.log(\`  📍 Sensor local time now: \${formatLocalTime(sensorLocalNow)}\`);
-                console.log(\`  📍 Querying from: \${formatLocalTime(sensorLocalThreeHoursAgo)}\`);
+                // Calculate the query range in sensor's local time
+                const sensorNow = new Date(nowUTC.getTime() - (probeData.offsetHours * 60 * 60 * 1000));
+                const sensorThreeHoursAgo = new Date(sensorNow.getTime() - 3 * 60 * 60 * 1000);
                 
                 // Format date for sensors (in their local time)
                 const formatDate = (date) => {
@@ -88,7 +82,7 @@ jobs:
                 
                 // Fetch data from sensor
                 const data = await new Promise((resolve, reject) => {
-                  const path = \`/dataloader.cgi?dw=vcalogcsv&report_type=0&statistics_type=3&linetype=31&time_start=\${formatDate(sensorLocalThreeHoursAgo)}&time_end=\${formatDate(sensorLocalNow)}\`;
+                  const path = \`/dataloader.cgi?dw=vcalogcsv&report_type=0&statistics_type=3&linetype=31&time_start=\${formatDate(sensorThreeHoursAgo)}&time_end=\${formatDate(sensorNow)}\`;
                   
                   const options = {
                     hostname: sensor.sensor_ip,
@@ -127,26 +121,20 @@ jobs:
                 console.log(\`  ✅ Retrieved \${records.length} records\`);
                 
                 // Process records
-                let insertedCount = 0;
-                let updatedCount = 0;
-                let skippedFuture = 0;
-                let skippedOld = 0;
+                let processedCount = 0;
                 
                 for (const record of records) {
-                  // Skip data that's in the future according to SENSOR LOCAL TIME
-                  if (record.sensorTimestamp > sensorLocalNow) {
-                    console.log(\`  ⏭️  Skipping future record: \${record.sensorTimestamp.toISOString()} (sensor local)\`);
-                    skippedFuture++;
+                  // Skip future data (in UTC)
+                  if (record.utcTimestamp > nowUTC) {
                     continue;
                   }
                   
-                  // Skip data older than 3 hours in SENSOR LOCAL TIME
-                  if (record.sensorTimestamp < sensorLocalThreeHoursAgo) {
-                    skippedOld++;
+                  // Only process recent data (last 3 hours in UTC)
+                  if (nowUTC.getTime() - record.utcTimestamp.getTime() > 3 * 60 * 60 * 1000) {
                     continue;
                   }
                   
-                  // Prepare record data with UTC timestamps for database
+                  // Prepare record data
                   const recordData = {
                     sensor_id: sensor.id,
                     organization_id: sensor.organization_id,
@@ -202,7 +190,6 @@ jobs:
                     );
                     
                     if (updateResponse.ok) {
-                      updatedCount++;
                       const totalIn = record.line1_in + record.line2_in + record.line3_in + record.line4_in;
                       const totalOut = record.line1_out + record.line2_out + record.line3_out + record.line4_out;
                       console.log(\`  📝 Updated \${record.utcTimestamp.toISOString().slice(11,16)} UTC: \${totalIn} IN, \${totalOut} OUT\`);
@@ -221,27 +208,20 @@ jobs:
                     });
                     
                     if (insertResponse.ok) {
-                      insertedCount++;
                       const totalIn = record.line1_in + record.line2_in + record.line3_in + record.line4_in;
                       const totalOut = record.line1_out + record.line2_out + record.line3_out + record.line4_out;
                       console.log(\`  ➕ Inserted \${record.utcTimestamp.toISOString().slice(11,16)} UTC: \${totalIn} IN, \${totalOut} OUT\`);
-                    } else {
-                      const error = await insertResponse.text();
-                      console.error(\`  ❌ Failed to insert: \${error}\`);
                     }
                   }
+                  
+                  processedCount++;
                 }
-                
-                console.log(\`  📊 Summary: \${insertedCount} inserted, \${updatedCount} updated, \${skippedFuture} future, \${skippedOld} old\`);
                 
                 results.push({
                   sensor: sensor.sensor_name,
                   status: 'success',
-                  records_retrieved: records.length,
-                  records_inserted: insertedCount,
-                  records_updated: updatedCount,
-                  skipped_future: skippedFuture,
-                  skipped_old: skippedOld
+                  records_processed: records.length,
+                  records_updated: processedCount
                 });
                 
               } catch (error) {
@@ -259,19 +239,10 @@ jobs:
             console.log('====================');
             results.forEach(r => {
               const status = r.status === 'success' ? '✅' : '❌';
-              if (r.status === 'success') {
-                console.log(\`\${status} \${r.sensor}: \${r.records_inserted} new, \${r.records_updated} updated (\${r.records_retrieved} total)\`);
-              } else {
-                console.log(\`\${status} \${r.sensor}: \${r.error}\`);
-              }
+              console.log(\`\${status} \${r.sensor}: \${r.status} (\${r.records_updated || 0} records processed)\`);
             });
             
             return results;
-          }
-          
-          function formatLocalTime(date) {
-            const pad = (n) => n.toString().padStart(2, '0');
-            return \`\${date.getFullYear()}-\${pad(date.getMonth() + 1)}-\${pad(date.getDate())} \${pad(date.getHours())}:\${pad(date.getMinutes())}\`;
           }
           
           async function probeSensorTime(sensor) {
@@ -342,8 +313,8 @@ jobs:
               console.log(\`    ⚠️  Could not probe sensor time: \${e.message}\`);
             }
             
-            // Default: assume UTC-3 (Brazil timezone)
-            return { offsetHours: -3 };
+            // Default: assume UTC
+            return { offsetHours: 0 };
           }
           
           function parseCSV(csv, offsetHours = 0) {
@@ -362,10 +333,9 @@ jobs:
                   const sensorTimestamp = new Date(parts[0].replace(/\\//g, '-'));
                   const sensorEndTime = new Date(parts[1].replace(/\\//g, '-'));
                   
-                  // Convert to UTC by subtracting the offset
-                  // If sensor is UTC-3, then UTC = sensor local time + 3 hours
-                  const utcTimestamp = new Date(sensorTimestamp.getTime() - (offsetHours * 60 * 60 * 1000));
-                  const utcEndTime = new Date(sensorEndTime.getTime() - (offsetHours * 60 * 60 * 1000));
+                  // Convert to UTC by applying offset
+                  const utcTimestamp = new Date(sensorTimestamp.getTime() + (offsetHours * 60 * 60 * 1000));
+                  const utcEndTime = new Date(sensorEndTime.getTime() + (offsetHours * 60 * 60 * 1000));
                   
                   records.push({
                     sensorTimestamp: sensorTimestamp,

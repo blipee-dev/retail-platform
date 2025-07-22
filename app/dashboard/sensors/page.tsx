@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/app/providers/auth-provider'
+import { formatTableDate, getStoreTimezone } from '@/app/lib/utils/date-formatter'
 
 export default function SensorsPage() {
   const { user, profile } = useAuth()
@@ -11,6 +12,7 @@ export default function SensorsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [registering, setRegistering] = useState(false)
+  const [userTimezone, setUserTimezone] = useState<string>('UTC')
 
   // J&J Sensor configuration
   const jjSensorConfig = {
@@ -39,6 +41,8 @@ export default function SensorsPage() {
       return
     }
     fetchSensors()
+    // Get user's timezone
+    setUserTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone)
   }, [user])
 
   const fetchSensors = async () => {
@@ -189,7 +193,7 @@ export default function SensorsPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {sensor.last_seen_at 
-                            ? new Date(sensor.last_seen_at).toLocaleString()
+                            ? formatTableDate(sensor.last_seen_at, sensor.timezone || userTimezone)
                             : 'Never'
                           }
                         </td>

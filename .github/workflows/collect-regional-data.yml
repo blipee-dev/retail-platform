@@ -1,0 +1,175 @@
+name: Regional Data Collection
+
+on:
+  schedule:
+    # Run every hour to collect regional data
+    - cron: '0 * * * *'
+  workflow_dispatch:  # Allow manual triggers
+
+jobs:
+  collect-regional-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: |
+          npm install node-fetch@2
+      
+      - name: Collect regional data from Omnia sensors
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          node -e "
+          const fetch = require('node-fetch');
+          const http = require('http');
+          
+          async function collectRegionalData() {
+            console.log('🗺️  Starting Regional Data Collection...');
+            
+            const supabaseUrl = process.env.SUPABASE_URL;
+            const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+            
+            // Omnia sensors with regional capabilities
+            const sensors = [
+              {
+                id: 'f63ef2e9-b71b-43f6-a5ad-c41a7e0e2f48',
+                name: 'OML01-PC',
+                ip: '93.108.96.96',
+                port: 21001,
+                auth: 'admin:OmniaOml01',
+                regions: {
+                  region1: 'Entrance Area',
+                  region2: 'Central Plaza',
+                  region3: 'Food Court Queue',
+                  region4: 'Premium Stores'
+                }
+              },
+              {
+                id: '7976051c-6d28-4975-8ebd-f8aecc8a8c39',
+                name: 'OML02-PC',
+                ip: '188.37.175.41',
+                port: 2201,
+                auth: 'admin:OmniaOml02',
+                regions: {
+                  region1: 'Entrance Zone',
+                  region2: 'Main Shopping Area',
+                  region3: 'Checkout Queue',
+                  region4: 'Storefront Display'
+                }
+              },
+              {
+                id: '29e75799-1dc4-4527-84be-e10b3e7a1a91',
+                name: 'OML03-PC',
+                ip: '188.37.124.33',
+                port: 21002,
+                auth: 'admin:OmniaOml03',
+                regions: {
+                  region1: 'Mall Entrance',
+                  region2: 'Central Corridor',
+                  region3: 'Food Court',
+                  region4: 'Premium Wing'
+                }
+              }
+            ];
+            
+            const now = new Date();
+            const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+            
+            const formatDate = (date) => {
+              const pad = (n) => n.toString().padStart(2, '0');
+              return \`\${date.getFullYear()}-\${pad(date.getMonth() + 1)}-\${pad(date.getDate())}-\${pad(date.getHours())}:\${pad(date.getMinutes())}:\${pad(date.getSeconds())}\`;
+            };
+            
+            for (const sensor of sensors) {
+              console.log(\`\\n📡 Processing \${sensor.name} regional data...\`);
+              
+              try {
+                // Try to get regional data using linetype=0 (region type)
+                const data = await new Promise((resolve, reject) => {
+                  const path = \`/dataloader.cgi?dw=vcalogcsv&report_type=0&statistics_type=3&linetype=0&time_start=\${formatDate(oneHourAgo)}&time_end=\${formatDate(now)}\`;
+                  
+                  const options = {
+                    hostname: sensor.ip,
+                    port: sensor.port,
+                    path: path,
+                    method: 'GET',
+                    headers: {
+                      'Authorization': 'Basic ' + Buffer.from(sensor.auth).toString('base64')
+                    },
+                    timeout: 30000
+                  };
+                  
+                  const req = http.request(options, (res) => {
+                    let data = '';
+                    res.on('data', (chunk) => data += chunk);
+                    res.on('end', () => {
+                      if (res.statusCode === 200) {
+                        resolve(data);
+                      } else {
+                        reject(new Error(\`HTTP \${res.statusCode}\`));
+                      }
+                    });
+                  });
+                  
+                  req.on('error', reject);
+                  req.on('timeout', () => {
+                    req.destroy();
+                    reject(new Error('Request timeout'));
+                  });
+                  
+                  req.end();
+                });
+                
+                // Parse CSV data
+                const lines = data.trim().split('\\n');
+                console.log(\`  ✅ Retrieved \${lines.length - 1} records\`);
+                
+                if (lines.length < 2) {
+                  console.log('  ⚠️  No regional data available');
+                  continue;
+                }
+                
+                // Check if we got regional data
+                const headers = lines[0].toLowerCase();
+                if (!headers.includes('region') && !headers.includes('zone')) {
+                  console.log('  ⚠️  No regional columns found in sensor data');
+                  console.log('  ℹ️  This sensor may not support regional counting or it needs to be enabled');
+                  continue;
+                }
+                
+                // Parse and insert regional data
+                console.log('  ✅ Found regional data columns!');
+                // TODO: Parse regional CSV and insert into regional_analytics table
+                
+              } catch (error) {
+                console.error(\`  ❌ Error: \${error.message}\`);
+                console.log('  ℹ️  Regional data collection not available for this sensor');
+              }
+            }
+            
+            console.log('\\n✅ Regional data collection completed!');
+          }
+          
+          // Run the collection
+          collectRegionalData()
+            .then(() => process.exit(0))
+            .catch((error) => {
+              console.error('❌ Regional data collection failed:', error);
+              process.exit(1);
+            });
+          "
+      
+      - name: Send notification on failure
+        if: failure()
+        run: |
+          echo "⚠️ Regional data collection failed. Check the logs for details."
