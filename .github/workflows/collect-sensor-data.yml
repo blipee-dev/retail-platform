@@ -57,7 +57,7 @@ jobs:
             
             const results = [];
             const now = new Date();
-            const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
+            const twoHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000); // Changed to 24 hours
             
             // Format date for sensors
             const formatDate = (date) => {
@@ -132,8 +132,8 @@ jobs:
                   // Skip future data
                   if (record.timestamp > now) continue;
                   
-                  // Skip old data
-                  if (now.getTime() - record.timestamp.getTime() > 2 * 60 * 60 * 1000) continue;
+                  // Skip old data (older than 24 hours)
+                  if (now.getTime() - record.timestamp.getTime() > 24 * 60 * 60 * 1000) continue;
                   
                   // Skip if already collected
                   if (lastTimestamp && record.timestamp <= lastTimestamp) continue;
