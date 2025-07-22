@@ -140,8 +140,8 @@ jobs:
                 }
                 
                 // Check if we got regional data
-                const headers = lines[0].toLowerCase();
-                if (!headers.includes('region') && !headers.includes('zone')) {
+                const headerCheck = lines[0].toLowerCase();
+                if (!headerCheck.includes('region') && !headerCheck.includes('zone')) {
                   console.log('  ⚠️  No regional columns found in sensor data');
                   console.log('  ℹ️  This sensor may not support regional counting or it needs to be enabled');
                   continue;
