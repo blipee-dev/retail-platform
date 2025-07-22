@@ -159,13 +159,13 @@ jobs:
                   if (match) {
                     const regionNum = parseInt(match[2]);
                     if (regionNum >= 1 && regionNum <= 4) {
-                      acc[`region${regionNum}`] = index;
+                      acc[\`region\${regionNum}\`] = index;
                     }
                   }
                   return acc;
                 }, {});
                 
-                console.log(`  📍 Found ${Object.keys(regionColumns).length} regions in data`);
+                console.log(\`  📍 Found \${Object.keys(regionColumns).length} regions in data\`);
                 
                 // Process each data line
                 const dataToInsert = [];
@@ -183,7 +183,7 @@ jobs:
                     if (count > 0) {
                       dataToInsert.push({
                         sensor_id: sensor.id,
-                        region_id: `${sensor.id}_region_${regionNum}`,
+                        region_id: \`\${sensor.id}_region_\${regionNum}\`,
                         timestamp: timestamp,
                         occupancy_count: count,
                         entries: Math.max(0, count), // Simplified for now
@@ -194,14 +194,14 @@ jobs:
                 }
                 
                 if (dataToInsert.length > 0) {
-                  console.log(`  💾 Inserting ${dataToInsert.length} regional data records...`);
+                  console.log(\`  💾 Inserting \${dataToInsert.length} regional data records...\`);
                   
                   // Insert into regional_analytics table
-                  const insertResponse = await fetch(`${supabaseUrl}/rest/v1/regional_analytics`, {
+                  const insertResponse = await fetch(\`\${supabaseUrl}/rest/v1/regional_analytics\`, {
                     method: 'POST',
                     headers: {
                       'apikey': supabaseKey,
-                      'Authorization': `Bearer ${supabaseKey}`,
+                      'Authorization': \`Bearer \${supabaseKey}\`,
                       'Content-Type': 'application/json',
                       'Prefer': 'return=minimal'
                     },
@@ -212,7 +212,7 @@ jobs:
                     console.log('  ✅ Regional data inserted successfully');
                   } else {
                     const error = await insertResponse.text();
-                    console.error(`  ❌ Failed to insert regional data: ${error}`);
+                    console.error(\`  ❌ Failed to insert regional data: \${error}\`);
                   }
                 }
                 
