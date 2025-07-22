@@ -4,7 +4,7 @@
 
 This roadmap outlines the development phases for the Retail Platform, focusing on sensor integration, analytics, and visualization capabilities.
 
-## Current State (2025-07-21)
+## Current State (2025-07-22)
 
 ### ✅ Completed Components
 - **Connector System**: Modular sensor integration framework
@@ -22,6 +22,9 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 - **API Endpoints**: Complete sensor data ingestion API (2025-07-21)
 - **Python Bridge**: Connector-to-API integration script (2025-07-21)
 - **All Static Pages**: Converted to Next.js with i18n (2025-07-21)
+- **Global Timezone Support**: Automatic detection and conversion for worldwide sensors (2025-07-22)
+- **Project Reorganization**: Complete housekeeping with 50% cleaner root directory (2025-07-22)
+- **GitHub Actions Data Collection**: Fixed timezone handling in automated workflows (2025-07-22)
 
 ### 🚧 In Progress
 - **Real-time Data Processing**: Need WebSocket/polling implementation
@@ -46,6 +49,7 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 - [x] Next.js app structure implementation (2025-07-20)
 - [x] CI/CD pipeline (GitHub Actions) (2025-07-20)
 - [x] Multi-environment deployment (staging/dev/prod) (2025-07-20)
+- [x] Complete project housekeeping with organized structure (2025-07-22)
 - [ ] Docker configuration for local development (moved to Week 9)
 
 #### Week 3-4: Authentication & Multi-tenancy (MVP) ✅ COMPLETED (2025-07-21)
@@ -84,6 +88,7 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 - [x] CSV/HTTP data ingestion
 - [x] Data validation and processing
 - [x] Batch import functionality
+- [x] Timezone-aware data collection (2025-07-22)
 - [ ] Real-time data pipeline (WebSocket - in progress)
 
 #### Week 7-8: Dashboard & Visualization (CURRENT PHASE)
@@ -355,11 +360,11 @@ total_estimate: ~$500-800/month
 
 **Note**: This roadmap is a living document and will be updated based on customer feedback, technical discoveries, and business priorities.
 
-**Last Updated**: 2025-07-21  
-**Version**: 1.2  
+**Last Updated**: 2025-07-22  
+**Version**: 1.3  
 **Owner**: blipee Product Team
 
-## Next Activities (Updated 2025-07-21)
+## Next Activities (Updated 2025-07-22)
 
 Based on completed work and roadmap, the next immediate priorities are:
 
@@ -379,17 +384,32 @@ Based on completed work and roadmap, the next immediate priorities are:
 - ✅ Built Python-to-API bridge
 - 🚧 Real-time updates (WebSocket implementation needed)
 
-### 3. 🚧 Connect Frontend to Backend (Week 7-8) - IN PROGRESS
+### 3. ✅ Global Timezone Support - COMPLETED (2025-07-22)
+- ✅ Fixed UTC timezone issue in GitHub Actions workflow
+- ✅ Implemented automatic timezone detection for sensors
+- ✅ Created centralized date formatting utility
+- ✅ Added timezone indicators to frontend displays
+- ✅ Updated filtering logic to use sensor local time
+
+### 4. ✅ Project Housekeeping - COMPLETED (2025-07-22)
+- ✅ Reorganized 58 scripts into logical subdirectories
+- ✅ Cleaned root directory from 40+ files to 18 essentials
+- ✅ Updated .gitignore with Python patterns
+- ✅ Documented new structure in README and CLAUDE.md
+- ✅ Created comprehensive documentation structure
+
+### 5. 🚧 Connect Frontend to Backend (Week 7-8) - IN PROGRESS
 - ✅ Converted HTML mockups to Next.js components
 - ✅ Created protected routes based on roles
+- ✅ Added timezone-aware date displays
 - 🚧 Connect live sensor data to dashboards
 - 🚧 Implement real-time data updates
 - 🚧 Build interactive heat map visualization
 
-### 4. Next Phase: Week 7-8 Dashboard & Visualization
+### 6. Next Phase: Week 7-8 Dashboard & Visualization
 The immediate focus is on:
 - Connecting live sensor data to dashboards
-- Real-time metrics display
+- Real-time metrics display with timezone support
 - Heat map visualization
 - Forgot password functionality
 - Basic charts and export features

@@ -47,12 +47,7 @@ export default function SensorDetailPage({ params }: { params: { id: string } })
 
   const fetchSensorDetails = async () => {
     try {
-      const token = await user?.getIdToken()
-      const response = await fetch('/api/sensors', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
+      const response = await fetch('/api/sensors')
 
       if (!response.ok) {
         throw new Error('Failed to fetch sensor details')
@@ -72,8 +67,6 @@ export default function SensorDetailPage({ params }: { params: { id: string } })
 
   const fetchSensorData = async () => {
     try {
-      const token = await user?.getIdToken()
-      
       // Calculate time range
       const endTime = new Date()
       const startTime = new Date()
@@ -95,11 +88,7 @@ export default function SensorDetailPage({ params }: { params: { id: string } })
         start_time: startTime.toISOString(),
         end_time: endTime.toISOString(),
         limit: '100'
-      }), {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
+      }))
 
       if (!response.ok) {
         throw new Error('Failed to fetch sensor data')

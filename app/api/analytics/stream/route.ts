@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/app/lib/supabase/server'
-import { cookies } from 'next/headers'
+import { createServerSupabaseClient as createClient } from '@/app/lib/supabase-server'
 
 // Note: Next.js App Router doesn't natively support WebSockets
 // This is a Server-Sent Events (SSE) implementation for real-time updates
@@ -8,8 +7,7 @@ import { cookies } from 'next/headers'
 
 export async function GET(request: NextRequest) {
   try {
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
+    const supabase = createClient()
     
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser()

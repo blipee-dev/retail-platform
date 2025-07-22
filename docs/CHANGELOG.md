@@ -2,6 +2,49 @@
 
 All notable changes to the Retail Platform project will be documented in this file.
 
+## [0.3.0] - 2025-07-22
+
+### Added
+- Global timezone support for sensors worldwide
+  - Automatic timezone detection and storage for each sensor
+  - Timezone-aware date formatting utility (`date-formatter.ts`)
+  - Visual timezone indicators in UI (e.g., "14:30 WEST")
+  - Store-specific timezone configuration
+- Comprehensive project housekeeping and reorganization
+  - Created logical directory structure for 58+ scripts
+  - Organized scripts into subdirectories: debug/, migrations/, data-collection/, etc.
+  - Added Python patterns to .gitignore
+  - Created documentation for file movements
+- Fixed GitHub Actions sensor data collection workflow
+  - Proper timezone offset calculation for negative UTC offsets
+  - Filter future data based on sensor local time instead of UTC
+  - Support for sensors in any timezone globally
+
+### Changed
+- Updated sensor data collection to handle timezones correctly
+  - Changed from `nowUTC - (offsetHours * 60 * 60 * 1000)` to proper addition
+  - Modified filtering logic to use sensor local time
+  - Updated all date displays to show timezone abbreviations
+- Cleaned root directory from 40+ files to 18 essential files
+  - Moved SQL files to `scripts/migrations/rls/`
+  - Moved test scripts to `scripts/utilities/auth-testing/`
+  - Moved documentation to appropriate `docs/` subdirectories
+- Enhanced frontend components with timezone awareness
+  - RealTimeDashboard shows times with timezone indicators
+  - All date displays now timezone-aware
+
+### Fixed
+- UTC timezone issue causing data collection to be stuck at 13:00-13:59 UTC
+- Incorrect timezone calculations in GitHub Actions workflow
+- Frontend components not showing correct local times for global sensors
+- Merge conflicts between main and develop branches
+
+### Technical Details
+- Implemented centralized timezone handling across the platform
+- Created reusable date formatting utilities with locale support
+- Updated workflow to properly handle negative UTC offsets (e.g., UTC-3)
+- All timestamps stored in UTC, displayed in appropriate local time
+
 ## [0.2.0] - 2025-07-21
 
 ### Added

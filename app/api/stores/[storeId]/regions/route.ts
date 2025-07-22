@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/app/lib/supabase/server'
-import { cookies } from 'next/headers'
+import { createServerSupabaseClient as createClient } from '@/app/lib/supabase-server'
 
 interface RegionConfig {
   id?: string
@@ -26,8 +25,7 @@ export async function GET(
   { params }: { params: { storeId: string } }
 ) {
   try {
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
+    const supabase = createClient()
     
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -59,8 +57,7 @@ export async function POST(
   { params }: { params: { storeId: string } }
 ) {
   try {
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
+    const supabase = createClient()
     
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -135,8 +132,7 @@ export async function PUT(
   { params }: { params: { storeId: string } }
 ) {
   try {
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
+    const supabase = createClient()
     
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -196,8 +192,7 @@ export async function DELETE(
   { params }: { params: { storeId: string } }
 ) {
   try {
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
+    const supabase = createClient()
     
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser()
