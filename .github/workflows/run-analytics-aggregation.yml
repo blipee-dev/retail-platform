@@ -1,0 +1,126 @@
+name: Run Analytics Aggregation
+
+on:
+  schedule:
+    # Run every hour at 5 minutes past the hour
+    - cron: '5 * * * *'
+  workflow_dispatch:  # Allow manual triggers
+
+jobs:
+  aggregate-analytics:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: |
+          npm install node-fetch@2
+      
+      - name: Run analytics aggregation
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          node -e "
+          const fetch = require('node-fetch');
+          
+          async function runAggregation() {
+            console.log('🚀 Starting analytics aggregation...');
+            console.log(\`📅 Current UTC time: \${new Date().toISOString()}\`);
+            
+            const supabaseUrl = process.env.SUPABASE_URL;
+            const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+            
+            try {
+              // Call the run_all_aggregations function
+              console.log('\\n📊 Running aggregation function...');
+              const response = await fetch(\`\${supabaseUrl}/rest/v1/rpc/run_all_aggregations\`, {
+                method: 'POST',
+                headers: {
+                  'apikey': supabaseKey,
+                  'Authorization': \`Bearer \${supabaseKey}\`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+              });
+              
+              if (response.ok) {
+                const result = await response.json();
+                console.log(\`✅ Aggregation successful: \${result}\`);
+                
+                // Get summary of hourly analytics
+                const hourlyResponse = await fetch(
+                  \`\${supabaseUrl}/rest/v1/hourly_analytics?select=*&order=hour_start.desc.nullsfirst,date.desc.nullsfirst,hour.desc.nullsfirst&limit=5\`,
+                  {
+                    headers: {
+                      'apikey': supabaseKey,
+                      'Authorization': \`Bearer \${supabaseKey}\`
+                    }
+                  }
+                );
+                
+                if (hourlyResponse.ok) {
+                  const hourlyData = await hourlyResponse.json();
+                  console.log(\`\\n📊 Recent hourly analytics (last 5):\`);
+                  for (const record of hourlyData) {
+                    const timestamp = record.hour_start || \`\${record.date} Hour \${record.hour}\`;
+                    const totalIn = record.total_entries || record.total_in || 0;
+                    const totalOut = record.total_exits || record.total_out || 0;
+                    console.log(\`  - \${timestamp}: \${totalIn} IN, \${totalOut} OUT\`);
+                  }
+                }
+                
+                // Get summary of daily analytics
+                const dailyResponse = await fetch(
+                  \`\${supabaseUrl}/rest/v1/daily_analytics?select=*&order=date.desc&limit=5\`,
+                  {
+                    headers: {
+                      'apikey': supabaseKey,
+                      'Authorization': \`Bearer \${supabaseKey}\`
+                    }
+                  }
+                );
+                
+                if (dailyResponse.ok) {
+                  const dailyData = await dailyResponse.json();
+                  console.log(\`\\n📊 Recent daily analytics (last 5):\`);
+                  for (const record of dailyData) {
+                    console.log(\`  - \${record.date}: \${record.total_in} IN, \${record.total_out} OUT\`);
+                  }
+                }
+                
+              } else {
+                const error = await response.text();
+                console.error(\`❌ Aggregation failed: \${response.status} - \${error}\`);
+                process.exit(1);
+              }
+              
+            } catch (error) {
+              console.error(\`❌ Error running aggregation: \${error.message}\`);
+              process.exit(1);
+            }
+            
+            console.log('\\n✅ Analytics aggregation completed successfully!');
+          }
+          
+          // Run the aggregation
+          runAggregation()
+            .then(() => process.exit(0))
+            .catch((error) => {
+              console.error('❌ Aggregation failed:', error);
+              process.exit(1);
+            });
+          "
+      
+      - name: Send notification on failure
+        if: failure()
+        run: |
+          echo "⚠️ Analytics aggregation failed. Check the logs for details."
