@@ -96,7 +96,7 @@ jobs:
               try {
                 // Try to get regional data using linetype=0 (region type)
                 const data = await new Promise((resolve, reject) => {
-                  const path = \`/dataloader.cgi?dw=vcalogcsv&report_type=0&statistics_type=3&linetype=0&time_start=\${formatDate(oneHourAgo)}&time_end=\${formatDate(now)}\`;
+                  const path = \`/dataloader.cgi?dw=regionalcountlogcsv&report_type=0&statistics_type=3&region1=1&region2=1&region3=1&region4=1&time_start=\${formatDate(oneHourAgo)}&time_end=\${formatDate(now)}\`;
                   
                   const options = {
                     hostname: sensor.ip,
@@ -153,11 +153,11 @@ jobs:
                 const headerLine = lines[0];
                 const headers = headerLine.split(',').map(h => h.trim());
                 
-                // Find region columns (might be named region1-4, zone1-4, area1-4)
+                // Find region columns (Region1, Region2, Region3, Region4)
                 const regionColumns = headers.reduce((acc, header, index) => {
-                  const match = header.match(/^(region|zone|area)(\d+)$/i);
+                  const match = header.match(/^Region(\d+)$/i);
                   if (match) {
-                    const regionNum = parseInt(match[2]);
+                    const regionNum = parseInt(match[1]);
                     if (regionNum >= 1 && regionNum <= 4) {
                       acc[\`region\${regionNum}\`] = index;
                     }
@@ -173,7 +173,7 @@ jobs:
                   const values = lines[i].split(',').map(v => v.trim());
                   if (values.length < headers.length) continue;
                   
-                  const timestamp = values[0]; // Assuming first column is timestamp
+                  const timestamp = values[0]; // StartTime column
                   
                   // Extract data for each region
                   for (const [regionKey, columnIndex] of Object.entries(regionColumns)) {
