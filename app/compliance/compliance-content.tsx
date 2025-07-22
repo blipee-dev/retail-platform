@@ -169,7 +169,7 @@ export default function ComplianceContent() {
         </p>
       </footer>
 
-      <style jsx>{`
+      <style>{`
         :root {
           /* Gradient System */
           --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #0EA5E9 100%);

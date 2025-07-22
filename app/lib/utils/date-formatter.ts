@@ -1,4 +1,4 @@
-import { format, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
+import { format, toZonedTime, fromZonedTime } from 'date-fns-tz';
 import { format as baseFormat, parseISO } from 'date-fns';
 import { enUS, pt, es } from 'date-fns/locale';
 
@@ -27,7 +27,7 @@ function getTimezoneDisplay(timezone: string, date: Date): string {
   
   // Fall back to offset
   try {
-    const zonedDate = utcToZonedTime(date, timezone);
+    const zonedDate = toZonedTime(date, timezone);
     const offset = format(zonedDate, 'zzz', { timeZone: timezone });
     return offset;
   } catch {
@@ -71,7 +71,7 @@ export function formatDate(
     const dateObj = typeof date === 'string' ? parseISO(date) : date;
     
     // Convert to target timezone
-    const zonedDate = utcToZonedTime(dateObj, timezone);
+    const zonedDate = toZonedTime(dateObj, timezone);
     
     // Format the date
     let formatted = baseFormat(zonedDate, formatStr, {
@@ -163,5 +163,5 @@ export function localToUTC(
   date: Date,
   timezone: string
 ): Date {
-  return zonedTimeToUtc(date, timezone);
+  return fromZonedTime(date, timezone);
 }
