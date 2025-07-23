@@ -89,12 +89,7 @@ async function fetchStoreData(storeId: string): Promise<ReportData | null> {
       .lte('date', yesterdayEnd.toISOString())
       .maybeSingle();
     
-    if (!dailyData) {
-      console.error('No daily data found for yesterday');
-      return null;
-    }
-    
-    // Fetch hourly data for yesterday
+    // Fetch hourly data first to check if we have any data
     const { data: hourlyData } = await supabase
       .from('hourly_analytics')
       .select('hour, total_in, total_out, capture_rate')
@@ -102,6 +97,30 @@ async function fetchStoreData(storeId: string): Promise<ReportData | null> {
       .gte('timestamp', yesterdayStart.toISOString())
       .lte('timestamp', yesterdayEnd.toISOString())
       .order('hour');
+    
+    if (!dailyData && (!hourlyData || hourlyData.length === 0)) {
+      console.error('No data found for yesterday (neither daily nor hourly)');
+      return null;
+    }
+    
+    // If no daily data but we have hourly data, aggregate it
+    if (!dailyData && hourlyData && hourlyData.length > 0) {
+      console.log('No daily data found, aggregating from hourly data...');
+      const totalIn = hourlyData.reduce((sum, h) => sum + (h.total_in || 0), 0);
+      const totalOut = hourlyData.reduce((sum, h) => sum + (h.total_out || 0), 0);
+      const totalTraffic = totalIn + totalOut;
+      const avgCaptureRate = hourlyData.reduce((sum, h) => sum + (h.capture_rate || 0), 0) / hourlyData.length;
+      
+      dailyData = {
+        total_traffic: totalTraffic,
+        total_in: totalIn,
+        total_out: totalOut,
+        capture_rate: avgCaptureRate,
+        passing_traffic: Math.round(totalTraffic / (avgCaptureRate / 100)) - totalTraffic
+      };
+    }
+    
+    // hourlyData already fetched above
     
     // Process hourly data
     let peakHour = 0;
@@ -153,24 +172,24 @@ async function fetchStoreData(storeId: string): Promise<ReportData | null> {
     const mtdAvgCaptureRate = mtdData?.reduce((sum, day) => sum + day.capture_rate, 0) / mtdDays || 0;
     
     // Calculate comparisons
-    const vsLastMonth = lastMonthData 
+    const vsLastMonth = lastMonthData && dailyData
       ? ((dailyData.total_traffic - lastMonthData.total_traffic) / lastMonthData.total_traffic) * 100
       : 0;
     
-    const vsLastWeek = lastWeekData
+    const vsLastWeek = lastWeekData && dailyData
       ? ((dailyData.total_traffic - lastWeekData.total_traffic) / lastWeekData.total_traffic) * 100
       : 0;
     
-    const captureRateChange = lastMonthData
+    const captureRateChange = lastMonthData && dailyData
       ? dailyData.capture_rate - lastMonthData.capture_rate
       : 0;
     
     // Generate dynamic insight
     const insight = generateInsight({
       date: yesterday,
-      totalVisitors: dailyData.total_traffic,
-      captureRate: dailyData.capture_rate,
-      passingTraffic: dailyData.passing_traffic || 0,
+      totalVisitors: dailyData?.total_traffic || 0,
+      captureRate: dailyData?.capture_rate || 0,
+      passingTraffic: dailyData?.passing_traffic || 0,
       peakHour,
       peakHourVisitors,
       hourlyVisitors,
@@ -193,11 +212,11 @@ async function fetchStoreData(storeId: string): Promise<ReportData | null> {
       
       // Yesterday's metrics
       date: yesterday,
-      totalVisitors: dailyData.total_traffic,
-      entries: dailyData.total_in || 0,
-      exits: dailyData.total_out || 0,
-      captureRate: dailyData.capture_rate,
-      passingTraffic: dailyData.passing_traffic || 0,
+      totalVisitors: dailyData?.total_traffic || 0,
+      entries: dailyData?.total_in || 0,
+      exits: dailyData?.total_out || 0,
+      captureRate: dailyData?.capture_rate || 0,
+      passingTraffic: dailyData?.passing_traffic || 0,
       peakHour,
       peakHourVisitors,
       hourlyData: hourlyVisitors.map((visitors, hour) => ({ hour, visitors })),
@@ -230,8 +249,19 @@ async function fetchStoreData(storeId: string): Promise<ReportData | null> {
 function generateInsight(dailyData: any, comparison: any) {
   // For now, return a simple insight
   // In production, use the full InsightGenerator
-  const morningCaptureRate = (dailyData.morningVisitors / (dailyData.passingTraffic * 0.3)) * 100;
-  const afternoonCaptureRate = (dailyData.afternoonVisitors / (dailyData.passingTraffic * 0.5)) * 100;
+  if (!dailyData || !dailyData.totalVisitors) {
+    return {
+      title: 'Limited data',
+      content: 'Insufficient data available for detailed insights. Check sensor connectivity and data collection.'
+    };
+  }
+  
+  const morningCaptureRate = dailyData.passingTraffic > 0 
+    ? (dailyData.morningVisitors / (dailyData.passingTraffic * 0.3)) * 100 
+    : 0;
+  const afternoonCaptureRate = dailyData.passingTraffic > 0
+    ? (dailyData.afternoonVisitors / (dailyData.passingTraffic * 0.5)) * 100
+    : 0;
   
   if (morningCaptureRate < afternoonCaptureRate * 0.6) {
     return {
