@@ -52,7 +52,7 @@ jobs:
         else
           # In production, fetch from database
           # Default to Jack & Jones Arrábida and Omnia Guimarães stores
-          echo "store_ids=f47ac10b-58cc-4372-a567-0e02b2c3d479,f1234567-89ab-cdef-0123-456789abcdef" >> $GITHUB_OUTPUT
+          echo "store_ids=d719cc6b-1715-4721-8897-6f6cd0c025b0,e3c26903-7da5-4b09-9d43-abf93cd09f74" >> $GITHUB_OUTPUT
         fi
     
     - name: Generate reports
@@ -61,6 +61,10 @@ jobs:
         SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       run: |
         cd scripts/reports
+        
+        # Create generated directory if it doesn't exist
+        mkdir -p generated
+        
         IFS=',' read -ra STORES <<< "${{ steps.get_stores.outputs.store_ids }}"
         
         for store_id in "${STORES[@]}"; do
@@ -70,7 +74,7 @@ jobs:
         
         # List generated reports
         echo "Generated reports:"
-        ls -la generated/
+        ls -la generated/ || echo "No reports generated"
     
     - name: Send email reports
       if: success()
