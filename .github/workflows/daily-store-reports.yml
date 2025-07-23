@@ -41,8 +41,8 @@ jobs:
     - name: Compile TypeScript
       run: |
         cd scripts/reports
-        npx tsc generate-store-report.ts --lib es2020 --module commonjs --target es2020
-        npx tsc insight-generator.ts --lib es2020 --module commonjs --target es2020
+        npx tsc generate-store-report.ts --lib es2020,dom --module commonjs --target es2020 --skipLibCheck true
+        npx tsc insight-generator.ts --lib es2020,dom --module commonjs --target es2020 --skipLibCheck true
     
     - name: Get active stores
       id: get_stores
