@@ -43,6 +43,16 @@ jobs:
         cd scripts/reports
         npx tsc generate-store-report.ts --lib es2020,dom --module commonjs --target es2020 --skipLibCheck true
         npx tsc insight-generator.ts --lib es2020,dom --module commonjs --target es2020 --skipLibCheck true
+        npx tsc fix-zero-data.ts --lib es2020,dom --module commonjs --target es2020 --skipLibCheck true
+    
+    - name: Run data aggregation
+      env:
+        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      run: |
+        cd scripts/reports
+        echo "Running data aggregation to ensure analytics tables are populated..."
+        node fix-zero-data.js || echo "Aggregation failed, continuing anyway"
     
     - name: Get active stores
       id: get_stores
