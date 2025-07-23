@@ -51,8 +51,8 @@ jobs:
           echo "store_ids=${{ github.event.inputs.store_ids }}" >> $GITHUB_OUTPUT
         else
           # In production, fetch from database
-          # For now, use example store IDs
-          echo "store_ids=jj-store-001,jj-store-002" >> $GITHUB_OUTPUT
+          # Default to Jack & Jones Arrábida and Omnia Guimarães stores
+          echo "store_ids=f47ac10b-58cc-4372-a567-0e02b2c3d479,f1234567-89ab-cdef-0123-456789abcdef" >> $GITHUB_OUTPUT
         fi
     
     - name: Generate reports
