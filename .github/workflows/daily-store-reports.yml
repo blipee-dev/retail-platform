@@ -36,10 +36,7 @@ jobs:
     - name: Install dependencies
       run: |
         cd scripts/reports
-        npm init -y
-        npm install @supabase/supabase-js date-fns date-fns-tz
-        npm install --save-dev @types/node typescript
-        npm install nodemailer @types/nodemailer
+        npm install
     
     - name: Compile TypeScript
       run: |
