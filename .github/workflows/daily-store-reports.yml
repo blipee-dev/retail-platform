@@ -1,0 +1,200 @@
+name: Generate and Send Daily Store Reports
+
+on:
+  schedule:
+    # Run at 6:00 AM UTC every day (adjust for your timezone)
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      store_ids:
+        description: 'Comma-separated store IDs (leave empty for all stores)'
+        required: false
+        type: string
+      test_mode:
+        description: 'Test mode - send to test email only'
+        required: false
+        type: boolean
+        default: false
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  generate-reports:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: |
+        cd scripts/reports
+        npm init -y
+        npm install @supabase/supabase-js date-fns date-fns-tz
+        npm install --save-dev @types/node typescript
+        npm install nodemailer @types/nodemailer
+    
+    - name: Compile TypeScript
+      run: |
+        cd scripts/reports
+        npx tsc generate-store-report.ts --lib es2020 --module commonjs --target es2020
+        npx tsc insight-generator.ts --lib es2020 --module commonjs --target es2020
+    
+    - name: Get active stores
+      id: get_stores
+      run: |
+        if [ -n "${{ github.event.inputs.store_ids }}" ]; then
+          echo "store_ids=${{ github.event.inputs.store_ids }}" >> $GITHUB_OUTPUT
+        else
+          # In production, fetch from database
+          # For now, use example store IDs
+          echo "store_ids=jj-store-001,jj-store-002" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Generate reports
+      env:
+        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+        SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      run: |
+        cd scripts/reports
+        IFS=',' read -ra STORES <<< "${{ steps.get_stores.outputs.store_ids }}"
+        
+        for store_id in "${STORES[@]}"; do
+          echo "Generating report for store: $store_id"
+          node generate-store-report.js "$store_id" || echo "Failed to generate report for $store_id"
+        done
+        
+        # List generated reports
+        echo "Generated reports:"
+        ls -la generated/
+    
+    - name: Send email reports
+      if: success()
+      env:
+        SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
+        SMTP_PORT: ${{ secrets.SMTP_PORT }}
+        EMAIL_USER: ${{ secrets.EMAIL_USER }}
+        EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+        EMAIL_TO: ${{ secrets.EMAIL_TO }}
+        TEST_MODE: ${{ github.event.inputs.test_mode }}
+      run: |
+        cd scripts/reports
+        
+        # Create email sender script
+        cat > send-emails.js << 'EOF'
+        const nodemailer = require('nodemailer');
+        const fs = require('fs');
+        const path = require('path');
+        
+        // Create transporter
+        const transporter = nodemailer.createTransport({
+          host: process.env.SMTP_SERVER || 'smtp.gmail.com',
+          port: parseInt(process.env.SMTP_PORT) || 587,
+          secure: false,
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD
+          }
+        });
+        
+        // Get all generated reports
+        const reportsDir = path.join(__dirname, 'generated');
+        const reports = fs.readdirSync(reportsDir).filter(f => f.endsWith('.html'));
+        
+        async function sendReports() {
+          for (const reportFile of reports) {
+            const reportPath = path.join(reportsDir, reportFile);
+            const reportContent = fs.readFileSync(reportPath, 'utf-8');
+            
+            // Extract store name and date from filename
+            const match = reportFile.match(/daily-report-(.*?)-(\d{4}-\d{2}-\d{2})\.html/);
+            const storeCode = match ? match[1] : 'Store';
+            const reportDate = match ? match[2] : new Date().toISOString().split('T')[0];
+            
+            // Determine recipients
+            let recipients = [];
+            if (process.env.TEST_MODE === 'true') {
+              recipients = [process.env.EMAIL_TO || 'pedro@blipee.com'];
+            } else {
+              // In production, fetch from database based on store
+              recipients = process.env.EMAIL_TO ? process.env.EMAIL_TO.split(',').map(e => e.trim()) : ['pedro@blipee.com'];
+            }
+            
+            // Send email
+            try {
+              await transporter.sendMail({
+                from: process.env.EMAIL_FROM || 'no-reply@blipee.com',
+                to: recipients.join(', '),
+                subject: `Daily Traffic Report - ${storeCode} - ${reportDate}`,
+                html: reportContent,
+                attachments: [{
+                  filename: reportFile,
+                  path: reportPath
+                }]
+              });
+              
+              console.log(`Report sent to ${recipients.join(', ')}`);
+            } catch (error) {
+              console.error(`Failed to send report for ${storeCode}:`, error);
+            }
+          }
+        }
+        
+        sendReports().catch(console.error);
+        EOF
+        
+        node send-emails.js
+    
+    - name: Upload reports as artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: daily-reports-${{ github.run_id }}
+        path: scripts/reports/generated/
+        retention-days: 30
+    
+    - name: Cleanup
+      if: always()
+      run: |
+        cd scripts/reports
+        rm -rf generated/
+
+  notify-completion:
+    needs: generate-reports
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: Send notification
+      env:
+        WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      run: |
+        if [ "${{ needs.generate-reports.result }}" == "success" ]; then
+          STATUS="✅ Success"
+          COLOR="good"
+        else
+          STATUS="❌ Failed"
+          COLOR="danger"
+        fi
+        
+        if [ -n "$WEBHOOK_URL" ]; then
+          curl -X POST $WEBHOOK_URL \
+            -H 'Content-Type: application/json' \
+            -d "{
+              \"attachments\": [{
+                \"color\": \"$COLOR\",
+                \"title\": \"Daily Store Reports - $STATUS\",
+                \"text\": \"Report generation completed with status: ${{ needs.generate-reports.result }}\",
+                \"footer\": \"GitHub Actions\",
+                \"ts\": $(date +%s)
+              }]
+            }"
+        fi

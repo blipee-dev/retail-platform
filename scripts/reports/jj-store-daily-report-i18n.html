@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JJ Store Daily Report</title>
+    <style>
+        /* Import Inter font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        /* Material Icons */
+        @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+        
+        /* Light Mode Design System Colors */
+        :root {
+            /* Primary Blue */
+            --primary-50: #eff6ff;
+            --primary-100: #dbeafe;
+            --primary-200: #bfdbfe;
+            --primary-300: #93c5fd;
+            --primary-400: #60a5fa;
+            --primary-500: #3b82f6;
+            --primary-600: #2563eb;
+            --primary-700: #1d4ed8;
+            
+            /* Semantic Colors */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            
+            /* Light Theme Colors */
+            --bg-light: #ffffff;
+            --bg-lighter: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #0EA5E9 100%);
+            --gradient-blue: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-green: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            --gradient-purple: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 0;
+            background-color: var(--bg-lighter);
+        }
+        
+        .email-container {
+            background-color: var(--bg-light);
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Header */
+        .header {
+            background: var(--bg-light);
+            padding: 32px 32px 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 400;
+            background: linear-gradient(135deg, #8B5CF6 0%, #0EA5E9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+        
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+        
+        .header .date {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        /* Hero Section - Yesterday at a Glance */
+        .hero-section {
+            padding: 32px;
+            background: linear-gradient(135deg, var(--primary-50) 0%, var(--bg-lighter) 100%);
+        }
+        
+        .hero-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .hero-title::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-200), transparent);
+            margin-left: 16px;
+        }
+        
+        /* Main Metrics Grid */
+        .main-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .main-metric-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .main-metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .main-metric-card.highlight {
+            background: linear-gradient(135deg, #fef3c7 0%, #fef9c3 100%);
+            border-color: #fbbf24;
+        }
+        
+        .main-metric-card .value {
+            font-size: 42px;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 4px;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .main-metric-card .label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        
+        .main-metric-card .change {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .main-metric-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 40px;
+            color: var(--primary-400);
+            opacity: 0.3;
+            font-weight: 200;
+        }
+        
+        .main-metric-card.highlight .main-metric-icon {
+            color: var(--warning);
+            opacity: 0.6;
+        }
+        
+        /* Hourly Chart */
+        .hourly-chart-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+        
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 20px 0;
+        }
+        
+        .hourly-chart {
+            position: relative;
+        }
+        
+        .hour-bars {
+            display: flex;
+            align-items: flex-end;
+            height: 180px;
+            gap: 3px;
+            margin-bottom: 16px;
+        }
+        
+        .hour-bar {
+            flex: 1;
+            background: var(--gradient-blue);
+            border-radius: 4px 4px 0 0;
+            min-height: 4px;
+            position: relative;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .hour-bar:hover {
+            opacity: 1;
+            transform: scaleY(1.05);
+        }
+        
+        .hour-bar.peak {
+            background: var(--gradient-green);
+            opacity: 1;
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            text-align: center;
+            line-height: 1.4;
+            z-index: 10;
+        }
+        
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.9);
+        }
+        
+        .hour-bar:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .hour-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-secondary);
+            padding: 0 10px;
+        }
+        
+        /* Key Metrics */
+        .key-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .metric-item {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .metric-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .metric-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .metric-icon {
+            font-size: 32px;
+            color: var(--primary-400);
+            margin-bottom: 12px;
+            font-weight: 300;
+        }
+        
+        /* Action Alert */
+        .action-alert {
+            background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 32px;
+            border: 1px solid #93c5fd;
+        }
+        
+        .action-alert-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .alert-icon {
+            font-size: 24px;
+            color: var(--primary-600);
+            font-weight: 400;
+        }
+        
+        .action-alert-title {
+            font-weight: 700;
+            color: var(--primary-700);
+            font-size: 16px;
+        }
+        
+        .action-alert-content {
+            color: var(--primary-800);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        /* Monthly Performance Section */
+        .monthly-section {
+            padding: 32px;
+            background: var(--bg-lighter);
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .monthly-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .monthly-title::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-200), transparent);
+            margin-left: 16px;
+        }
+        
+        .monthly-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        
+        .monthly-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        
+        .monthly-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .monthly-card .label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        
+        .monthly-card .change {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--bg-light);
+            padding: 24px 32px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .footer .logo-footer {
+            font-size: 18px;
+            font-weight: 400;
+            background: linear-gradient(135deg, #8B5CF6 0%, #0EA5E9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+        
+        /* Utility Classes */
+        .change.positive {
+            color: var(--success);
+        }
+        
+        .change.negative {
+            color: var(--error);
+        }
+        
+        /* Language switcher */
+        .language-selector {
+            position: absolute;
+            top: 32px;
+            right: 32px;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .lang-btn {
+            padding: 4px 8px;
+            font-size: 12px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-light);
+            color: var(--text-secondary);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .lang-btn:hover {
+            background: var(--bg-lighter);
+            color: var(--text-primary);
+        }
+        
+        .lang-btn.active {
+            background: var(--primary-500);
+            color: white;
+            border-color: var(--primary-500);
+        }
+        
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 24px;
+            }
+            
+            .hero-section, .monthly-section {
+                padding: 24px;
+            }
+            
+            .main-metrics {
+                grid-template-columns: 1fr;
+            }
+            
+            .key-metrics {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .monthly-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-metric-card .value {
+                font-size: 36px;
+            }
+            
+            .metric-item {
+                padding: 16px;
+            }
+            
+            .language-selector {
+                position: static;
+                margin-bottom: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="language-selector">
+                <button class="lang-btn" onclick="changeLanguage('en')">EN</button>
+                <button class="lang-btn" onclick="changeLanguage('es')">ES</button>
+                <button class="lang-btn" onclick="changeLanguage('pt')">PT</button>
+            </div>
+            <div class="logo">blipee</div>
+            <div class="header-info">
+                <h1>JJ Store - João de Barros</h1>
+                <div class="date" data-i18n="date">January 22, 2025</div>
+            </div>
+        </div>
+
+        <!-- Hero Section - Yesterday at a Glance -->
+        <div class="hero-section">
+            <h2 class="hero-title" data-i18n="yesterdayAtGlance">Yesterday at a Glance</h2>
+            
+            <!-- Main Metrics -->
+            <div class="main-metrics">
+                <div class="main-metric-card">
+                    <span class="material-symbols-outlined main-metric-icon">group</span>
+                    <div class="value">2,847</div>
+                    <div class="label" data-i18n="totalVisitors">Total Visitors</div>
+                    <div class="change positive">↑ 12.3% <span data-i18n="vsLastMonth">vs last month</span></div>
+                </div>
+                <div class="main-metric-card highlight">
+                    <span class="material-symbols-outlined main-metric-icon">conversion_path</span>
+                    <div class="value">24.6%</div>
+                    <div class="label" data-i18n="captureRate">Capture Rate</div>
+                    <div class="change positive">↑ 2.8pp <span data-i18n="vsLastMonth">vs last month</span></div>
+                </div>
+            </div>
+            
+            <!-- Hourly Distribution -->
+            <div class="hourly-chart-container">
+                <h3 class="chart-title" data-i18n="hourlyTrafficDistribution">Hourly Traffic Distribution</h3>
+                <div class="hourly-chart">
+                    <div class="hour-bars">
+                        <div class="hour-bar" style="height: 15%" data-visitors="58" data-time="9:00 AM">
+                            <div class="tooltip"><span data-i18n-visitors="58">58 visitors</span><br>9:00 AM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 18%" data-visitors="70" data-time="10:00 AM">
+                            <div class="tooltip"><span data-i18n-visitors="70">70 visitors</span><br>10:00 AM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 25%" data-visitors="97" data-time="11:00 AM">
+                            <div class="tooltip"><span data-i18n-visitors="97">97 visitors</span><br>11:00 AM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 35%" data-visitors="136" data-time="12:00 PM">
+                            <div class="tooltip"><span data-i18n-visitors="136">136 visitors</span><br>12:00 PM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 48%" data-visitors="186" data-time="1:00 PM">
+                            <div class="tooltip"><span data-i18n-visitors="186">186 visitors</span><br>1:00 PM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 62%" data-visitors="241" data-time="2:00 PM">
+                            <div class="tooltip"><span data-i18n-visitors="241">241 visitors</span><br>2:00 PM</div>
+                        </div>
+                        <div class="hour-bar peak" style="height: 100%" data-visitors="387" data-time="3:00 PM">
+                            <div class="tooltip"><span data-i18n-visitors="387">387 visitors</span><br>3:00 PM <span data-i18n="peak">(Peak)</span></div>
+                        </div>
+                        <div class="hour-bar" style="height: 85%" data-visitors="330" data-time="4:00 PM">
+                            <div class="tooltip"><span data-i18n-visitors="330">330 visitors</span><br>4:00 PM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 75%" data-visitors="291" data-time="5:00 PM">
+                            <div class="tooltip"><span data-i18n-visitors="291">291 visitors</span><br>5:00 PM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 45%" data-visitors="175" data-time="6:00 PM">
+                            <div class="tooltip"><span data-i18n-visitors="175">175 visitors</span><br>6:00 PM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 20%" data-visitors="78" data-time="7:00 PM">
+                            <div class="tooltip"><span data-i18n-visitors="78">78 visitors</span><br>7:00 PM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 10%" data-visitors="39" data-time="8:00 PM">
+                            <div class="tooltip"><span data-i18n-visitors="39">39 visitors</span><br>8:00 PM</div>
+                        </div>
+                    </div>
+                    <div class="hour-labels">
+                        <span>9AM</span>
+                        <span>12PM</span>
+                        <span>3PM</span>
+                        <span>6PM</span>
+                        <span>9PM</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Key Metrics -->
+            <div class="key-metrics">
+                <div class="metric-item">
+                    <span class="material-symbols-outlined metric-icon">directions_walk</span>
+                    <div class="metric-value">5,845</div>
+                    <div class="metric-label" data-i18n="passedBy">Passed By</div>
+                </div>
+                <div class="metric-item">
+                    <span class="material-symbols-outlined metric-icon">schedule</span>
+                    <div class="metric-value">3:00 PM</div>
+                    <div class="metric-label" data-i18n="peakHour">Peak Hour</div>
+                </div>
+                <div class="metric-item">
+                    <span class="material-symbols-outlined metric-icon">trending_up</span>
+                    <div class="metric-value">+327</div>
+                    <div class="metric-label" data-i18n="aboveAverage">Above Average</div>
+                </div>
+            </div>
+            
+            <!-- Action Alert -->
+            <div class="action-alert">
+                <div class="action-alert-header">
+                    <span class="material-symbols-outlined alert-icon">lightbulb</span>
+                    <div class="action-alert-title" data-i18n="todaysAction">Today's Action</div>
+                </div>
+                <div class="action-alert-content">
+                    <strong data-i18n="morningOpportunity">Morning opportunity:</strong> <span data-i18n="morningOpportunityText">Capture rate drops to 12.8% before noon. Focus on morning window displays and entrance visibility to capture more of the 1,242 morning passers-by.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Performance Section -->
+        <div class="monthly-section">
+            <h2 class="monthly-title" data-i18n="monthToDatePerformance">Month-to-Date Performance</h2>
+            
+            <div class="monthly-grid">
+                <div class="monthly-card">
+                    <div class="value">55,429</div>
+                    <div class="label" data-i18n="totalVisitorsMTD">Total Visitors MTD</div>
+                    <div class="change positive">↑ 10.8% <span data-i18n="vsDec">vs Dec</span></div>
+                </div>
+                <div class="monthly-card">
+                    <div class="value">22.4%</div>
+                    <div class="label" data-i18n="avgCaptureRate">Avg Capture Rate</div>
+                    <div class="change positive">↑ 2.1pp <span data-i18n="vsDec">vs Dec</span></div>
+                </div>
+                <div class="monthly-card">
+                    <div class="value">78,154</div>
+                    <div class="label" data-i18n="projectedMonthly">Projected Monthly</div>
+                    <div class="change" data-i18n="bestIn6Months">Best in 6 months</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="logo-footer">blipee</div>
+            <p><strong data-i18n="retailAnalyticsPlatform">Retail Analytics Platform</strong></p>
+            <p data-i18n="reportGenerated">Report generated January 23, 2025 at 6:00 AM WET</p>
+        </div>
+    </div>
+
+    <script>
+        // Translations
+        const translations = {
+            en: {
+                date: "January 22, 2025",
+                yesterdayAtGlance: "Yesterday at a Glance",
+                totalVisitors: "Total Visitors",
+                captureRate: "Capture Rate",
+                vsLastMonth: "vs last month",
+                hourlyTrafficDistribution: "Hourly Traffic Distribution",
+                visitors: "{count} visitors",
+                peak: "(Peak)",
+                passedBy: "Passed By",
+                peakHour: "Peak Hour",
+                aboveAverage: "Above Average",
+                todaysAction: "Today's Action",
+                morningOpportunity: "Morning opportunity:",
+                morningOpportunityText: "Capture rate drops to 12.8% before noon. Focus on morning window displays and entrance visibility to capture more of the 1,242 morning passers-by.",
+                monthToDatePerformance: "Month-to-Date Performance",
+                totalVisitorsMTD: "Total Visitors MTD",
+                avgCaptureRate: "Avg Capture Rate",
+                projectedMonthly: "Projected Monthly",
+                vsDec: "vs Dec",
+                bestIn6Months: "Best in 6 months",
+                retailAnalyticsPlatform: "Retail Analytics Platform",
+                reportGenerated: "Report generated January 23, 2025 at 6:00 AM WET"
+            },
+            es: {
+                date: "22 de enero de 2025",
+                yesterdayAtGlance: "Resumen de Ayer",
+                totalVisitors: "Visitantes Totales",
+                captureRate: "Tasa de Captura",
+                vsLastMonth: "vs mes pasado",
+                hourlyTrafficDistribution: "Distribución de Tráfico por Hora",
+                visitors: "{count} visitantes",
+                peak: "(Pico)",
+                passedBy: "Pasaron",
+                peakHour: "Hora Pico",
+                aboveAverage: "Sobre el Promedio",
+                todaysAction: "Acción de Hoy",
+                morningOpportunity: "Oportunidad matutina:",
+                morningOpportunityText: "La tasa de captura cae al 12.8% antes del mediodía. Enfócate en los escaparates matutinos y la visibilidad de la entrada para capturar más de los 1,242 transeúntes de la mañana.",
+                monthToDatePerformance: "Rendimiento del Mes",
+                totalVisitorsMTD: "Visitantes Totales del Mes",
+                avgCaptureRate: "Tasa de Captura Promedio",
+                projectedMonthly: "Proyección Mensual",
+                vsDec: "vs Dic",
+                bestIn6Months: "Mejor en 6 meses",
+                retailAnalyticsPlatform: "Plataforma de Análisis Retail",
+                reportGenerated: "Informe generado el 23 de enero de 2025 a las 6:00 AM WET"
+            },
+            pt: {
+                date: "22 de janeiro de 2025",
+                yesterdayAtGlance: "Resumo de Ontem",
+                totalVisitors: "Total de Visitantes",
+                captureRate: "Taxa de Captura",
+                vsLastMonth: "vs mês passado",
+                hourlyTrafficDistribution: "Distribuição de Tráfego por Hora",
+                visitors: "{count} visitantes",
+                peak: "(Pico)",
+                passedBy: "Passaram",
+                peakHour: "Hora de Pico",
+                aboveAverage: "Acima da Média",
+                todaysAction: "Ação de Hoje",
+                morningOpportunity: "Oportunidade matinal:",
+                morningOpportunityText: "A taxa de captura cai para 12,8% antes do meio-dia. Concentre-se nas montras matinais e na visibilidade da entrada para capturar mais dos 1.242 transeuntes da manhã.",
+                monthToDatePerformance: "Desempenho do Mês",
+                totalVisitorsMTD: "Total de Visitantes do Mês",
+                avgCaptureRate: "Taxa de Captura Média",
+                projectedMonthly: "Projeção Mensal",
+                vsDec: "vs Dez",
+                bestIn6Months: "Melhor em 6 meses",
+                retailAnalyticsPlatform: "Plataforma de Análise de Retalho",
+                reportGenerated: "Relatório gerado a 23 de janeiro de 2025 às 6:00 AM WET"
+            }
+        };
+
+        // Get browser language
+        function getBrowserLanguage() {
+            const lang = navigator.language || navigator.userLanguage;
+            const shortLang = lang.substring(0, 2).toLowerCase();
+            
+            // Map language codes
+            if (shortLang === 'pt') return 'pt';
+            if (shortLang === 'es') return 'es';
+            return 'en'; // Default to English
+        }
+
+        // Apply translations
+        function applyTranslations(lang) {
+            const t = translations[lang];
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (t[key]) {
+                    element.textContent = t[key];
+                }
+            });
+            
+            // Update visitor counts in tooltips
+            document.querySelectorAll('[data-i18n-visitors]').forEach(element => {
+                const count = element.getAttribute('data-i18n-visitors');
+                element.textContent = t.visitors.replace('{count}', count);
+            });
+            
+            // Update active language button
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.lang-btn[onclick="changeLanguage('${lang}')"]`)?.classList.add('active');
+            
+            // Update HTML lang attribute
+            document.documentElement.lang = lang;
+        }
+
+        // Change language function
+        function changeLanguage(lang) {
+            applyTranslations(lang);
+            localStorage.setItem('preferredLanguage', lang);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check for saved language preference, otherwise use browser language
+            const savedLang = localStorage.getItem('preferredLanguage');
+            const lang = savedLang || getBrowserLanguage();
+            applyTranslations(lang);
+        });
+    </script>
+</body>
+</html>

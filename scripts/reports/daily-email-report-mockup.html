@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily People Counting Report - January 22, 2025</title>
+    <style>
+        /* Import Inter font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        /* Design System Colors */
+        :root {
+            /* Primary Blue */
+            --primary-50: #eff6ff;
+            --primary-100: #dbeafe;
+            --primary-200: #bfdbfe;
+            --primary-300: #93c5fd;
+            --primary-400: #60a5fa;
+            --primary-500: #3b82f6;
+            --primary-600: #2563eb;
+            --primary-700: #1d4ed8;
+            --primary-800: #1e40af;
+            --primary-900: #1e3a8a;
+            
+            /* Semantic Colors */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            
+            /* Dark Theme Colors */
+            --bg-dark: #0a0a0a;
+            --bg-darker: #020617;
+            --card-bg: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-blue: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--bg-dark);
+        }
+        
+        .email-container {
+            background-color: var(--bg-darker);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header .date {
+            font-size: 16px;
+            opacity: 0.95;
+            margin-top: 8px;
+            font-weight: 400;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .metric-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-blue);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .metric-card:hover::before {
+            opacity: 1;
+        }
+        
+        .metric-card .label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .metric-card .value {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .metric-card .change {
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .change.positive {
+            color: var(--success);
+        }
+        
+        .change.negative {
+            color: var(--error);
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.02em;
+        }
+        
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border-color);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        
+        th, td {
+            padding: 16px;
+            text-align: left;
+        }
+        
+        th {
+            background: var(--bg-darker);
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        td {
+            font-size: 14px;
+            color: var(--text-primary);
+            border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .number {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            font-weight: 500;
+        }
+        
+        .store-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .footer {
+            background: var(--bg-darker);
+            padding: 32px 40px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .highlight-row {
+            background: rgba(59, 130, 246, 0.1);
+            font-weight: 700;
+        }
+        
+        .highlight-row td {
+            color: var(--primary-400);
+            border-bottom: none;
+        }
+        
+        .peak-hour {
+            display: inline-block;
+            background: var(--gradient-blue);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.025em;
+        }
+        
+        .alert {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(239, 68, 68, 0.1) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 32px;
+            color: var(--warning);
+        }
+        
+        .alert-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .alert div {
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        
+        /* Insights List */
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        ul li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(51, 65, 85, 0.3);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+        
+        ul li:last-child {
+            border-bottom: none;
+        }
+        
+        ul li strong {
+            color: var(--primary-400);
+            font-weight: 600;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .content {
+                padding: 24px;
+            }
+            
+            .summary-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 12px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Daily People Counting Report</h1>
+            <div class="date">Data for January 22, 2025 (Wednesday)</div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Yesterday's Summary -->
+            <div class="summary-grid">
+                <div class="metric-card">
+                    <div class="label">Total Visitors Yesterday</div>
+                    <div class="value">12,847</div>
+                    <div class="change positive">↑ 8.3% vs Last Month</div>
+                </div>
+                <div class="metric-card">
+                    <div class="label">Average per Store</div>
+                    <div class="value">1,605</div>
+                    <div class="change positive">↑ 5.2% vs Last Month</div>
+                </div>
+                <div class="metric-card">
+                    <div class="label">Peak Hour</div>
+                    <div class="value">3:00 PM</div>
+                    <div class="change">2,145 visitors</div>
+                </div>
+            </div>
+
+            <!-- Alerts -->
+            <div class="alert">
+                <div class="alert-title">📊 Performance Highlights</div>
+                <div>• Store #003 (Oxford Street) achieved highest daily traffic: 2,341 visitors (+15.2% MoM)</div>
+                <div>• 3 stores exceeded their monthly average by more than 20%</div>
+            </div>
+
+            <!-- Yesterday's Store Performance -->
+            <div class="section">
+                <h2 class="section-title">Yesterday's Store Performance</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Store</th>
+                            <th class="number">Entries</th>
+                            <th class="number">Exits</th>
+                            <th class="number">Total Traffic</th>
+                            <th class="number">vs Last Month</th>
+                            <th>Peak Hour</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="store-name">Store #001 - High Street</td>
+                            <td class="number">1,234</td>
+                            <td class="number">1,221</td>
+                            <td class="number">2,455</td>
+                            <td class="number change positive">+12.3%</td>
+                            <td><span class="peak-hour">2:00 PM</span></td>
+                        </tr>
+                        <tr>
+                            <td class="store-name">Store #002 - Mall Plaza</td>
+                            <td class="number">987</td>
+                            <td class="number">976</td>
+                            <td class="number">1,963</td>
+                            <td class="number change negative">-3.2%</td>
+                            <td><span class="peak-hour">4:00 PM</span></td>
+                        </tr>
+                        <tr>
+                            <td class="store-name">Store #003 - Oxford Street</td>
+                            <td class="number">1,176</td>
+                            <td class="number">1,165</td>
+                            <td class="number">2,341</td>
+                            <td class="number change positive">+15.2%</td>
+                            <td><span class="peak-hour">3:00 PM</span></td>
+                        </tr>
+                        <tr>
+                            <td class="store-name">Store #004 - City Center</td>
+                            <td class="number">876</td>
+                            <td class="number">869</td>
+                            <td class="number">1,745</td>
+                            <td class="number change positive">+7.8%</td>
+                            <td><span class="peak-hour">1:00 PM</span></td>
+                        </tr>
+                        <tr>
+                            <td class="store-name">Store #005 - Westfield</td>
+                            <td class="number">654</td>
+                            <td class="number">647</td>
+                            <td class="number">1,301</td>
+                            <td class="number change negative">-1.5%</td>
+                            <td><span class="peak-hour">5:00 PM</span></td>
+                        </tr>
+                        <tr>
+                            <td class="store-name">Store #006 - Airport</td>
+                            <td class="number">543</td>
+                            <td class="number">538</td>
+                            <td class="number">1,081</td>
+                            <td class="number change positive">+9.1%</td>
+                            <td><span class="peak-hour">7:00 PM</span></td>
+                        </tr>
+                        <tr>
+                            <td class="store-name">Store #007 - Station Square</td>
+                            <td class="number">456</td>
+                            <td class="number">451</td>
+                            <td class="number">907</td>
+                            <td class="number change positive">+4.6%</td>
+                            <td><span class="peak-hour">6:00 PM</span></td>
+                        </tr>
+                        <tr>
+                            <td class="store-name">Store #008 - Riverside</td>
+                            <td class="number">527</td>
+                            <td class="number">522</td>
+                            <td class="number">1,049</td>
+                            <td class="number change positive">+11.2%</td>
+                            <td><span class="peak-hour">12:00 PM</span></td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td class="store-name"><strong>Total</strong></td>
+                            <td class="number"><strong>6,453</strong></td>
+                            <td class="number"><strong>6,389</strong></td>
+                            <td class="number"><strong>12,842</strong></td>
+                            <td class="number change positive"><strong>+8.3%</strong></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Monthly Accumulated Data -->
+            <div class="section">
+                <h2 class="section-title">Month-to-Date Performance (Jan 1-22, 2025)</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Store</th>
+                            <th class="number">MTD Traffic</th>
+                            <th class="number">Daily Average</th>
+                            <th class="number">vs Last Month</th>
+                            <th class="number">Projected Monthly</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="store-name">Store #001 - High Street</td>
+                            <td class="number">48,234</td>
+                            <td class="number">2,192</td>
+                            <td class="number change positive">+10.5%</td>
+                            <td class="number">67,957</td>
+                        </tr>
+                        <tr>
+                            <td class="store-name">Store #002 - Mall Plaza</td>
+                            <td class="number">39,876</td>
+                            <td class="number">1,813</td>
+                            <td class="number change negative">-2.8%</td>
+                            <td class="number">56,194</td>
+                        </tr>
+                        <tr>
+                            <td class="store-name">Store #003 - Oxford Street</td>
+                            <td class="number">51,342</td>
+                            <td class="number">2,334</td>
+                            <td class="number change positive">+18.2%</td>
+                            <td class="number">72,347</td>
+                        </tr>
+                        <tr>
+                            <td class="store-name">Store #004 - City Center</td>
+                            <td class="number">36,789</td>
+                            <td class="number">1,672</td>
+                            <td class="number change positive">+6.9%</td>
+                            <td class="number">51,845</td>
+                        </tr>
+                        <tr>
+                            <td class="store-name">Store #005 - Westfield</td>
+                            <td class="number">28,654</td>
+                            <td class="number">1,302</td>
+                            <td class="number change negative">-4.1%</td>
+                            <td class="number">40,376</td>
+                        </tr>
+                        <tr>
+                            <td class="store-name">Store #006 - Airport</td>
+                            <td class="number">23,456</td>
+                            <td class="number">1,066</td>
+                            <td class="number change positive">+8.7%</td>
+                            <td class="number">33,055</td>
+                        </tr>
+                        <tr>
+                            <td class="store-name">Store #007 - Station Square</td>
+                            <td class="number">19,876</td>
+                            <td class="number">903</td>
+                            <td class="number change positive">+3.2%</td>
+                            <td class="number">28,009</td>
+                        </tr>
+                        <tr>
+                            <td class="store-name">Store #008 - Riverside</td>
+                            <td class="number">22,345</td>
+                            <td class="number">1,016</td>
+                            <td class="number change positive">+12.8%</td>
+                            <td class="number">31,486</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td class="store-name"><strong>Total Network</strong></td>
+                            <td class="number"><strong>270,572</strong></td>
+                            <td class="number"><strong>12,299</strong></td>
+                            <td class="number change positive"><strong>+7.6%</strong></td>
+                            <td class="number"><strong>381,269</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Key Insights -->
+            <div class="section">
+                <h2 class="section-title">Key Insights</h2>
+                <ul>
+                    <li><strong>Best Performer:</strong> Store #003 (Oxford Street) continues to lead with 18.2% MoM growth</li>
+                    <li><strong>Improvement Needed:</strong> Store #005 (Westfield) showing -4.1% decline, requires attention</li>
+                    <li><strong>Traffic Pattern:</strong> Peak hours shifting earlier (1-3 PM) compared to last month (3-5 PM)</li>
+                    <li><strong>Monthly Projection:</strong> On track to exceed 380K visitors (+7.6% vs December 2024)</li>
+                    <li><strong>Occupancy Balance:</strong> Net flow positive (+64 visitors retained in stores at close)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Retail Analytics Platform</strong></p>
+            <p>This report was automatically generated on January 23, 2025 at 6:00 AM GMT</p>
+            <p>Data reflects all sensor readings from January 22, 2025 (00:00 - 23:59 local time)</p>
+            <p style="margin-top: 10px; font-size: 11px;">
+                For questions or issues with this report, please contact analytics@retailplatform.com
+            </p>
+        </div>
+    </div>
+</body>
+</html>
