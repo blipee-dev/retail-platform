@@ -66,7 +66,7 @@ async function fetchStoreData(storeId: string): Promise<ReportData | null> {
       .from('stores')
       .select('id, name, code, timezone')
       .eq('id', storeId)
-      .single();
+      .maybeSingle();
     
     if (storeError || !store) {
       console.error('Error fetching store:', storeError);
@@ -87,7 +87,7 @@ async function fetchStoreData(storeId: string): Promise<ReportData | null> {
       .eq('store_id', storeId)
       .gte('date', yesterdayStart.toISOString())
       .lte('date', yesterdayEnd.toISOString())
-      .single();
+      .maybeSingle();
     
     if (!dailyData) {
       console.error('No daily data found for yesterday');
@@ -125,7 +125,7 @@ async function fetchStoreData(storeId: string): Promise<ReportData | null> {
       .eq('store_id', storeId)
       .gte('date', startOfDay(lastMonthDate).toISOString())
       .lte('date', endOfDay(lastMonthDate).toISOString())
-      .single();
+      .maybeSingle();
     
     // Fetch last week same day
     const lastWeekDate = subDays(yesterday, 7);
@@ -135,7 +135,7 @@ async function fetchStoreData(storeId: string): Promise<ReportData | null> {
       .eq('store_id', storeId)
       .gte('date', startOfDay(lastWeekDate).toISOString())
       .lte('date', endOfDay(lastWeekDate).toISOString())
-      .single();
+      .maybeSingle();
     
     // Calculate MTD (Month to Date) metrics
     const monthStart = new Date(yesterday.getFullYear(), yesterday.getMonth(), 1);
