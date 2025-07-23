@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JJ Store Daily Report - January 22, 2025</title>
+    <style>
+        /* Import Inter font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        /* Material Icons */
+        @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+        
+        /* Light Mode Design System Colors */
+        :root {
+            /* Primary Blue */
+            --primary-50: #eff6ff;
+            --primary-100: #dbeafe;
+            --primary-200: #bfdbfe;
+            --primary-300: #93c5fd;
+            --primary-400: #60a5fa;
+            --primary-500: #3b82f6;
+            --primary-600: #2563eb;
+            --primary-700: #1d4ed8;
+            
+            /* Semantic Colors */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            
+            /* Light Theme Colors */
+            --bg-light: #ffffff;
+            --bg-lighter: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #0EA5E9 100%);
+            --gradient-blue: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            --gradient-green: linear-gradient(135deg, #10B981 0%, #0EA5E9 100%);
+            --gradient-purple: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 0;
+            background-color: var(--bg-lighter);
+        }
+        
+        .email-container {
+            background-color: var(--bg-light);
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Header */
+        .header {
+            background: var(--bg-light);
+            padding: 32px 32px 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 400;
+            background: linear-gradient(135deg, #8B5CF6 0%, #0EA5E9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+        
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+        
+        .header .date {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        /* Hero Section - Yesterday at a Glance */
+        .hero-section {
+            padding: 32px;
+            background: linear-gradient(135deg, var(--primary-50) 0%, var(--bg-lighter) 100%);
+        }
+        
+        .hero-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .hero-title::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-200), transparent);
+            margin-left: 16px;
+        }
+        
+        /* Main Metrics Grid */
+        .main-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .main-metric-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .main-metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .main-metric-card.highlight {
+            background: linear-gradient(135deg, #fef3c7 0%, #fef9c3 100%);
+            border-color: #fbbf24;
+        }
+        
+        .main-metric-card .value {
+            font-size: 42px;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 4px;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .main-metric-card .label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        
+        .main-metric-card .change {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .main-metric-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 40px;
+            color: var(--primary-400);
+            opacity: 0.3;
+            font-weight: 200;
+        }
+        
+        .main-metric-card.highlight .main-metric-icon {
+            color: var(--warning);
+            opacity: 0.6;
+        }
+        
+        /* Hourly Chart */
+        .hourly-chart-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+        
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 20px 0;
+        }
+        
+        .hourly-chart {
+            position: relative;
+        }
+        
+        .hour-bars {
+            display: flex;
+            align-items: flex-end;
+            height: 180px;
+            gap: 3px;
+            margin-bottom: 16px;
+        }
+        
+        .hour-bar {
+            flex: 1;
+            background: var(--gradient-blue);
+            border-radius: 4px 4px 0 0;
+            min-height: 4px;
+            position: relative;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .hour-bar:hover {
+            opacity: 1;
+            transform: scaleY(1.05);
+        }
+        
+        .hour-bar.peak {
+            background: var(--gradient-green);
+            opacity: 1;
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            text-align: center;
+            line-height: 1.4;
+            z-index: 10;
+        }
+        
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.9);
+        }
+        
+        .hour-bar:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .hour-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-secondary);
+            padding: 0 10px;
+        }
+        
+        /* Key Metrics */
+        .key-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .metric-item {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .metric-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .metric-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .metric-icon {
+            font-size: 32px;
+            color: var(--primary-400);
+            margin-bottom: 12px;
+            font-weight: 300;
+        }
+        
+        /* Action Alert */
+        .action-alert {
+            background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 32px;
+            border: 1px solid #93c5fd;
+        }
+        
+        .action-alert-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .alert-icon {
+            font-size: 24px;
+            color: var(--primary-600);
+            font-weight: 400;
+        }
+        
+        .action-alert-title {
+            font-weight: 700;
+            color: var(--primary-700);
+            font-size: 16px;
+        }
+        
+        .action-alert-content {
+            color: var(--primary-800);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        /* Monthly Performance Section */
+        .monthly-section {
+            padding: 32px;
+            background: var(--bg-lighter);
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .monthly-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .monthly-title::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-200), transparent);
+            margin-left: 16px;
+        }
+        
+        .monthly-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        
+        .monthly-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        
+        .monthly-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .monthly-card .label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        
+        .monthly-card .change {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--bg-light);
+            padding: 24px 32px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .footer .logo-footer {
+            font-size: 18px;
+            font-weight: 400;
+            background: linear-gradient(135deg, #8B5CF6 0%, #0EA5E9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+        
+        /* Utility Classes */
+        .change.positive {
+            color: var(--success);
+        }
+        
+        .change.negative {
+            color: var(--error);
+        }
+        
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 24px;
+            }
+            
+            .hero-section, .monthly-section {
+                padding: 24px;
+            }
+            
+            .main-metrics {
+                grid-template-columns: 1fr;
+            }
+            
+            .key-metrics {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .monthly-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-metric-card .value {
+                font-size: 36px;
+            }
+            
+            .performance-card {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">blipee</div>
+            <div class="header-info">
+                <h1>JJ Store - João de Barros</h1>
+                <div class="date">January 22, 2025</div>
+            </div>
+        </div>
+
+        <!-- Hero Section - Yesterday at a Glance -->
+        <div class="hero-section">
+            <h2 class="hero-title">Yesterday at a Glance</h2>
+            
+            <!-- Main Metrics -->
+            <div class="main-metrics">
+                <div class="main-metric-card">
+                    <span class="material-symbols-outlined main-metric-icon">group</span>
+                    <div class="value">2,847</div>
+                    <div class="label">Total Visitors</div>
+                    <div class="change positive">↑ 12.3% vs last month</div>
+                </div>
+                <div class="main-metric-card highlight">
+                    <span class="material-symbols-outlined main-metric-icon">conversion_path</span>
+                    <div class="value">24.6%</div>
+                    <div class="label">Capture Rate</div>
+                    <div class="change positive">↑ 2.8pp vs last month</div>
+                </div>
+            </div>
+            
+            <!-- Hourly Distribution -->
+            <div class="hourly-chart-container">
+                <h3 class="chart-title">Hourly Traffic Distribution</h3>
+                <div class="hourly-chart">
+                    <div class="hour-bars">
+                        <div class="hour-bar" style="height: 15%" data-visitors="58" data-time="9:00 AM">
+                            <div class="tooltip">58 visitors<br>9:00 AM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 18%" data-visitors="70" data-time="10:00 AM">
+                            <div class="tooltip">70 visitors<br>10:00 AM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 25%" data-visitors="97" data-time="11:00 AM">
+                            <div class="tooltip">97 visitors<br>11:00 AM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 35%" data-visitors="136" data-time="12:00 PM">
+                            <div class="tooltip">136 visitors<br>12:00 PM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 48%" data-visitors="186" data-time="1:00 PM">
+                            <div class="tooltip">186 visitors<br>1:00 PM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 62%" data-visitors="241" data-time="2:00 PM">
+                            <div class="tooltip">241 visitors<br>2:00 PM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 75%" data-visitors="291" data-time="3:00 PM">
+                            <div class="tooltip">291 visitors<br>3:00 PM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 85%" data-visitors="330" data-time="4:00 PM">
+                            <div class="tooltip">330 visitors<br>4:00 PM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 90%" data-visitors="349" data-time="5:00 PM">
+                            <div class="tooltip">349 visitors<br>5:00 PM</div>
+                        </div>
+                        <div class="hour-bar peak" style="height: 100%" data-visitors="387" data-time="6:00 PM">
+                            <div class="tooltip">387 visitors<br>6:00 PM (Peak)</div>
+                        </div>
+                        <div class="hour-bar" style="height: 95%" data-visitors="368" data-time="7:00 PM">
+                            <div class="tooltip">368 visitors<br>7:00 PM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 88%" data-visitors="341" data-time="8:00 PM">
+                            <div class="tooltip">341 visitors<br>8:00 PM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 80%" data-visitors="310" data-time="9:00 PM">
+                            <div class="tooltip">310 visitors<br>9:00 PM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 72%" data-visitors="279" data-time="10:00 PM">
+                            <div class="tooltip">279 visitors<br>10:00 PM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 65%" data-visitors="252" data-time="11:00 PM">
+                            <div class="tooltip">252 visitors<br>11:00 PM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 55%" data-visitors="213" data-time="12:00 AM">
+                            <div class="tooltip">213 visitors<br>12:00 AM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 45%" data-visitors="175" data-time="1:00 AM">
+                            <div class="tooltip">175 visitors<br>1:00 AM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 35%" data-visitors="136" data-time="2:00 AM">
+                            <div class="tooltip">136 visitors<br>2:00 AM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 28%" data-visitors="109" data-time="3:00 AM">
+                            <div class="tooltip">109 visitors<br>3:00 AM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 20%" data-visitors="78" data-time="4:00 AM">
+                            <div class="tooltip">78 visitors<br>4:00 AM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 15%" data-visitors="58" data-time="5:00 AM">
+                            <div class="tooltip">58 visitors<br>5:00 AM</div>
+                        </div>
+                        <div class="hour-bar" style="height: 10%" data-visitors="39" data-time="6:00 AM">
+                            <div class="tooltip">39 visitors<br>6:00 AM</div>
+                        </div>
+                    </div>
+                    <div class="hour-labels">
+                        <span>9AM</span>
+                        <span>12PM</span>
+                        <span>3PM</span>
+                        <span>6PM</span>
+                        <span>9PM</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Key Metrics -->
+            <div class="key-metrics">
+                <div class="metric-item">
+                    <span class="material-symbols-outlined metric-icon">directions_walk</span>
+                    <div class="metric-value">5,845</div>
+                    <div class="metric-label">Passed By</div>
+                </div>
+                <div class="metric-item">
+                    <span class="material-symbols-outlined metric-icon">schedule</span>
+                    <div class="metric-value">3:00 PM</div>
+                    <div class="metric-label">Peak Hour</div>
+                </div>
+                <div class="metric-item">
+                    <span class="material-symbols-outlined metric-icon">trending_up</span>
+                    <div class="metric-value">+327</div>
+                    <div class="metric-label">Above Average</div>
+                </div>
+            </div>
+            
+            <!-- Action Alert -->
+            <div class="action-alert">
+                <div class="action-alert-header">
+                    <span class="material-symbols-outlined alert-icon">lightbulb</span>
+                    <div class="action-alert-title">Today's Action</div>
+                </div>
+                <div class="action-alert-content">
+                    <strong>Morning opportunity:</strong> Capture rate drops to 12.8% before noon. Focus on morning window displays and entrance visibility to capture more of the 1,242 morning passers-by.
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Performance Section -->
+        <div class="monthly-section">
+            <h2 class="monthly-title">Month-to-Date Performance</h2>
+            
+            <div class="monthly-grid">
+                <div class="monthly-card">
+                    <div class="value">55,429</div>
+                    <div class="label">Total Visitors MTD</div>
+                    <div class="change positive">↑ 10.8% vs Dec</div>
+                </div>
+                <div class="monthly-card">
+                    <div class="value">22.4%</div>
+                    <div class="label">Avg Capture Rate</div>
+                    <div class="change positive">↑ 2.1pp vs Dec</div>
+                </div>
+                <div class="monthly-card">
+                    <div class="value">78,154</div>
+                    <div class="label">Projected Monthly</div>
+                    <div class="change">Best in 6 months</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="logo-footer">blipee</div>
+            <p><strong>Retail Analytics Platform</strong></p>
+            <p>Report generated January 23, 2025 at 6:00 AM WET</p>
+        </div>
+    </div>
+</body>
+</html>
