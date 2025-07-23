@@ -42,7 +42,7 @@ jobs:
             // Omnia sensors with regional capabilities
             const sensors = [
               {
-                id: 'f63ef2e9-b71b-43f6-a5ad-c41a7e0e2f48',
+                id: 'f63ef2e9-344e-4373-aedf-04dd05cf8f8b',
                 name: 'OML01-PC',
                 ip: '93.108.96.96',
                 port: 21001,
@@ -55,7 +55,7 @@ jobs:
                 }
               },
               {
-                id: '7976051c-6d28-4975-8ebd-f8aecc8a8c39',
+                id: '7976051c-980b-45e1-b099-45d032f3c7aa',
                 name: 'OML02-PC',
                 ip: '188.37.175.41',
                 port: 2201,
@@ -68,7 +68,7 @@ jobs:
                 }
               },
               {
-                id: '29e75799-1dc4-4527-84be-e10b3e7a1a91',
+                id: '29e75799-328f-4143-9a2f-2bcc1269f77e',
                 name: 'OML03-PC',
                 ip: '188.37.124.33',
                 port: 21002,
@@ -94,6 +94,38 @@ jobs:
               console.log(\`\\n📡 Processing \${sensor.name} regional data...\`);
               
               try {
+                // First, ensure region configurations exist for this sensor
+                console.log('  🔧 Checking region configurations...');
+                
+                // Get sensor metadata to ensure we have the right sensor_id
+                const sensorResponse = await fetch(\`\${supabaseUrl}/rest/v1/sensor_metadata?id=eq.\${sensor.id}\`, {
+                  headers: {
+                    'apikey': supabaseKey,
+                    'Authorization': \`Bearer \${supabaseKey}\`
+                  }
+                });
+                
+                if (!sensorResponse.ok || !(await sensorResponse.json()).length) {
+                  console.log(\`  ⚠️  Sensor \${sensor.id} not found in database\`);
+                  continue;
+                }
+                
+                // Check if regions are configured
+                const regionsResponse = await fetch(\`\${supabaseUrl}/rest/v1/region_configurations?sensor_id=eq.\${sensor.id}\`, {
+                  headers: {
+                    'apikey': supabaseKey,
+                    'Authorization': \`Bearer \${supabaseKey}\`
+                  }
+                });
+                
+                const existingRegions = await regionsResponse.json();
+                console.log(\`  📍 Found \${existingRegions.length} configured regions\`);
+                
+                // Map region numbers to configuration IDs
+                const regionConfigMap = {};
+                for (const config of existingRegions) {
+                  regionConfigMap[config.region_number] = config.id;
+                }
                 // Try to get regional data using linetype=0 (region type)
                 const data = await new Promise((resolve, reject) => {
                   const path = \`/dataloader.cgi?dw=regionalcountlogcsv&report_type=0&statistics_type=3&region1=1&region2=1&region3=1&region4=1&time_start=\${formatDate(oneHourAgo)}&time_end=\${formatDate(now)}\`;
@@ -167,6 +199,13 @@ jobs:
                 
                 console.log(\`  📍 Found \${Object.keys(regionColumns).length} regions in data\`);
                 
+                // Check if we have any configured regions
+                if (Object.keys(regionConfigMap).length === 0) {
+                  console.log('  ❌ No region configurations found for this sensor!');
+                  console.log('  ℹ️  Please configure regions in the database first');
+                  continue;
+                }
+                
                 // Process each data line
                 const dataToInsert = [];
                 for (let i = 1; i < lines.length; i++) {
@@ -180,15 +219,17 @@ jobs:
                     const regionNum = parseInt(regionKey.replace('region', ''));
                     const count = parseInt(values[columnIndex]) || 0;
                     
-                    if (count > 0) {
+                    // Only insert if we have a configuration for this region
+                    if (count > 0 && regionConfigMap[regionNum]) {
                       dataToInsert.push({
-                        sensor_id: sensor.id,
-                        region_id: \`\${sensor.id}_region_\${regionNum}\`,
-                        timestamp: timestamp,
+                        region_id: regionConfigMap[regionNum],
+                        snapshot_time: timestamp,
                         occupancy_count: count,
-                        entries: Math.max(0, count), // Simplified for now
-                        exits: 0
+                        occupancy_rate: 0, // Would need capacity to calculate
+                        density_level: count > 500 ? 'high' : count > 200 ? 'medium' : count > 50 ? 'low' : 'empty'
                       });
+                    } else if (count > 0) {
+                      console.log(\`  ⚠️  No configuration found for region \${regionNum}, skipping data point\`);
                     }
                   }
                 }
@@ -196,8 +237,8 @@ jobs:
                 if (dataToInsert.length > 0) {
                   console.log(\`  💾 Inserting \${dataToInsert.length} regional data records...\`);
                   
-                  // Insert into regional_analytics table
-                  const insertResponse = await fetch(\`\${supabaseUrl}/rest/v1/regional_analytics\`, {
+                  // Insert into regional_occupancy_snapshots table
+                  const insertResponse = await fetch(\`\${supabaseUrl}/rest/v1/regional_occupancy_snapshots\`, {
                     method: 'POST',
                     headers: {
                       'apikey': supabaseKey,
