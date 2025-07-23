@@ -75,10 +75,17 @@ async function fetchStoreData(storeId: string): Promise<ReportData | null> {
     
     // Calculate yesterday in store timezone
     const now = new Date();
+    console.log(`Current UTC time: ${now.toISOString()}`);
+    console.log(`Store timezone: ${store.timezone}`);
+    
     const storeTime = utcToZonedTime(now, store.timezone);
+    console.log(`Store local time: ${storeTime.toISOString()}`);
+    
     const yesterday = subDays(storeTime, 1);
     const yesterdayStart = startOfDay(yesterday);
     const yesterdayEnd = endOfDay(yesterday);
+    
+    console.log(`Querying for data between: ${yesterdayStart.toISOString()} and ${yesterdayEnd.toISOString()}`);
     
     // Fetch yesterday's daily analytics
     let { data: dailyData } = await supabase
@@ -98,6 +105,9 @@ async function fetchStoreData(storeId: string): Promise<ReportData | null> {
       .lte('timestamp', yesterdayEnd.toISOString())
       .order('hour');
     
+    console.log(`Daily data found: ${dailyData ? 'YES' : 'NO'}`);
+    console.log(`Hourly data found: ${hourlyData ? hourlyData.length + ' records' : 'NO'}`);
+    
     if (!dailyData && (!hourlyData || hourlyData.length === 0)) {
       console.error('No data found for yesterday (neither daily nor hourly)');
       return null;
@@ -110,6 +120,8 @@ async function fetchStoreData(storeId: string): Promise<ReportData | null> {
       const totalOut = hourlyData.reduce((sum, h) => sum + (h.total_out || 0), 0);
       const totalTraffic = totalIn + totalOut;
       const avgCaptureRate = hourlyData.reduce((sum, h) => sum + (h.capture_rate || 0), 0) / hourlyData.length;
+      
+      console.log(`Aggregated data: totalIn=${totalIn}, totalOut=${totalOut}, totalTraffic=${totalTraffic}, avgCaptureRate=${avgCaptureRate}`);
       
       dailyData = {
         total_traffic: totalTraffic,
@@ -203,7 +215,7 @@ async function fetchStoreData(storeId: string): Promise<ReportData | null> {
       monthlyAverage: avgDailyVisitors
     });
     
-    return {
+    const reportData = {
       // Store info
       storeId: store.id,
       storeName: store.name,
@@ -237,6 +249,16 @@ async function fetchStoreData(storeId: string): Promise<ReportData | null> {
       insightTitle: insight.title,
       insightContent: insight.content
     };
+    
+    console.log('Report data summary:', {
+      totalVisitors: reportData.totalVisitors,
+      entries: reportData.entries,
+      exits: reportData.exits,
+      captureRate: reportData.captureRate,
+      mtdVisitors: reportData.mtdVisitors
+    });
+    
+    return reportData;
   } catch (error) {
     console.error('Error fetching store data:', error);
     return null;
