@@ -81,7 +81,7 @@ async function fetchStoreData(storeId: string): Promise<ReportData | null> {
     const yesterdayEnd = endOfDay(yesterday);
     
     // Fetch yesterday's daily analytics
-    const { data: dailyData } = await supabase
+    let { data: dailyData } = await supabase
       .from('daily_analytics')
       .select('*')
       .eq('store_id', storeId)
