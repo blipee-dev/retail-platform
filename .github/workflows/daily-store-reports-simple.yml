@@ -1,0 +1,149 @@
+name: Daily Store Reports (Simple)
+
+on:
+  schedule:
+    # Run at 6:00 AM UTC every day (adjust for your timezone)
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      test_mode:
+        description: 'Test mode - send to test email only'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  send-reports:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: Send test email
+      env:
+        SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
+        SMTP_PORT: ${{ secrets.SMTP_PORT }}
+        EMAIL_USER: ${{ secrets.EMAIL_USER }}
+        EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+        EMAIL_TO: ${{ secrets.EMAIL_TO }}
+        TEST_MODE: ${{ github.event.inputs.test_mode }}
+      run: |
+        # Install nodemailer
+        npm install nodemailer
+        
+        # Create email sender script
+        cat > send-test-email.js << 'EOF'
+        const nodemailer = require('nodemailer');
+        const fs = require('fs');
+        const path = require('path');
+        
+        // Create transporter
+        const transporter = nodemailer.createTransport({
+          host: process.env.SMTP_SERVER || 'smtp.gmail.com',
+          port: parseInt(process.env.SMTP_PORT) || 587,
+          secure: false,
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD
+          }
+        });
+        
+        // Read the HTML template
+        const templatePath = path.join(__dirname, 'scripts/reports/jj-store-daily-report-i18n.html');
+        let htmlContent = fs.readFileSync(templatePath, 'utf-8');
+        
+        // Replace placeholders with sample data for testing
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        
+        htmlContent = htmlContent.replace(/{{storeName}}/g, 'JJ Store 001');
+        htmlContent = htmlContent.replace(/{{reportDate}}/g, yesterday.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
+        htmlContent = htmlContent.replace(/{{totalVisitors}}/g, '1,234');
+        htmlContent = htmlContent.replace(/{{visitorsTrend}}/g, '+12.5%');
+        htmlContent = htmlContent.replace(/{{captureRate}}/g, '45.2%');
+        htmlContent = htmlContent.replace(/{{captureRateTrend}}/g, '+3.1%');
+        htmlContent = htmlContent.replace(/{{peakHour}}/g, '2:00 PM');
+        htmlContent = htmlContent.replace(/{{peakHourVisitors}}/g, '156');
+        htmlContent = htmlContent.replace(/{{passingTraffic}}/g, '2,732');
+        htmlContent = htmlContent.replace(/{{performanceVsAvg}}/g, '+8.3%');
+        htmlContent = htmlContent.replace(/{{primaryInsight}}/g, 'Strong afternoon performance with peak traffic at 2 PM');
+        htmlContent = htmlContent.replace(/{{secondaryInsight}}/g, 'Capture rate improved by 3.1% compared to last month');
+        htmlContent = htmlContent.replace(/{{monthlyTotal}}/g, '28,450');
+        htmlContent = htmlContent.replace(/{{monthlyTrend}}/g, '+15.2%');
+        htmlContent = htmlContent.replace(/{{monthlyProjection}}/g, '35,000');
+        
+        // Generate sample hourly data
+        const hourlyData = [];
+        for (let i = 10; i <= 19; i++) {
+          const visitors = Math.floor(Math.random() * 100) + 50;
+          hourlyData.push({
+            hour: `${i}:00`,
+            visitors: visitors,
+            height: (visitors / 200) * 100
+          });
+        }
+        
+        // Inject the hourly data
+        const hourlyDataScript = `
+          <script>
+            const hourlyData = ${JSON.stringify(hourlyData)};
+            hourlyData.forEach(data => {
+              const bar = document.querySelector(\`[data-hour="\${data.hour}"]\`);
+              if (bar) {
+                bar.style.height = data.height + '%';
+                bar.setAttribute('data-visitors', data.visitors);
+              }
+            });
+          </script>
+        `;
+        
+        htmlContent = htmlContent.replace('</body>', hourlyDataScript + '</body>');
+        
+        // Determine recipients
+        let recipients = [];
+        if (process.env.TEST_MODE === 'true') {
+          recipients = [process.env.EMAIL_TO || 'pedro@blipee.com'];
+        } else {
+          recipients = process.env.EMAIL_TO ? process.env.EMAIL_TO.split(',').map(e => e.trim()) : ['pedro@blipee.com'];
+        }
+        
+        // Send email
+        async function sendEmail() {
+          try {
+            const info = await transporter.sendMail({
+              from: process.env.EMAIL_FROM || 'no-reply@blipee.com',
+              to: recipients.join(', '),
+              subject: `Daily Traffic Report - JJ Store 001 - ${yesterday.toISOString().split('T')[0]}`,
+              html: htmlContent
+            });
+            
+            console.log('Email sent successfully!');
+            console.log('Message ID:', info.messageId);
+            console.log('Recipients:', recipients.join(', '));
+          } catch (error) {
+            console.error('Failed to send email:', error);
+            process.exit(1);
+          }
+        }
+        
+        sendEmail();
+        EOF
+        
+        node send-test-email.js
+    
+    - name: Completion notification
+      if: always()
+      run: |
+        if [ "${{ job.status }}" == "success" ]; then
+          echo "✅ Daily report email sent successfully!"
+        else
+          echo "❌ Failed to send daily report email"
+        fi
