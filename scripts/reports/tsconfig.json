@@ -14,7 +14,8 @@
     "types": ["node"]
   },
   "include": [
-    "*.ts"
+    "generate-store-report.ts",
+    "insight-generator.ts"
   ],
   "exclude": [
     "node_modules"
