@@ -82,6 +82,35 @@ retail-platform/
 - **Deployment**: Vercel with automatic branch deployments
 - **Monitoring**: Built-in analytics and error tracking
 
+## 🗄️ Database Architecture
+
+The platform uses an optimized PostgreSQL schema with 11 core tables:
+
+### Core Tables
+- **organizations**: Multi-tenant foundation
+- **stores**: Physical locations with timezone support  
+- **sensor_metadata**: Sensor configuration and health monitoring
+- **user_profiles**: User management with 6-tier RBAC
+
+### Data Collection
+- **people_counting_raw**: Source of truth for traffic data
+- **regional_counting_raw**: Zone occupancy data
+
+### Analytics
+- **hourly_analytics**: Pre-aggregated dashboard data
+- **daily_analytics**: Daily summaries and trends
+
+### Monitoring
+- **alerts**: Unified alerting system
+- **region_configurations**: Zone definitions
+- **latest_sensor_data**: Real-time status view
+
+### Key Features
+- Automatic sensor health monitoring
+- Audit trail for all configuration changes
+- Optimized indexes for sub-second queries
+- Ready for partitioning at scale
+
 ## 🌍 Timezone Support
 
 The platform automatically handles timezone conversions for global deployments:

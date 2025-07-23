@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
         console.log('Inserting data:', insertData)
 
         const { data: insertResult, error: insertError } = await supabase
-          .from('people_counting_data')
+          .from('people_counting_raw')
           .insert(insertData)
           .select()
 

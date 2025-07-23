@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
 
         // Insert people counting data
         const { error: insertError } = await supabase
-          .from('people_counting_data')
+          .from('people_counting_raw')
           .insert({
             sensor_id,
             store_id: storeRecord.id,
