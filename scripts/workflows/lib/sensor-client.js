@@ -53,29 +53,30 @@ class SensorClient {
   }
 
   /**
-   * Get timezone offset for a location using date-fns-tz
+   * Get local time for a timezone
    */
-  getTimezoneOffset(timezone, date = new Date()) {
+  getLocalTime(timezone, date = new Date()) {
     try {
-      // Use date-fns-tz to get proper timezone offset
-      const { getTimezoneOffset } = require('date-fns-tz');
+      // Use date-fns-tz to get the local time
+      const { utcToZonedTime, format } = require('date-fns-tz');
       
-      // getTimezoneOffset returns offset in milliseconds
-      // We need hours, and we need to invert the sign for our calculations
-      const offsetMs = getTimezoneOffset(timezone, date);
-      const offsetHours = -(offsetMs / (1000 * 60 * 60));
+      // Convert UTC to the target timezone
+      const zonedTime = utcToZonedTime(date, timezone);
       
-      return offsetHours;
+      return {
+        localTime: zonedTime,
+        localHour: zonedTime.getHours(),
+        formatted: format(zonedTime, 'yyyy-MM-dd HH:mm:ss zzz', { timeZone: timezone })
+      };
     } catch (e) {
-      console.log(`    ⚠️  Could not calculate timezone offset for ${timezone}: ${e.message}`);
+      console.log(`    ⚠️  Could not calculate local time for ${timezone}: ${e.message}`);
       
-      // Fallback: try to parse UTC±X format
-      const match = timezone.match(/UTC([+-]\d+)/);
-      if (match) {
-        return -parseInt(match[1]);
-      }
-      
-      return 0; // Default to UTC
+      // Fallback: return UTC
+      return {
+        localTime: date,
+        localHour: date.getUTCHours(),
+        formatted: date.toISOString()
+      };
     }
   }
 
@@ -129,28 +130,39 @@ class SensorClient {
    * Collect people counting data from Milesight sensor
    */
   async collectMilesightData(sensor) {
-    // First probe sensor for timezone
-    const probeData = await this.probeSensorTime(sensor);
-    console.log(`    🕐 Sensor timezone offset: ${probeData.offsetHours} hours from UTC`);
-    
     // Get current time
     const nowUTC = new Date();
     
-    // Calculate sensor local time
-    const sensorLocalNow = new Date(nowUTC.getTime() + (probeData.offsetHours * 60 * 60 * 1000));
-    const sensorLocalHour = sensorLocalNow.getHours();
+    // Get local time based on store timezone
+    let localTimeInfo;
+    if (sensor.stores?.timezone) {
+      localTimeInfo = this.getLocalTime(sensor.stores.timezone, nowUTC);
+      console.log(`    📍 Store timezone: ${sensor.stores.timezone}`);
+      console.log(`    🕐 Local time: ${localTimeInfo.formatted}`);
+    } else {
+      // Fallback to probe sensor for timezone
+      const probeData = await this.probeSensorTime(sensor);
+      console.log(`    🕐 Sensor timezone offset: ${probeData.offsetHours} hours from UTC`);
+      
+      const sensorLocalNow = new Date(nowUTC.getTime() + (probeData.offsetHours * 60 * 60 * 1000));
+      localTimeInfo = {
+        localTime: sensorLocalNow,
+        localHour: sensorLocalNow.getHours(),
+        formatted: this.formatLocalTime(sensorLocalNow)
+      };
+    }
     
     // Check if within business hours (9:00 AM to 1:00 AM next day)
     // 1:00 AM to 9:00 AM is outside business hours
-    if (sensorLocalHour >= 1 && sensorLocalHour < 9) {
-      console.log(`    ⏰ Outside business hours (${sensorLocalHour}:00 local time). Skipping.`);
+    if (localTimeInfo.localHour >= 1 && localTimeInfo.localHour < 9) {
+      console.log(`    ⏰ Outside business hours (${localTimeInfo.localHour}:00 local time). Skipping.`);
       return [];
     }
     
+    const sensorLocalNow = localTimeInfo.localTime;
     const sensorLocalThreeHoursAgo = new Date(sensorLocalNow.getTime() - 3 * 60 * 60 * 1000);
     
-    console.log(`    📍 Sensor local time: ${this.formatLocalTime(sensorLocalNow)}`);
-    console.log(`    📍 Querying from: ${this.formatLocalTime(sensorLocalThreeHoursAgo)}`);
+    console.log(`    📍 Querying from: ${this.formatLocalTime(sensorLocalThreeHoursAgo)} to ${this.formatLocalTime(sensorLocalNow)}`);
     
     // Format date for Milesight API
     const formatDate = (date) => {
@@ -162,6 +174,9 @@ class SensorClient {
     const endpoint = `/dataloader.cgi?dw=vcalogcsv&report_type=0&statistics_type=3&linetype=31&time_start=${formatDate(sensorLocalThreeHoursAgo)}&time_end=${formatDate(sensorLocalNow)}`;
     
     const data = await this.fetchData(sensor, endpoint);
+    
+    // Calculate offset hours for parsing
+    const offsetHours = Math.round((sensorLocalNow.getTime() - nowUTC.getTime()) / (60 * 60 * 1000));
     
     // Parse CSV response
     if (typeof data === 'string') {
@@ -238,7 +253,7 @@ class SensorClient {
         return { records, skippedFuture, skippedOld };
       };
       
-      const result = parseRecords(data, probeData.offsetHours, sensorLocalNow, sensorLocalThreeHoursAgo);
+      const result = parseRecords(data, offsetHours, sensorLocalNow, sensorLocalThreeHoursAgo);
       
       if (result.skippedFuture > 0 || result.skippedOld > 0) {
         console.log(`      📊 Filtered: ${result.skippedFuture} future, ${result.skippedOld} old records`);
