@@ -47,7 +47,7 @@ jobs:
         run: |
           cd scripts/workflows
           npm init -y
-          npm install @supabase/supabase-js node-fetch@2 p-limit
+          npm install @supabase/supabase-js node-fetch@2 p-limit date-fns-tz
 
       - name: Collect sensor data
         id: collect

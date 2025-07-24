@@ -53,10 +53,46 @@ class SensorClient {
   }
 
   /**
+   * Get timezone offset for a location using date-fns-tz
+   */
+  getTimezoneOffset(timezone, date = new Date()) {
+    try {
+      // Use date-fns-tz to get proper timezone offset
+      const { getTimezoneOffset } = require('date-fns-tz');
+      
+      // getTimezoneOffset returns offset in milliseconds
+      // We need hours, and we need to invert the sign for our calculations
+      const offsetMs = getTimezoneOffset(timezone, date);
+      const offsetHours = -(offsetMs / (1000 * 60 * 60));
+      
+      return offsetHours;
+    } catch (e) {
+      console.log(`    ⚠️  Could not calculate timezone offset for ${timezone}: ${e.message}`);
+      
+      // Fallback: try to parse UTC±X format
+      const match = timezone.match(/UTC([+-]\d+)/);
+      if (match) {
+        return -parseInt(match[1]);
+      }
+      
+      return 0; // Default to UTC
+    }
+  }
+
+  /**
    * Probe sensor to detect timezone offset
    */
   async probeSensorTime(sensor) {
     const nowUTC = new Date();
+    
+    // First, check if we have timezone from store configuration
+    if (sensor.stores?.timezone) {
+      const configuredOffset = this.getTimezoneOffset(sensor.stores.timezone);
+      console.log(`    📍 Using store timezone: ${sensor.stores.timezone} (UTC${configuredOffset >= 0 ? '+' : ''}${configuredOffset})`);
+      return { offsetHours: configuredOffset, sensorTime: nowUTC };
+    }
+    
+    // Otherwise, try to detect from sensor data
     const oneHourAgo = new Date(nowUTC.getTime() - 60 * 60 * 1000);
     
     const formatDate = (date) => {
@@ -81,9 +117,11 @@ class SensorClient {
         }
       }
     } catch (e) {
-      console.log(`    ⚠️  Could not determine timezone, assuming UTC`);
+      console.log(`    ⚠️  Could not probe sensor time: ${e.message}`);
     }
     
+    // Default: use UTC
+    console.log(`    ⚠️  Could not determine timezone, defaulting to UTC`);
     return { offsetHours: 0, sensorTime: nowUTC };
   }
 

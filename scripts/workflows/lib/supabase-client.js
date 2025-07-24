@@ -28,7 +28,7 @@ class SupabaseClient {
           )
         )
       `)
-      .in('status', ['online', 'warning'])
+      .eq('is_active', true)
       .order('sensor_name');
 
     if (error) throw error;
