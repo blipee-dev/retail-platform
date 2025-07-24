@@ -1,0 +1,75 @@
+name: Run Analytics Aggregation V2
+
+on:
+  workflow_call:
+    inputs:
+      pipeline_id:
+        description: 'Pipeline run ID'
+        required: false
+        type: string
+      sensor_data_status:
+        description: 'Status of sensor data collection'
+        required: false
+        type: string
+      regional_data_status:
+        description: 'Status of regional data collection'
+        required: false
+        type: string
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  aggregate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm install @supabase/supabase-js node-fetch@2
+
+      - name: Run analytics aggregation
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          PIPELINE_ID: ${{ inputs.pipeline_id }}
+        run: |
+          echo "🔄 Running analytics aggregation..."
+          echo "Pipeline ID: ${{ inputs.pipeline_id }}"
+          echo "Sensor data status: ${{ inputs.sensor_data_status }}"
+          echo "Regional data status: ${{ inputs.regional_data_status }}"
+          
+          # Run the existing aggregation script
+          cd scripts
+          if [ -f "data-processing/run_hourly_aggregation.js" ]; then
+            node data-processing/run_hourly_aggregation.js
+          else
+            echo "⚠️ Aggregation script not found, skipping..."
+          fi
+
+      - name: Generate summary
+        if: always()
+        run: |
+          cat << EOF > $GITHUB_STEP_SUMMARY
+          ## Analytics Aggregation Summary
+          
+          **Pipeline**: ${{ inputs.pipeline_id }}
+          **Status**: ${{ job.status }}
+          
+          ### Input Status
+          - Sensor Data: ${{ inputs.sensor_data_status }}
+          - Regional Data: ${{ inputs.regional_data_status }}
+          
+          ### Results
+          Check logs for detailed aggregation results.
+          EOF
