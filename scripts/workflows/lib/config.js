@@ -35,6 +35,7 @@ module.exports = {
   
   monitoring: {
     slackWebhook: process.env.SLACK_WEBHOOK_URL,
+    discordWebhook: process.env.DISCORD_WEBHOOK_URL,
     alertOnFailure: true,
     metricsEndpoint: process.env.METRICS_ENDPOINT
   }

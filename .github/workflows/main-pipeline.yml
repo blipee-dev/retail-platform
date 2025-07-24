@@ -152,18 +152,41 @@ jobs:
       - name: Send pipeline notification
         if: steps.status.outputs.status == 'failure'
         env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
-          curl -X POST $SLACK_WEBHOOK \
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "⚠️ DISCORD_WEBHOOK_URL not configured - skipping notification"
+            exit 0
+          fi
+          
+          curl -X POST $DISCORD_WEBHOOK \
             -H 'Content-Type: application/json' \
             -d '{
-              "text": "⚠️ Pipeline Failed",
-              "blocks": [{
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "*Data Pipeline Failed*\n• Pipeline: `${{ needs.initialize.outputs.pipeline_id }}`\n• <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Details>"
-                }
+              "embeds": [{
+                "title": "⚠️ Data Pipeline Failed",
+                "color": 15158332,
+                "fields": [
+                  {
+                    "name": "Pipeline ID",
+                    "value": "`${{ needs.initialize.outputs.pipeline_id }}`",
+                    "inline": false
+                  },
+                  {
+                    "name": "Failed Stages",
+                    "value": "Sensor Collection: ${{ needs.collect-sensor-data.result }}\nRegional Collection: ${{ needs.collect-regional-data.result }}\nAnalytics: ${{ needs.analytics-aggregation.result }}",
+                    "inline": false
+                  },
+                  {
+                    "name": "Sensors Status",
+                    "value": "✅ Successful: ${{ needs.collect-sensor-data.outputs.successful || 0 }}\n❌ Failed: ${{ needs.collect-sensor-data.outputs.failed || 0 }}",
+                    "inline": true
+                  }
+                ],
+                "footer": {
+                  "text": "GitHub Actions"
+                },
+                "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'",
+                "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
               }]
             }'
 
