@@ -255,10 +255,127 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
           console.log(`  ➕ Inserted ${store.name} - ${hourStart.toISOString()}`);
         }
       }
+      
+      // Now process regional data for the same hour
+      const regionalResponse = await fetch(
+        `${supabaseUrl}/rest/v1/regional_counting_raw?` +
+        `store_id=eq.${store.id}&` +
+        `timestamp=gte.${hourStart.toISOString()}&` +
+        `timestamp=lte.${hourEnd.toISOString()}&` +
+        `timestamp=lte.${now.toISOString()}`, // Exclude future data
+        { headers }
+      );
+      
+      if (regionalResponse.ok) {
+        const regionalData = await regionalResponse.json();
+        
+        if (regionalData.length > 0) {
+          // Calculate regional metrics
+          const regionalMetrics = calculateRegionalMetrics(
+            regionalData, 
+            totals.storeEntries,
+            store.id,
+            hourStart
+          );
+          
+          // Update the hourly record with regional data
+          if (Object.keys(regionalMetrics).length > 0) {
+            const updateRegionalResponse = await fetch(
+              `${supabaseUrl}/rest/v1/hourly_analytics?` +
+              `store_id=eq.${store.id}&` +
+              `hour_start=eq.${hourStart.toISOString()}`,
+              {
+                method: 'PATCH',
+                headers,
+                body: JSON.stringify(regionalMetrics)
+              }
+            );
+            
+            if (updateRegionalResponse.ok) {
+              console.log(`  🗺️  Updated regional metrics`);
+            }
+          }
+        }
+      }
     }
   }
   
   console.log(`\n📊 Processed ${totalProcessed} hourly records`);
+}
+
+/**
+ * Calculate regional metrics from raw regional counting data
+ */
+function calculateRegionalMetrics(regionalData, storeEntries, storeId, hourStart) {
+  const metrics = {};
+  
+  // Group by region and calculate occupancy
+  const regionOccupancy = { 1: 0, 2: 0, 3: 0, 4: 0 };
+  const regionReadings = { 1: 0, 2: 0, 3: 0, 4: 0 };
+  let maxOccupancy = { 1: 0, 2: 0, 3: 0, 4: 0 };
+  
+  regionalData.forEach(record => {
+    // Sum occupancy for each region
+    for (let i = 1; i <= 4; i++) {
+      const count = record[`region${i}_count`] || 0;
+      regionOccupancy[i] += count;
+      regionReadings[i]++;
+      maxOccupancy[i] = Math.max(maxOccupancy[i], count);
+    }
+  });
+  
+  // Calculate total store occupancy (sum of all zones)
+  const totalOccupancy = Object.values(regionOccupancy).reduce((a, b) => a + b, 0);
+  const avgTotalOccupancy = totalOccupancy / Math.max(regionalData.length, 1);
+  
+  // Only proceed if we have data
+  if (totalOccupancy === 0) return metrics;
+  
+  // 1. Store-Wide Dwell Time (if we have store entries)
+  if (storeEntries > 0) {
+    // Assuming 5-minute intervals between readings
+    const intervalMinutes = 5;
+    const totalPersonMinutes = totalOccupancy * intervalMinutes;
+    metrics.avg_store_dwell_time = Math.round((totalPersonMinutes / storeEntries) * 10) / 10;
+  }
+  
+  // 2. Zone Share % for each region
+  metrics.zone1_share_pct = totalOccupancy > 0 ? 
+    Math.round((regionOccupancy[1] / totalOccupancy) * 100) : 0;
+  metrics.zone2_share_pct = totalOccupancy > 0 ? 
+    Math.round((regionOccupancy[2] / totalOccupancy) * 100) : 0;
+  metrics.zone3_share_pct = totalOccupancy > 0 ? 
+    Math.round((regionOccupancy[3] / totalOccupancy) * 100) : 0;
+  metrics.zone4_share_pct = totalOccupancy > 0 ? 
+    Math.round((regionOccupancy[4] / totalOccupancy) * 100) : 0;
+  
+  // 3. Peak Occupancy per Zone
+  metrics.zone1_peak_occupancy = maxOccupancy[1];
+  metrics.zone2_peak_occupancy = maxOccupancy[2];
+  metrics.zone3_peak_occupancy = maxOccupancy[3];
+  metrics.zone4_peak_occupancy = maxOccupancy[4];
+  
+  // 4. Zone Dwell Contribution (person-minutes contribution)
+  const totalPersonMinutes = totalOccupancy * 5; // 5-minute intervals
+  metrics.zone1_dwell_contribution = totalPersonMinutes > 0 ? 
+    Math.round((regionOccupancy[1] * 5 / totalPersonMinutes) * 100) : 0;
+  metrics.zone2_dwell_contribution = totalPersonMinutes > 0 ? 
+    Math.round((regionOccupancy[2] * 5 / totalPersonMinutes) * 100) : 0;
+  metrics.zone3_dwell_contribution = totalPersonMinutes > 0 ? 
+    Math.round((regionOccupancy[3] * 5 / totalPersonMinutes) * 100) : 0;
+  metrics.zone4_dwell_contribution = totalPersonMinutes > 0 ? 
+    Math.round((regionOccupancy[4] * 5 / totalPersonMinutes) * 100) : 0;
+  
+  // 5. Total Store Occupancy
+  metrics.total_zone_occupancy = Math.round(avgTotalOccupancy);
+  
+  // Combined metrics: Occupancy Validation
+  if (storeEntries > 0) {
+    // This helps validate sensor accuracy
+    metrics.occupancy_accuracy_score = 100; // Placeholder - would need exits to calculate
+  }
+  
+  return metrics;
 }
 
 async function showRecentAnalytics(supabaseUrl, supabaseKey) {
