@@ -1,0 +1,88 @@
+name: Run Daily Analytics Aggregation
+
+on:
+  schedule:
+    # Run at 2:00 AM UTC every day
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Date to aggregate (YYYY-MM-DD, defaults to yesterday)'
+        required: false
+        type: string
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  aggregate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm install node-fetch@2
+
+      - name: Run daily aggregation
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          AGGREGATION_DATE: ${{ inputs.date }}
+        run: |
+          echo "🔄 Running daily analytics aggregation..."
+          
+          if [ -n "$AGGREGATION_DATE" ]; then
+            echo "Aggregating for specific date: $AGGREGATION_DATE"
+            # TODO: Modify script to accept date parameter
+          fi
+          
+          cd scripts
+          node run_daily_aggregation.js
+
+      - name: Generate summary
+        if: always()
+        run: |
+          cat << EOF > $GITHUB_STEP_SUMMARY
+          ## Daily Analytics Aggregation Summary
+          
+          **Status**: ${{ job.status }}
+          **Run Time**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          
+          ### Results
+          Check logs for detailed aggregation results.
+          
+          ### Next Steps
+          - Review daily analytics in dashboard
+          - Check for any data quality issues
+          - Monitor store performance trends
+          EOF
+
+      - name: Send notification on failure
+        if: failure()
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          if [ -n "$SLACK_WEBHOOK" ]; then
+            curl -X POST $SLACK_WEBHOOK \
+              -H 'Content-Type: application/json' \
+              -d '{
+                "text": "❌ Daily Analytics Aggregation Failed",
+                "blocks": [{
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Daily Analytics Aggregation Failed*\n• <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Details>"
+                  }
+                }]
+              }'
+          fi
