@@ -85,7 +85,7 @@ async function runDailyAggregation() {
         continue;
       }
       
-      // Aggregate the hourly data with new metrics
+      // Aggregate the hourly data with new metrics including regional
       const dailyStats = hourlyData.reduce((acc, hour) => {
         // Store traffic (use new fields if available, fallback to legacy)
         const storeEntries = hour.store_entries || hour.total_entries || 0;
@@ -131,6 +131,34 @@ async function runDailyAggregation() {
         acc.data_quality += hour.data_quality || 0;
         acc.hours_count++;
         
+        // Regional metrics aggregation
+        if (hour.total_zone_occupancy) {
+          acc.total_zone_occupancy += hour.total_zone_occupancy || 0;
+          acc.zone_hours_count++;
+          
+          // Sum zone occupancies for averaging
+          acc.zone1_occupancy_sum += (hour.zone1_peak_occupancy || 0);
+          acc.zone2_occupancy_sum += (hour.zone2_peak_occupancy || 0);
+          acc.zone3_occupancy_sum += (hour.zone3_peak_occupancy || 0);
+          acc.zone4_occupancy_sum += (hour.zone4_peak_occupancy || 0);
+          
+          // Track peak zone occupancies
+          acc.zone1_peak = Math.max(acc.zone1_peak, hour.zone1_peak_occupancy || 0);
+          acc.zone2_peak = Math.max(acc.zone2_peak, hour.zone2_peak_occupancy || 0);
+          acc.zone3_peak = Math.max(acc.zone3_peak, hour.zone3_peak_occupancy || 0);
+          acc.zone4_peak = Math.max(acc.zone4_peak, hour.zone4_peak_occupancy || 0);
+          
+          // Track when peaks occur
+          if ((hour.zone1_peak_occupancy || 0) > acc.zone1_peak_value) {
+            acc.zone1_peak_value = hour.zone1_peak_occupancy || 0;
+            acc.zone1_peak_hour = hour.hour;
+          }
+          
+          // Sum dwell times for averaging
+          acc.total_dwell_minutes += (hour.avg_store_dwell_time || 0) * storeEntries;
+          acc.dwell_entries += storeEntries;
+        }
+        
         return acc;
       }, {
         store_entries: 0,
@@ -150,7 +178,22 @@ async function runDailyAggregation() {
         after_hours_entries: 0,
         sample_count: 0,
         data_quality: 0,
-        hours_count: 0
+        hours_count: 0,
+        // Regional metrics
+        total_zone_occupancy: 0,
+        zone_hours_count: 0,
+        zone1_occupancy_sum: 0,
+        zone2_occupancy_sum: 0,
+        zone3_occupancy_sum: 0,
+        zone4_occupancy_sum: 0,
+        zone1_peak: 0,
+        zone2_peak: 0,
+        zone3_peak: 0,
+        zone4_peak: 0,
+        zone1_peak_hour: 0,
+        zone1_peak_value: 0,
+        total_dwell_minutes: 0,
+        dwell_entries: 0
       });
       
       // Calculate distribution percentages
@@ -180,6 +223,22 @@ async function runDailyAggregation() {
       const avgDataQuality = dailyStats.hours_count > 0 ? 
         Math.round(dailyStats.data_quality / dailyStats.hours_count) : 100;
       
+      // Calculate regional metrics
+      const avgStoreDwellTime = dailyStats.dwell_entries > 0 ?
+        Math.round((dailyStats.total_dwell_minutes / dailyStats.dwell_entries) * 10) / 10 : 0;
+      
+      // Calculate daily zone shares (based on average occupancy)
+      const avgZone1Occupancy = dailyStats.zone_hours_count > 0 ? 
+        dailyStats.zone1_occupancy_sum / dailyStats.zone_hours_count : 0;
+      const avgZone2Occupancy = dailyStats.zone_hours_count > 0 ? 
+        dailyStats.zone2_occupancy_sum / dailyStats.zone_hours_count : 0;
+      const avgZone3Occupancy = dailyStats.zone_hours_count > 0 ? 
+        dailyStats.zone3_occupancy_sum / dailyStats.zone_hours_count : 0;
+      const avgZone4Occupancy = dailyStats.zone_hours_count > 0 ? 
+        dailyStats.zone4_occupancy_sum / dailyStats.zone_hours_count : 0;
+      
+      const totalAvgOccupancy = avgZone1Occupancy + avgZone2Occupancy + avgZone3Occupancy + avgZone4Occupancy;
+      
       // Prepare daily record with all new KPIs
       const dailyRecord = {
         store_id: store.id,
@@ -203,6 +262,24 @@ async function runDailyAggregation() {
         business_hours_entries: dailyStats.business_hours_entries,
         after_hours_entries: dailyStats.after_hours_entries,
         business_hours_capture_rate: businessHoursCaptureRate,
+        // Regional metrics
+        avg_store_dwell_time: avgStoreDwellTime,
+        total_zone_occupancy: Math.round(totalAvgOccupancy),
+        zone1_share_pct: totalAvgOccupancy > 0 ? 
+          Math.round((avgZone1Occupancy / totalAvgOccupancy) * 100) : 0,
+        zone2_share_pct: totalAvgOccupancy > 0 ? 
+          Math.round((avgZone2Occupancy / totalAvgOccupancy) * 100) : 0,
+        zone3_share_pct: totalAvgOccupancy > 0 ? 
+          Math.round((avgZone3Occupancy / totalAvgOccupancy) * 100) : 0,
+        zone4_share_pct: totalAvgOccupancy > 0 ? 
+          Math.round((avgZone4Occupancy / totalAvgOccupancy) * 100) : 0,
+        zone1_peak_occupancy: dailyStats.zone1_peak,
+        zone2_peak_occupancy: dailyStats.zone2_peak,
+        zone3_peak_occupancy: dailyStats.zone3_peak,
+        zone4_peak_occupancy: dailyStats.zone4_peak,
+        zone1_peak_hour: dailyStats.zone1_peak_hour,
+        // Combined people + regional metrics
+        occupancy_accuracy_score: 0, // Would need to compare entries-exits vs total occupancy
         // Metadata
         conversion_rate: 0, // Would need transaction data
         data_quality: avgDataQuality,
