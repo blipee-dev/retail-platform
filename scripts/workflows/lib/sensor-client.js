@@ -160,9 +160,17 @@ class SensorClient {
     }
     
     const sensorLocalNow = localTimeInfo.localTime;
-    const sensorLocalThreeHoursAgo = new Date(sensorLocalNow.getTime() - 3 * 60 * 60 * 1000);
     
-    console.log(`    📍 Querying from: ${this.formatLocalTime(sensorLocalThreeHoursAgo)} to ${this.formatLocalTime(sensorLocalNow)}`);
+    // Round to complete hour periods
+    // End time: Current hour at HH:59:59
+    const queryEndTime = new Date(sensorLocalNow);
+    queryEndTime.setMinutes(59, 59, 999);
+    
+    // Start time: 3 hours ago at HH:00:00
+    const queryStartTime = new Date(sensorLocalNow.getTime() - 3 * 60 * 60 * 1000);
+    queryStartTime.setMinutes(0, 0, 0);
+    
+    console.log(`    📍 Querying from: ${this.formatLocalTime(queryStartTime)} to ${this.formatLocalTime(queryEndTime)}`);
     
     // Format date for Milesight API
     const formatDate = (date) => {
@@ -171,7 +179,7 @@ class SensorClient {
     };
     
     // Build endpoint with query parameters
-    const endpoint = `/dataloader.cgi?dw=vcalogcsv&report_type=0&statistics_type=3&linetype=31&time_start=${formatDate(sensorLocalThreeHoursAgo)}&time_end=${formatDate(sensorLocalNow)}`;
+    const endpoint = `/dataloader.cgi?dw=vcalogcsv&report_type=0&statistics_type=3&linetype=31&time_start=${formatDate(queryStartTime)}&time_end=${formatDate(queryEndTime)}`;
     
     const data = await this.fetchData(sensor, endpoint);
     
@@ -253,7 +261,7 @@ class SensorClient {
         return { records, skippedFuture, skippedOld };
       };
       
-      const result = parseRecords(data, offsetHours, sensorLocalNow, sensorLocalThreeHoursAgo);
+      const result = parseRecords(data, offsetHours, sensorLocalNow, queryStartTime);
       
       if (result.skippedFuture > 0 || result.skippedOld > 0) {
         console.log(`      📊 Filtered: ${result.skippedFuture} future, ${result.skippedOld} old records`);
