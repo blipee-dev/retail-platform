@@ -77,6 +77,10 @@ class SupabaseClient {
    * Insert sensor data with duplicate checking
    */
   async insertSensorData(data) {
+    console.log(`    🔍 DEBUG - Checking for existing record:`);
+    console.log(`      sensor_id: ${data.sensor_id}`);
+    console.log(`      timestamp: ${data.timestamp}`);
+    
     // Check if record already exists
     const { data: existing, error: checkError } = await this.client
       .from('people_counting_raw')
@@ -86,10 +90,12 @@ class SupabaseClient {
       .single();
 
     if (checkError && checkError.code !== 'PGRST116') { // PGRST116 = no rows returned
+      console.log(`    ❌ DEBUG - Check error:`, checkError);
       throw checkError;
     }
 
     if (existing) {
+      console.log(`    ✅ DEBUG - Found existing record with id: ${existing.id}`);
       // Update existing record
       const { error } = await this.client
         .from('people_counting_raw')
@@ -105,9 +111,14 @@ class SupabaseClient {
         })
         .eq('id', existing.id);
 
-      if (error) throw error;
+      if (error) {
+        console.log(`    ❌ DEBUG - Update error:`, error);
+        throw error;
+      }
+      console.log(`    ✅ DEBUG - Record updated successfully`);
       return { action: 'updated', id: existing.id };
     } else {
+      console.log(`    ✅ DEBUG - No existing record, inserting new...`);
       // Insert new record
       const { data: inserted, error } = await this.client
         .from('people_counting_raw')
@@ -115,7 +126,12 @@ class SupabaseClient {
         .select('id')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.log(`    ❌ DEBUG - Insert error:`, error);
+        console.log(`    ❌ DEBUG - Data attempted:`, JSON.stringify(data, null, 2));
+        throw error;
+      }
+      console.log(`    ✅ DEBUG - Record inserted with id: ${inserted.id}`);
       return { action: 'inserted', id: inserted.id };
     }
   }
