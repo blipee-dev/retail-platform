@@ -2,6 +2,21 @@
 
 const fetch = require('node-fetch');
 
+// Helper function to get local hour for a given timezone
+function getLocalHour(date, timezone) {
+  try {
+    const options = {
+      timeZone: timezone,
+      hour: 'numeric',
+      hour12: false
+    };
+    return parseInt(new Intl.DateTimeFormat('en-US', options).format(date));
+  } catch (e) {
+    // Fallback to UTC if timezone is invalid
+    return date.getUTCHours();
+  }
+}
+
 async function runHourlyAggregation() {
   console.log('🚀 Starting Hourly Analytics Aggregation');
   console.log('=' .repeat(60));
@@ -51,14 +66,21 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
     'Content-Type': 'application/json'
   };
   
-  // Get data from last 3 hours
+  // Get data from last 3 hours (matching collection window)
   const now = new Date();
   const threeHoursAgo = new Date(now.getTime() - 3 * 60 * 60 * 1000);
   
+  // Don't process data older than 24 hours
+  const maxAge = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  if (threeHoursAgo < maxAge) {
+    console.log('⏰ Limiting aggregation to last 24 hours');
+    threeHoursAgo.setTime(maxAge.getTime());
+  }
+  
   console.log(`\n📊 Manual aggregation from ${threeHoursAgo.toISOString()} to ${now.toISOString()}`);
   
-  // Get all stores with organization_id
-  const storesResponse = await fetch(`${supabaseUrl}/rest/v1/stores?select=id,name,organization_id`, {
+  // Get all stores with organization_id and timezone
+  const storesResponse = await fetch(`${supabaseUrl}/rest/v1/stores?select=id,name,organization_id,timezone`, {
     headers
   });
   
@@ -71,19 +93,37 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
   
   let totalProcessed = 0;
   
-  // Process each hour
+  // Process each hour (complete hour periods only)
   for (let h = 0; h < 3; h++) {
     const hourStart = new Date(now.getTime() - (h + 1) * 60 * 60 * 1000);
-    hourStart.setMinutes(0, 0, 0);
-    const hourEnd = new Date(hourStart.getTime() + 60 * 60 * 1000);
+    hourStart.setMinutes(0, 0, 0); // HH:00:00
+    const hourEnd = new Date(hourStart);
+    hourEnd.setMinutes(59, 59, 999); // HH:59:59
     
     for (const store of stores) {
-      // Get raw data for this hour
+      // Check business hours for this store's timezone
+      const storeTimezone = store.timezone || 'UTC';
+      const storeLocalHour = getLocalHour(hourStart, storeTimezone);
+      
+      // Skip if outside business hours (1 AM - 9 AM)
+      if (storeLocalHour >= 1 && storeLocalHour < 9) {
+        console.log(`    ⏰ Skipping ${store.name} - outside business hours (${storeLocalHour}:00 local)`);
+        continue;
+      }
+      
+      // Skip future hours
+      if (hourStart > now) {
+        console.log(`    ⏭️  Skipping ${store.name} - future hour`);
+        continue;
+      }
+      
+      // Get raw data for this hour (complete hour period)
       const rawResponse = await fetch(
         `${supabaseUrl}/rest/v1/people_counting_raw?` +
         `store_id=eq.${store.id}&` +
         `timestamp=gte.${hourStart.toISOString()}&` +
-        `timestamp=lt.${hourEnd.toISOString()}`,
+        `timestamp=lte.${hourEnd.toISOString()}&` +
+        `timestamp=lte.${now.toISOString()}`, // Exclude future data
         { headers }
       );
       
@@ -92,23 +132,56 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
       const rawData = await rawResponse.json();
       if (rawData.length === 0) continue;
       
-      // Calculate aggregates
+      // Calculate aggregates with proper separation
       let totals = {
-        entries: 0,
-        exits: 0,
+        storeEntries: 0,      // Lines 1-3 only
+        storeExits: 0,        // Lines 1-3 only
+        passerbyTotal: 0,     // Line 4 total
+        passerbyIn: 0,        // Line 4 in
+        passerbyOut: 0,       // Line 4 out
         lines: { in: [0, 0, 0, 0], out: [0, 0, 0, 0] }
       };
       
       for (const record of rawData) {
+        // Process each line
         for (let i = 1; i <= 4; i++) {
           const lineIn = record[`line${i}_in`] || 0;
           const lineOut = record[`line${i}_out`] || 0;
-          totals.entries += lineIn;
-          totals.exits += lineOut;
+          
           totals.lines.in[i-1] += lineIn;
           totals.lines.out[i-1] += lineOut;
+          
+          // Lines 1-3 are store traffic
+          if (i <= 3) {
+            totals.storeEntries += lineIn;
+            totals.storeExits += lineOut;
+          } else {
+            // Line 4 is passerby traffic
+            totals.passerbyIn += lineIn;
+            totals.passerbyOut += lineOut;
+            totals.passerbyTotal += lineIn + lineOut;
+          }
         }
       }
+      
+      // Calculate distribution percentages
+      const entryLine1Pct = totals.storeEntries > 0 ? 
+        Math.round((totals.lines.in[0] / totals.storeEntries) * 100) : 0;
+      const entryLine2Pct = totals.storeEntries > 0 ? 
+        Math.round((totals.lines.in[1] / totals.storeEntries) * 100) : 0;
+      const entryLine3Pct = totals.storeEntries > 0 ? 
+        Math.round((totals.lines.in[2] / totals.storeEntries) * 100) : 0;
+      
+      const exitLine1Pct = totals.storeExits > 0 ? 
+        Math.round((totals.lines.out[0] / totals.storeExits) * 100) : 0;
+      const exitLine2Pct = totals.storeExits > 0 ? 
+        Math.round((totals.lines.out[1] / totals.storeExits) * 100) : 0;
+      const exitLine3Pct = totals.storeExits > 0 ? 
+        Math.round((totals.lines.out[2] / totals.storeExits) * 100) : 0;
+      
+      // Calculate capture rate
+      const captureRate = totals.passerbyTotal > 0 ? 
+        Math.round((totals.storeEntries / totals.passerbyTotal) * 100 * 100) / 100 : 0;
       
       // Prepare hourly record
       const hourlyRecord = {
@@ -117,11 +190,19 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
         hour_start: hourStart.toISOString(),
         date: hourStart.toISOString().split('T')[0],
         hour: hourStart.getHours(),
-        total_entries: totals.entries,
-        total_exits: totals.exits,
-        total_in: totals.entries,
-        total_out: totals.exits,
-        net_flow: totals.entries - totals.exits,
+        // New comprehensive metrics
+        store_entries: totals.storeEntries,
+        store_exits: totals.storeExits,
+        passerby_count: totals.passerbyTotal,
+        passerby_in: totals.passerbyIn,
+        passerby_out: totals.passerbyOut,
+        capture_rate: captureRate,
+        entry_line1_pct: entryLine1Pct,
+        entry_line2_pct: entryLine2Pct,
+        entry_line3_pct: entryLine3Pct,
+        exit_line1_pct: exitLine1Pct,
+        exit_line2_pct: exitLine2Pct,
+        exit_line3_pct: exitLine3Pct,
         sample_count: rawData.length,
         avg_occupancy: 0,
         peak_occupancy: 0
