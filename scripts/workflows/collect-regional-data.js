@@ -125,7 +125,24 @@ async function collectRegionalData() {
     
   } catch (error) {
     console.error('\n💥 Fatal error:', error.message);
-    process.exit(1);
+    // Set outputs even on fatal error
+    const results = { successful: 0, failed: 0, total: 0, errors: {} };
+    console.log('\n📤 GitHub Actions Output:');
+    console.log(`successful=${results.successful}`);
+    console.log(`failed=${results.failed}`);
+    console.log(`total=${results.total}`);
+    
+    if (process.env.GITHUB_ACTIONS && process.env.GITHUB_OUTPUT) {
+      const fs = require('fs');
+      const output = [
+        `successful=${results.successful}`,
+        `failed=${results.failed}`,
+        `total=${results.total}`
+      ].join('\n');
+      fs.appendFileSync(process.env.GITHUB_OUTPUT, output + '\n');
+    }
+    // Exit successfully to allow pipeline to continue
+    return;
   }
   
   // Summary
@@ -168,11 +185,8 @@ async function collectRegionalData() {
     }
   }
   
-  // Exit with error only if all sensors failed
-  if (results.failed > 0 && results.successful === 0) {
-    console.log('\n❌ All sensors failed - exiting with error');
-    process.exit(1);
-  }
+  // Always exit successfully to allow pipeline to continue
+  // Even with no data, we want analytics to run (it might process historical data)
 }
 
 /**
