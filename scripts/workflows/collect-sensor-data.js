@@ -124,10 +124,23 @@ async function processSensor(sensor, type, supabase) {
     
     if (result.success) {
       // Save to database
-      if (type === 'milesight') {
-        await supabase.insertSensorData(result.data);
+      let recordsInserted = 0;
+      
+      if (type === 'milesight' || type === 'milesight_people_counter') {
+        // Insert each record
+        if (Array.isArray(result.data)) {
+          for (const record of result.data) {
+            try {
+              await supabase.insertSensorData(record);
+              recordsInserted++;
+            } catch (insertError) {
+              console.log(`    ⚠️  Failed to insert record: ${insertError.message}`);
+            }
+          }
+        }
       } else if (type === 'omnia') {
         await supabase.insertRegionalData(result.data);
+        recordsInserted = Array.isArray(result.data) ? result.data.length : 1;
       }
 
       // Update sensor health
@@ -140,20 +153,20 @@ async function processSensor(sensor, type, supabase) {
 
       // Log health
       await supabase.logSensorHealth(
-        sensor.sensor_id,
+        sensor.id,  // Use UUID for health log
         'online',
         result.responseTime,
-        Array.isArray(result.data) ? result.data.length : 1
+        recordsInserted
       );
 
-      console.log(`    ✅ Success (${result.responseTime}ms)`);
+      console.log(`    ✅ Success (${result.responseTime}ms) - ${recordsInserted} records`);
       
       return {
         success: true,
         sensor: sensor.sensor_name,
         sensorId: sensor.sensor_id,
         responseTime: result.responseTime,
-        records: Array.isArray(result.data) ? result.data.length : 1
+        records: recordsInserted
       };
       
     } else {

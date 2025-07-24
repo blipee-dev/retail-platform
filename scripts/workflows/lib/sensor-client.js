@@ -75,61 +75,57 @@ class SensorClient {
     if (typeof data === 'string') {
       const lines = data.trim().split('\n');
       if (lines.length < 2) {
-        return {
-          sensor_id: sensor.sensor_id,
-          store_id: sensor.store_id,
-          timestamp: new Date().toISOString(),
-          total_in: 0,
-          total_out: 0,
-          metadata: {
-            sensor_type: 'milesight',
-            sensor_name: sensor.sensor_name,
-            ip: sensor.sensor_ip,
-            no_data: true
-          }
-        };
+        return [];
       }
       
-      // Get the latest record (last line)
-      const lastLine = lines[lines.length - 1];
-      const parts = lastLine.split(',');
+      const records = [];
       
-      if (parts.length >= 17) {
-        // Sum all lines (like the working version)
-        const totalIn = (parseInt(parts[5]) || 0) + (parseInt(parts[8]) || 0) + 
-                       (parseInt(parts[11]) || 0) + (parseInt(parts[14]) || 0);
-        const totalOut = (parseInt(parts[6]) || 0) + (parseInt(parts[9]) || 0) + 
-                        (parseInt(parts[12]) || 0) + (parseInt(parts[15]) || 0);
+      // Skip header, process data lines
+      for (let i = 1; i < lines.length; i++) {
+        const parts = lines[i].split(',').map(p => p.trim());
         
-        return {
-          sensor_id: sensor.sensor_id,
-          store_id: sensor.store_id,
-          timestamp: new Date().toISOString(),
-          total_in: totalIn,
-          total_out: totalOut,
-          metadata: {
-            sensor_type: 'milesight',
-            sensor_name: sensor.sensor_name,
-            ip: sensor.sensor_ip
+        if (parts.length >= 17) {
+          try {
+            // Parse timestamp
+            const timestamp = new Date(parts[0].replace(/\//g, '-'));
+            const endTime = new Date(parts[1].replace(/\//g, '-'));
+            
+            const line1In = parseInt(parts[5]) || 0;
+            const line1Out = parseInt(parts[6]) || 0;
+            const line2In = parseInt(parts[8]) || 0;
+            const line2Out = parseInt(parts[9]) || 0;
+            const line3In = parseInt(parts[11]) || 0;
+            const line3Out = parseInt(parts[12]) || 0;
+            const line4In = parseInt(parts[14]) || 0;
+            const line4Out = parseInt(parts[15]) || 0;
+            
+            records.push({
+              sensor_id: sensor.id,  // Use UUID id, not string sensor_id
+              store_id: sensor.store_id,
+              organization_id: sensor.stores?.organizations?.id || sensor.organization_id,  // Get org from nested structure
+              timestamp: timestamp.toISOString(),
+              end_time: endTime.toISOString(),
+              line1_in: line1In,
+              line1_out: line1Out,
+              line2_in: line2In,
+              line2_out: line2Out,
+              line3_in: line3In,
+              line3_out: line3Out,
+              line4_in: line4In,
+              line4_out: line4Out
+              // Don't include total_in/total_out - they are computed columns
+            });
+          } catch (e) {
+            console.error(`    Error parsing line ${i}: ${e.message}`);
           }
-        };
+        }
       }
+      
+      return records;
     }
     
     // Fallback for unexpected format
-    return {
-      sensor_id: sensor.sensor_id,
-      store_id: sensor.store_id,
-      timestamp: new Date().toISOString(),
-      total_in: 0,
-      total_out: 0,
-      metadata: {
-        sensor_type: 'milesight',
-        sensor_name: sensor.sensor_name,
-        ip: sensor.sensor_ip,
-        parse_error: true
-      }
-    };
+    return [];
   }
 
   /**
