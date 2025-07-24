@@ -4,8 +4,12 @@ const config = require('./config');
 
 class SensorClient {
   constructor(type) {
-    this.type = type;
-    this.config = config.sensors[type];
+    // Normalize sensor types to match config
+    const normalizedType = type.includes('milesight') ? 'milesight' : 
+                          type.includes('omnia') ? 'omnia' : type;
+    
+    this.type = normalizedType;
+    this.config = config.sensors[normalizedType];
     if (!this.config) {
       throw new Error(`Unknown sensor type: ${type}`);
     }
@@ -19,7 +23,8 @@ class SensorClient {
    * Fetch data from sensor with retry logic
    */
   async fetchData(sensor, endpoint) {
-    const url = `http://${sensor.sensor_ip}${endpoint}`;
+    const port = sensor.sensor_port || 80;
+    const url = `http://${sensor.sensor_ip}:${port}${endpoint}`;
     
     return this.retryHandler.execute(async () => {
       const response = await fetch(url, {
@@ -44,18 +49,34 @@ class SensorClient {
    * Collect people counting data from Milesight sensor
    */
   async collectMilesightData(sensor) {
-    const data = await this.fetchData(sensor, '/api/v1/people-counting');
+    // Use the API endpoint from sensor config or default
+    const endpoint = sensor.config?.api_endpoint || '/dataloader.cgi';
+    const data = await this.fetchData(sensor, endpoint);
+    
+    // Parse Milesight response - it returns array of line data
+    let totalIn = 0;
+    let totalOut = 0;
+    
+    if (Array.isArray(data)) {
+      data.forEach(line => {
+        totalIn += line.in || 0;
+        totalOut += line.out || 0;
+      });
+    } else if (data.in !== undefined || data.out !== undefined) {
+      totalIn = data.in || 0;
+      totalOut = data.out || 0;
+    }
     
     return {
       sensor_id: sensor.id,
       store_id: sensor.store_id,
       timestamp: new Date().toISOString(),
-      total_in: data.in || 0,
-      total_out: data.out || 0,
+      total_in: totalIn,
+      total_out: totalOut,
       metadata: {
-        device_time: data.timestamp,
         sensor_type: 'milesight',
-        firmware_version: data.firmware_version
+        sensor_name: sensor.sensor_name,
+        ip: sensor.sensor_ip
       }
     };
   }
