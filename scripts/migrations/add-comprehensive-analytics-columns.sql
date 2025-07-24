@@ -17,6 +17,12 @@ ADD COLUMN IF NOT EXISTS exit_line1_pct DECIMAL(5,2),
 ADD COLUMN IF NOT EXISTS exit_line2_pct DECIMAL(5,2),
 ADD COLUMN IF NOT EXISTS exit_line3_pct DECIMAL(5,2);
 
+-- Add any missing standard columns to daily_analytics
+ALTER TABLE daily_analytics
+ADD COLUMN IF NOT EXISTS peak_hour INTEGER,
+ADD COLUMN IF NOT EXISTS avg_dwell_time INTEGER,
+ADD COLUMN IF NOT EXISTS business_hours_traffic INTEGER;
+
 -- Add columns to daily_analytics table
 ALTER TABLE daily_analytics
 ADD COLUMN IF NOT EXISTS store_entries INTEGER,
@@ -68,14 +74,5 @@ CREATE INDEX IF NOT EXISTS idx_daily_analytics_capture_rate
 ON daily_analytics(store_id, date, capture_rate) 
 WHERE capture_rate > 0;
 
--- Backward compatibility: Update legacy total_entries/exits to match store_entries/exits
--- This ensures old dashboards continue working
-UPDATE hourly_analytics 
-SET total_entries = COALESCE(store_entries, total_entries),
-    total_exits = COALESCE(store_exits, total_exits)
-WHERE store_entries IS NOT NULL;
-
-UPDATE daily_analytics 
-SET total_entries = COALESCE(store_entries, total_entries),
-    total_exits = COALESCE(store_exits, total_exits)
-WHERE store_entries IS NOT NULL;
+-- Note: The aggregation scripts handle backward compatibility by populating both
+-- the legacy fields (if they exist) and the new fields

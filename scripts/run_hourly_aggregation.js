@@ -190,12 +190,6 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
         hour_start: hourStart.toISOString(),
         date: hourStart.toISOString().split('T')[0],
         hour: hourStart.getHours(),
-        // Legacy fields (for backward compatibility)
-        total_entries: totals.storeEntries,
-        total_exits: totals.storeExits,
-        total_in: totals.storeEntries,
-        total_out: totals.storeExits,
-        net_flow: totals.storeEntries - totals.storeExits,
         // New comprehensive metrics
         store_entries: totals.storeEntries,
         store_exits: totals.storeExits,

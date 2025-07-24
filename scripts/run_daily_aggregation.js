@@ -184,13 +184,6 @@ async function runDailyAggregation() {
       const dailyRecord = {
         store_id: store.id,
         date: startDate.toISOString().split('T')[0],
-        // Legacy fields for backward compatibility
-        total_entries: dailyStats.store_entries,
-        total_exits: dailyStats.store_exits,
-        peak_occupancy: 0, // Not calculated
-        peak_hour: dailyStats.peak_entry_hour,
-        avg_dwell_time: 0, // Cannot calculate from sensor data
-        business_hours_traffic: dailyStats.business_hours_entries,
         // New comprehensive metrics
         store_entries: dailyStats.store_entries,
         store_exits: dailyStats.store_exits,
