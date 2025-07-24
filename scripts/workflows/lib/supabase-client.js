@@ -28,7 +28,7 @@ class SupabaseClient {
           )
         )
       `)
-      .in('status', ['online', 'warning'])
+      .eq('is_active', true)
       .order('sensor_name');
 
     if (error) throw error;
@@ -74,14 +74,50 @@ class SupabaseClient {
   }
 
   /**
-   * Insert sensor data
+   * Insert sensor data with duplicate checking
    */
   async insertSensorData(data) {
-    const { error } = await this.client
+    // Check if record already exists
+    const { data: existing, error: checkError } = await this.client
       .from('people_counting_raw')
-      .insert(data);
+      .select('id')
+      .eq('sensor_id', data.sensor_id)
+      .eq('timestamp', data.timestamp)
+      .single();
 
-    if (error) throw error;
+    if (checkError && checkError.code !== 'PGRST116') { // PGRST116 = no rows returned
+      throw checkError;
+    }
+
+    if (existing) {
+      // Update existing record
+      const { error } = await this.client
+        .from('people_counting_raw')
+        .update({
+          line1_in: data.line1_in,
+          line1_out: data.line1_out,
+          line2_in: data.line2_in,
+          line2_out: data.line2_out,
+          line3_in: data.line3_in,
+          line3_out: data.line3_out,
+          line4_in: data.line4_in,
+          line4_out: data.line4_out
+        })
+        .eq('id', existing.id);
+
+      if (error) throw error;
+      return { action: 'updated', id: existing.id };
+    } else {
+      // Insert new record
+      const { data: inserted, error } = await this.client
+        .from('people_counting_raw')
+        .insert(data)
+        .select('id')
+        .single();
+
+      if (error) throw error;
+      return { action: 'inserted', id: inserted.id };
+    }
   }
 
   /**
@@ -99,20 +135,44 @@ class SupabaseClient {
    * Create alert
    */
   async createAlert(alert) {
-    const { error } = await this.client
-      .from('alerts')
-      .insert({
-        organization_id: alert.organizationId,
-        store_id: alert.storeId,
-        sensor_id: alert.sensorId,
-        alert_type: alert.type,
-        severity: alert.severity,
-        title: alert.title,
-        description: alert.description,
-        metadata: alert.metadata
-      });
+    try {
+      // Try with sensor_id first
+      const { error } = await this.client
+        .from('alerts')
+        .insert({
+          organization_id: alert.organizationId,
+          store_id: alert.storeId,
+          sensor_id: alert.sensorId,
+          alert_type: alert.type,
+          severity: alert.severity,
+          title: alert.title,
+          description: alert.description,
+          metadata: alert.metadata
+        });
 
-    if (error) throw error;
+      if (error) {
+        if (error.message.includes('sensor_id')) {
+          // Retry without sensor_id
+          const { error: retryError } = await this.client
+            .from('alerts')
+            .insert({
+              organization_id: alert.organizationId,
+              store_id: alert.storeId,
+              alert_type: alert.type,
+              severity: alert.severity,
+              title: alert.title,
+              description: alert.description,
+              metadata: { ...alert.metadata, sensor_id: alert.sensorId }
+            });
+          
+          if (retryError) throw retryError;
+        } else {
+          throw error;
+        }
+      }
+    } catch (e) {
+      throw e;
+    }
   }
 
   /**
