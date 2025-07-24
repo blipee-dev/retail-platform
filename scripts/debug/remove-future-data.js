@@ -21,15 +21,23 @@ async function removeFutureData() {
   console.log('🔍 Checking for future data...\n');
 
   try {
-    const nowUTC = new Date().toISOString();
-    console.log(`📅 Current UTC time: ${nowUTC}`);
-    console.log(`   (Any data after this time will be removed)\n`);
+    const now = new Date();
+    const nowUTC = now.toISOString();
     
-    // First, count future records
+    // Calculate the start of next hour
+    const nextHour = new Date(now);
+    nextHour.setHours(nextHour.getHours() + 1, 0, 0, 0);
+    const nextHourUTC = nextHour.toISOString();
+    
+    console.log(`📅 Current UTC time: ${nowUTC}`);
+    console.log(`⏰ Next hour starts: ${nextHourUTC}`);
+    console.log(`   (Data from ${nextHourUTC} onwards will be removed)\n`);
+    
+    // First, count future records (from next hour onwards)
     const { count: futureCount, error: countError } = await supabase
       .from('people_counting_raw')
       .select('*', { count: 'exact', head: true })
-      .gt('timestamp', nowUTC);
+      .gte('timestamp', nextHourUTC);
       
     if (countError) throw countError;
     
@@ -44,7 +52,7 @@ async function removeFutureData() {
     const { data: sampleData, error: sampleError } = await supabase
       .from('people_counting_raw')
       .select('id, sensor_id, timestamp, total_in, total_out')
-      .gt('timestamp', nowUTC)
+      .gte('timestamp', nextHourUTC)
       .order('timestamp', { ascending: true })
       .limit(10);
       
@@ -68,7 +76,7 @@ async function removeFutureData() {
       const { error: deleteError } = await supabase
         .from('people_counting_raw')
         .delete()
-        .gt('timestamp', nowUTC);
+        .gte('timestamp', nextHourUTC);
         
       if (deleteError) throw deleteError;
       
@@ -78,7 +86,7 @@ async function removeFutureData() {
       const { count: remainingCount } = await supabase
         .from('people_counting_raw')
         .select('*', { count: 'exact', head: true })
-        .gt('timestamp', nowUTC);
+        .gte('timestamp', nextHourUTC);
         
       console.log(`   Remaining future records: ${remainingCount || 0}`);
       
