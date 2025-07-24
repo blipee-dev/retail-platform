@@ -74,14 +74,50 @@ class SupabaseClient {
   }
 
   /**
-   * Insert sensor data
+   * Insert sensor data with duplicate checking
    */
   async insertSensorData(data) {
-    const { error } = await this.client
+    // Check if record already exists
+    const { data: existing, error: checkError } = await this.client
       .from('people_counting_raw')
-      .insert(data);
+      .select('id')
+      .eq('sensor_id', data.sensor_id)
+      .eq('timestamp', data.timestamp)
+      .single();
 
-    if (error) throw error;
+    if (checkError && checkError.code !== 'PGRST116') { // PGRST116 = no rows returned
+      throw checkError;
+    }
+
+    if (existing) {
+      // Update existing record
+      const { error } = await this.client
+        .from('people_counting_raw')
+        .update({
+          line1_in: data.line1_in,
+          line1_out: data.line1_out,
+          line2_in: data.line2_in,
+          line2_out: data.line2_out,
+          line3_in: data.line3_in,
+          line3_out: data.line3_out,
+          line4_in: data.line4_in,
+          line4_out: data.line4_out
+        })
+        .eq('id', existing.id);
+
+      if (error) throw error;
+      return { action: 'updated', id: existing.id };
+    } else {
+      // Insert new record
+      const { data: inserted, error } = await this.client
+        .from('people_counting_raw')
+        .insert(data)
+        .select('id')
+        .single();
+
+      if (error) throw error;
+      return { action: 'inserted', id: inserted.id };
+    }
   }
 
   /**

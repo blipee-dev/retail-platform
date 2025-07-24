@@ -74,6 +74,15 @@ async function main() {
     console.log(`  ✅ Successful: ${results.successful}`);
     console.log(`  ❌ Failed: ${results.failed}`);
     console.log(`  📊 Success Rate: ${((results.successful / results.total) * 100).toFixed(1)}%`);
+    
+    // Calculate totals
+    const totalInserted = results.sensors.reduce((sum, s) => sum + (s.recordsInserted || 0), 0);
+    const totalUpdated = results.sensors.reduce((sum, s) => sum + (s.recordsUpdated || 0), 0);
+    const totalRecords = results.sensors.reduce((sum, s) => sum + (s.records || 0), 0);
+    
+    if (totalRecords > 0) {
+      console.log(`  📦 Records: ${totalInserted} new, ${totalUpdated} updated (${totalRecords} total)`);
+    }
 
     // Log errors if any
     if (results.errors.length > 0) {
@@ -125,16 +134,28 @@ async function processSensor(sensor, type, supabase) {
     if (result.success) {
       // Save to database
       let recordsInserted = 0;
+      let recordsUpdated = 0;
       
       if (type === 'milesight' || type === 'milesight_people_counter') {
         // Insert each record
-        if (Array.isArray(result.data)) {
+        if (Array.isArray(result.data) && result.data.length > 0) {
+          console.log(`    📦 Processing ${result.data.length} records...`);
+          
           for (const record of result.data) {
             try {
-              await supabase.insertSensorData(record);
-              recordsInserted++;
+              // Remove internal tracking fields before insert
+              const recordToInsert = { ...record };
+              delete recordToInsert._original_timestamp;
+              delete recordToInsert._utc_timestamp;
+              
+              const insertResult = await supabase.insertSensorData(recordToInsert);
+              if (insertResult.action === 'inserted') {
+                recordsInserted++;
+              } else {
+                recordsUpdated++;
+              }
             } catch (insertError) {
-              console.log(`    ⚠️  Failed to insert record: ${insertError.message}`);
+              console.log(`    ⚠️  Failed to process record: ${insertError.message}`);
             }
           }
         }
@@ -156,17 +177,24 @@ async function processSensor(sensor, type, supabase) {
         sensor.id,  // Use UUID for health log
         'online',
         result.responseTime,
-        recordsInserted
+        recordsInserted + recordsUpdated
       );
 
-      console.log(`    ✅ Success (${result.responseTime}ms) - ${recordsInserted} records`);
+      const totalProcessed = recordsInserted + recordsUpdated;
+      if (totalProcessed > 0) {
+        console.log(`    ✅ Success (${result.responseTime}ms) - ${recordsInserted} new, ${recordsUpdated} updated`);
+      } else {
+        console.log(`    ✅ Success (${result.responseTime}ms) - No new data`);
+      }
       
       return {
         success: true,
         sensor: sensor.sensor_name,
         sensorId: sensor.sensor_id,
         responseTime: result.responseTime,
-        records: recordsInserted
+        records: totalProcessed,
+        recordsInserted: recordsInserted,
+        recordsUpdated: recordsUpdated
       };
       
     } else {
