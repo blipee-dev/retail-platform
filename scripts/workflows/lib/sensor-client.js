@@ -19,7 +19,7 @@ class SensorClient {
    * Fetch data from sensor with retry logic
    */
   async fetchData(sensor, endpoint) {
-    const url = `http://${sensor.ip_address}${endpoint}`;
+    const url = `http://${sensor.sensor_ip}${endpoint}`;
     
     return this.retryHandler.execute(async () => {
       const response = await fetch(url, {

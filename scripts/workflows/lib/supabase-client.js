@@ -29,7 +29,7 @@ class SupabaseClient {
         )
       `)
       .in('status', ['online', 'warning'])
-      .order('name');
+      .order('sensor_name');
 
     if (error) throw error;
     return data || [];

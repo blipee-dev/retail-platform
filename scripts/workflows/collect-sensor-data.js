@@ -90,9 +90,17 @@ async function main() {
 
   // Output results for GitHub Actions
   console.log('\n📤 GitHub Actions Output:');
-  console.log(`::set-output name=successful::${results.successful}`);
-  console.log(`::set-output name=failed::${results.failed}`);
-  console.log(`::set-output name=total::${results.total}`);
+  if (process.env.GITHUB_OUTPUT) {
+    const fs = require('fs');
+    fs.appendFileSync(process.env.GITHUB_OUTPUT, `successful=${results.successful}\n`);
+    fs.appendFileSync(process.env.GITHUB_OUTPUT, `failed=${results.failed}\n`);
+    fs.appendFileSync(process.env.GITHUB_OUTPUT, `total=${results.total}\n`);
+  } else {
+    // Fallback for local testing
+    console.log(`successful=${results.successful}`);
+    console.log(`failed=${results.failed}`);
+    console.log(`total=${results.total}`);
+  }
 
   // Exit with error if any failures
   if (results.failed > 0) {
@@ -105,7 +113,7 @@ async function main() {
  */
 async function processSensor(sensor, type, supabase) {
   const startTime = Date.now();
-  console.log(`  Processing ${sensor.name} (${sensor.sensor_id})...`);
+  console.log(`  Processing ${sensor.sensor_name} (${sensor.sensor_id})...`);
 
   try {
     // Create sensor client
@@ -142,7 +150,7 @@ async function processSensor(sensor, type, supabase) {
       
       return {
         success: true,
-        sensor: sensor.name,
+        sensor: sensor.sensor_name,
         sensorId: sensor.sensor_id,
         responseTime: result.responseTime,
         records: Array.isArray(result.data) ? result.data.length : 1
@@ -168,7 +176,7 @@ async function processSensor(sensor, type, supabase) {
           type: 'sensor',
           severity: 'high',
           title: 'Sensor Offline',
-          description: `Sensor ${sensor.name} has gone offline after ${newFailureCount} consecutive failures`,
+          description: `Sensor ${sensor.sensor_name} has gone offline after ${newFailureCount} consecutive failures`,
           metadata: {
             error: result.error,
             workflowRun: process.env.GITHUB_RUN_ID,
@@ -181,7 +189,7 @@ async function processSensor(sensor, type, supabase) {
       
       return {
         success: false,
-        sensor: sensor.name,
+        sensor: sensor.sensor_name,
         sensorId: sensor.sensor_id,
         error: result.error,
         consecutiveFailures: newFailureCount
