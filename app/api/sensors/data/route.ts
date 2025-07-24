@@ -239,11 +239,6 @@ export async function GET(request: NextRequest) {
         break
 
       case 'daily_summary':
-        query = supabaseAdmin
-          .from('daily_summary')
-          .select('*')
-          .eq('organization_id', auth.organizationId)
-        break
 
       default:
         return NextResponse.json(

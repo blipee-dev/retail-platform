@@ -47,10 +47,32 @@ export async function GET(request: NextRequest) {
     } else if (profileData.role === 'regional_manager') {
       // Fetch assigned regions and their stores
       const { data: userRegions } = await supabase
+        .from('user_regions')
+        .select(`
+          region:regions(
+            *,
+            stores(*)
+          )
+        `)
+        .eq('user_id', authContext.userId)
+
+      regionsData = userRegions?.map(ur => ur.region) || []
+      storesData = regionsData.flatMap(region => region.stores || [])
 
     } else {
       // Fetch only assigned stores
       const { data: userStores } = await supabase
+        .from('user_stores')
+        .select(`
+          store:stores(*)
+        `)
+        .eq('user_id', authContext.userId)
+
+      storesData = userStores?.map(us => us.store) || []
+    }
+
+    console.log('✅ Server-side profile fetch successful')
+
     return NextResponse.json({
       profile: profileData,
       organization: orgData,

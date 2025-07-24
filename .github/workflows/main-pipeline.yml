@@ -1,0 +1,198 @@
+name: Main Data Pipeline
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+    inputs:
+      skip_collection:
+        description: 'Skip data collection phase'
+        type: boolean
+        default: false
+      force_all_stages:
+        description: 'Force run all pipeline stages'
+        type: boolean
+        default: false
+
+env:
+  TZ: 'UTC'
+
+jobs:
+  # Initialize pipeline
+  initialize:
+    name: Initialize Pipeline
+    runs-on: ubuntu-latest
+    outputs:
+      pipeline_id: ${{ steps.init.outputs.pipeline_id }}
+      should_collect: ${{ steps.check.outputs.should_collect }}
+      timestamp: ${{ steps.init.outputs.timestamp }}
+    
+    steps:
+      - name: Generate pipeline ID
+        id: init
+        run: |
+          TIMESTAMP=$(date -u +%Y%m%d-%H%M%S)
+          PIPELINE_ID="pipeline-${TIMESTAMP}-${{ github.run_number }}"
+          echo "pipeline_id=${PIPELINE_ID}" >> $GITHUB_OUTPUT
+          echo "timestamp=${TIMESTAMP}" >> $GITHUB_OUTPUT
+          echo "📋 Pipeline ID: ${PIPELINE_ID}"
+
+      - name: Check collection conditions
+        id: check
+        run: |
+          SHOULD_COLLECT=true
+          
+          # Check if skip collection is requested
+          if [[ "${{ inputs.skip_collection }}" == "true" ]]; then
+            SHOULD_COLLECT=false
+            echo "⏭️ Skipping collection (requested)"
+          fi
+          
+          # Could add more checks here (maintenance window, etc.)
+          
+          echo "should_collect=${SHOULD_COLLECT}" >> $GITHUB_OUTPUT
+
+  # Parallel data collection stage
+  collect-sensor-data:
+    name: Collect Sensor Data
+    needs: initialize
+    if: needs.initialize.outputs.should_collect == 'true'
+    uses: ./.github/workflows/collect-sensor-data-v2.yml
+    with:
+      pipeline_id: ${{ needs.initialize.outputs.pipeline_id }}
+    secrets: inherit
+
+  collect-regional-data:
+    name: Collect Regional Data
+    needs: initialize
+    if: needs.initialize.outputs.should_collect == 'true'
+    uses: ./.github/workflows/collect-regional-data-v2.yml
+    with:
+      pipeline_id: ${{ needs.initialize.outputs.pipeline_id }}
+    secrets: inherit
+
+  # Analytics aggregation (waits for both collections)
+  analytics-aggregation:
+    name: Run Analytics Aggregation
+    needs: [initialize, collect-sensor-data, collect-regional-data]
+    if: |
+      always() && 
+      needs.initialize.result == 'success' &&
+      (needs.collect-sensor-data.result == 'success' || needs.collect-regional-data.result == 'success' || inputs.force_all_stages)
+    uses: ./.github/workflows/run-analytics-aggregation-v2.yml
+    with:
+      pipeline_id: ${{ needs.initialize.outputs.pipeline_id }}
+      sensor_data_status: ${{ needs.collect-sensor-data.result }}
+      regional_data_status: ${{ needs.collect-regional-data.result }}
+    secrets: inherit
+
+  # Virtual regions calculation (sequential after aggregation)
+  calculate-virtual-regions:
+    name: Calculate Virtual Regions
+    needs: [initialize, analytics-aggregation]
+    if: |
+      needs.analytics-aggregation.result == 'success' || 
+      inputs.force_all_stages
+    uses: ./.github/workflows/calculate-virtual-regions-v2.yml
+    with:
+      pipeline_id: ${{ needs.initialize.outputs.pipeline_id }}
+    secrets: inherit
+
+  # Pipeline validation and cleanup
+  finalize:
+    name: Finalize Pipeline
+    needs: [initialize, collect-sensor-data, collect-regional-data, analytics-aggregation, calculate-virtual-regions]
+    if: always()
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Calculate pipeline status
+        id: status
+        run: |
+          # Determine overall pipeline status
+          STATUS="success"
+          
+          if [[ "${{ needs.collect-sensor-data.result }}" == "failure" ]] || \
+             [[ "${{ needs.collect-regional-data.result }}" == "failure" ]] || \
+             [[ "${{ needs.analytics-aggregation.result }}" == "failure" ]] || \
+             [[ "${{ needs.calculate-virtual-regions.result }}" == "failure" ]]; then
+            STATUS="failure"
+          fi
+          
+          echo "status=${STATUS}" >> $GITHUB_OUTPUT
+          echo "📊 Pipeline Status: ${STATUS}"
+
+      - name: Generate pipeline summary
+        run: |
+          cat << EOF > $GITHUB_STEP_SUMMARY
+          # Pipeline Summary
+          
+          **Pipeline ID**: ${{ needs.initialize.outputs.pipeline_id }}
+          **Status**: ${{ steps.status.outputs.status }}
+          **Duration**: ${{ github.run_number }} minutes
+          
+          ## Stage Results
+          
+          | Stage | Status | Details |
+          |-------|--------|---------|
+          | Sensor Collection | ${{ needs.collect-sensor-data.result }} | ${{ needs.collect-sensor-data.outputs.successful }}/${{ needs.collect-sensor-data.outputs.total }} successful |
+          | Regional Collection | ${{ needs.collect-regional-data.result }} | - |
+          | Analytics Aggregation | ${{ needs.analytics-aggregation.result }} | - |
+          | Virtual Regions | ${{ needs.calculate-virtual-regions.result }} | - |
+          
+          ## Links
+          
+          - [View Full Logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          - [Pipeline Dashboard](https://retail-platform.vercel.app/dashboard/pipeline)
+          EOF
+
+      - name: Send pipeline notification
+        if: steps.status.outputs.status == 'failure'
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          curl -X POST $SLACK_WEBHOOK \
+            -H 'Content-Type: application/json' \
+            -d '{
+              "text": "⚠️ Pipeline Failed",
+              "blocks": [{
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Data Pipeline Failed*\n• Pipeline: `${{ needs.initialize.outputs.pipeline_id }}`\n• <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Details>"
+                }
+              }]
+            }'
+
+      - name: Record metrics
+        if: always()
+        env:
+          METRICS_ENDPOINT: ${{ secrets.METRICS_ENDPOINT }}
+          METRICS_API_KEY: ${{ secrets.METRICS_API_KEY }}
+        run: |
+          if [[ -n "$METRICS_ENDPOINT" ]]; then
+            curl -X POST $METRICS_ENDPOINT \
+              -H "Authorization: Bearer $METRICS_API_KEY" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "pipeline_id": "${{ needs.initialize.outputs.pipeline_id }}",
+                "status": "${{ steps.status.outputs.status }}",
+                "stages": {
+                  "sensor_collection": "${{ needs.collect-sensor-data.result }}",
+                  "regional_collection": "${{ needs.collect-regional-data.result }}",
+                  "analytics_aggregation": "${{ needs.analytics-aggregation.result }}",
+                  "virtual_regions": "${{ needs.calculate-virtual-regions.result }}"
+                },
+                "metrics": {
+                  "sensors_successful": ${{ needs.collect-sensor-data.outputs.successful || 0 }},
+                  "sensors_failed": ${{ needs.collect-sensor-data.outputs.failed || 0 }},
+                  "sensors_total": ${{ needs.collect-sensor-data.outputs.total || 0 }}
+                },
+                "timestamp": "${{ needs.initialize.outputs.timestamp }}",
+                "run_id": "${{ github.run_id }}",
+                "run_number": "${{ github.run_number }}"
+              }'
+          fi

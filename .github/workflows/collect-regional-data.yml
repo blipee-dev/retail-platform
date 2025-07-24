@@ -42,7 +42,7 @@ jobs:
             // Omnia sensors with regional capabilities
             const sensors = [
               {
-                id: 'f63ef2e9-b71b-43f6-a5ad-c41a7e0e2f48',
+                id: 'f63ef2e9-344e-4373-aedf-04dd05cf8f8b',
                 name: 'OML01-PC',
                 ip: '93.108.96.96',
                 port: 21001,
@@ -55,7 +55,7 @@ jobs:
                 }
               },
               {
-                id: '7976051c-6d28-4975-8ebd-f8aecc8a8c39',
+                id: '7976051c-980b-45e1-b099-45d032f3c7aa',
                 name: 'OML02-PC',
                 ip: '188.37.175.41',
                 port: 2201,
@@ -68,7 +68,7 @@ jobs:
                 }
               },
               {
-                id: '29e75799-1dc4-4527-84be-e10b3e7a1a91',
+                id: '29e75799-328f-4143-9a2f-2bcc1269f77e',
                 name: 'OML03-PC',
                 ip: '188.37.124.33',
                 port: 21002,
@@ -94,6 +94,24 @@ jobs:
               console.log(\`\\n📡 Processing \${sensor.name} regional data...\`);
               
               try {
+                // Get sensor metadata for store_id and organization_id
+                const sensorResponse = await fetch(\`\${supabaseUrl}/rest/v1/sensor_metadata?id=eq.\${sensor.id}\`, {
+                  headers: {
+                    'apikey': supabaseKey,
+                    'Authorization': \`Bearer \${supabaseKey}\`
+                  }
+                });
+                
+                const sensorData = await sensorResponse.json();
+                if (!sensorResponse.ok || !sensorData.length) {
+                  console.log(\`  ⚠️  Sensor \${sensor.id} not found in database\`);
+                  continue;
+                }
+                
+                const sensorInfo = sensorData[0];
+                sensor.store_id = sensorInfo.store_id;
+                sensor.organization_id = sensorInfo.organization_id;
+                console.log(\`  ✅ Found sensor in store \${sensorInfo.store_name || sensor.store_id}\`);
                 // Try to get regional data using linetype=0 (region type)
                 const data = await new Promise((resolve, reject) => {
                   const path = \`/dataloader.cgi?dw=regionalcountlogcsv&report_type=0&statistics_type=3&region1=1&region2=1&region3=1&region4=1&time_start=\${formatDate(oneHourAgo)}&time_end=\${formatDate(now)}\`;
@@ -175,29 +193,35 @@ jobs:
                   
                   const timestamp = values[0]; // StartTime column
                   
-                  // Extract data for each region
+                  // Extract counts for all regions
+                  const regionCounts = {};
+                  let hasData = false;
+                  
                   for (const [regionKey, columnIndex] of Object.entries(regionColumns)) {
                     const regionNum = parseInt(regionKey.replace('region', ''));
                     const count = parseInt(values[columnIndex]) || 0;
-                    
-                    if (count > 0) {
-                      dataToInsert.push({
-                        sensor_id: sensor.id,
-                        region_id: \`\${sensor.id}_region_\${regionNum}\`,
-                        timestamp: timestamp,
-                        occupancy_count: count,
-                        entries: Math.max(0, count), // Simplified for now
-                        exits: 0
-                      });
-                    }
+                    regionCounts[\`region\${regionNum}_count\`] = count;
+                    if (count > 0) hasData = true;
+                  }
+                  
+                  // Only insert if we have any data
+                  if (hasData) {
+                    dataToInsert.push({
+                      sensor_id: sensor.id,
+                      organization_id: sensor.organization_id || null,
+                      store_id: sensor.store_id || null,
+                      timestamp: new Date(timestamp.replace(/\//g, '-')).toISOString(),
+                      end_time: new Date(values[1].replace(/\//g, '-')).toISOString(), // EndTime column
+                      ...regionCounts
+                    });
                   }
                 }
                 
                 if (dataToInsert.length > 0) {
                   console.log(\`  💾 Inserting \${dataToInsert.length} regional data records...\`);
                   
-                  // Insert into regional_analytics table
-                  const insertResponse = await fetch(\`\${supabaseUrl}/rest/v1/regional_analytics\`, {
+                  // Insert into regional_counting_raw table
+                  const insertResponse = await fetch(\`\${supabaseUrl}/rest/v1/regional_counting_raw\`, {
                     method: 'POST',
                     headers: {
                       'apikey': supabaseKey,

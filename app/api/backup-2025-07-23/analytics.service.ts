@@ -63,7 +63,7 @@ export class AnalyticsService {
     try {
       // Get current occupancy from line crossing data
       const { data: recentData } = await this.supabase
-        .from('people_counting_raw')
+        .from('people_counting_data')
         .select('timestamp, total_in, total_out')
         .eq('sensor_id', storeId)
         .gte('timestamp', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
@@ -129,7 +129,7 @@ export class AnalyticsService {
   async getCaptureRate(storeId: string, timeRange: TimeRange): Promise<CaptureRateData> {
     try {
       const { data } = await this.supabase
-        .from('people_counting_raw')
+        .from('people_counting_data')
         .select('timestamp, capture_rate, passing_traffic, total_in')
         .eq('sensor_id', storeId)
         .gte('timestamp', timeRange.start.toISOString())
@@ -172,27 +172,27 @@ export class AnalyticsService {
   async getJourneyAnalytics(storeId: string): Promise<JourneyData> {
     try {
       const { data: journeys } = await this.supabase
-//         .from('customer_journeys')
-//         .select('*')
-//         .eq('store_id', storeId)
-//         .gte('start_time', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
-// 
-//       if (!journeys || journeys.length === 0) {
-//         return {
-//           totalJourneys: 0,
-//           avgDurationMinutes: 0,
-//           conversionRate: 0,
-//           commonPaths: [],
-//           abandonmentPoints: []
-//         }
-//       }
-// 
-//       const totalJourneys = journeys.length
-//       const conversions = journeys.filter(j => j.conversion).length
-//       const conversionRate = conversions / totalJourneys
-// 
-//       const avgDurationSeconds = journeys.reduce((sum, j) => sum + (j.total_duration_seconds || 0), 0) / totalJourneys
-//       const avgDurationMinutes = Math.round(avgDurationSeconds / 60)
+        .from('customer_journeys')
+        .select('*')
+        .eq('store_id', storeId)
+        .gte('start_time', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
+
+      if (!journeys || journeys.length === 0) {
+        return {
+          totalJourneys: 0,
+          avgDurationMinutes: 0,
+          conversionRate: 0,
+          commonPaths: [],
+          abandonmentPoints: []
+        }
+      }
+
+      const totalJourneys = journeys.length
+      const conversions = journeys.filter(j => j.conversion).length
+      const conversionRate = conversions / totalJourneys
+
+      const avgDurationSeconds = journeys.reduce((sum, j) => sum + (j.total_duration_seconds || 0), 0) / totalJourneys
+      const avgDurationMinutes = Math.round(avgDurationSeconds / 60)
 
       // Extract common paths
       const pathMap = new Map<string, { count: number; conversions: number }>()

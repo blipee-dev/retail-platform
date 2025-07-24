@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
           try {
             // Get latest people counting data
             const { data: latestData } = await supabase
-              .from('people_counting_data')
+              .from('people_counting_raw')
               .select('*')
               .eq('sensor_id', storeId)
               .order('timestamp', { ascending: false })
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
 
               // Check for alerts
               const { data: alerts } = await supabase
-                .from('analytics_alerts')
+                .from('alerts')
                 .select('*')
                 .eq('sensor_id', storeId)
                 .eq('resolved', false)

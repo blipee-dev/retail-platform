@@ -4,7 +4,7 @@
 
 This roadmap outlines the development phases for the Retail Platform, focusing on sensor integration, analytics, and visualization capabilities.
 
-## Current State (2025-07-22)
+## Current State (2025-07-23)
 
 ### ✅ Completed Components
 - **Connector System**: Modular sensor integration framework
@@ -25,6 +25,9 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 - **Global Timezone Support**: Automatic detection and conversion for worldwide sensors (2025-07-22)
 - **Project Reorganization**: Complete housekeeping with 50% cleaner root directory (2025-07-22)
 - **GitHub Actions Data Collection**: Fixed timezone handling in automated workflows (2025-07-22)
+- **Database Schema Optimization**: Reduced from 34 to 11 tables with 68% complexity reduction (2025-07-23)
+- **Sensor Health Monitoring**: Automatic offline detection and status tracking (2025-07-23)
+- **Audit Trail System**: Configuration change tracking for compliance (2025-07-23)
 
 ### 🚧 In Progress
 - **Real-time Data Processing**: Need WebSocket/polling implementation
@@ -91,7 +94,17 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 - [x] Timezone-aware data collection (2025-07-22)
 - [ ] Real-time data pipeline (WebSocket - in progress)
 
-#### Week 7-8: Dashboard & Visualization (CURRENT PHASE)
+#### Week 7: Database Optimization & Infrastructure ✅ COMPLETED (2025-07-23)
+- [x] Analyzed 34 existing tables for redundancy and usage
+- [x] Reduced schema to 11 essential tables (68% reduction)
+- [x] Fixed NULL sensor_id issues blocking relationships
+- [x] Implemented sensor health monitoring system
+- [x] Added audit trail for configuration changes
+- [x] Created performance indexes for common queries
+- [x] Fixed aggregation mismatches in analytics
+- [x] Documented new schema in all relevant docs
+
+#### Week 8: Dashboard & Visualization (CURRENT PHASE)
 - [ ] Main dashboard layout
 - [ ] Real-time metrics display
 - [ ] Basic charts (footfall, occupancy)
@@ -100,6 +113,8 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 - [ ] Export functionality
 - [ ] Convert forgot-password page to Next.js
 - [ ] Implement password reset flow with email
+- [x] GitHub Actions workflow security fixes (COMPLETED)
+- [x] Implement sensor health monitoring in workflows (COMPLETED)
 
 **Deliverables**: MVP with basic people counting analytics
 
@@ -115,6 +130,10 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 - [ ] Environment configuration management
 - [ ] Basic monitoring setup (health checks)
 - [ ] Backup and restore procedures
+- [x] GitHub Actions workflow optimization (single-cron architecture) - COMPLETED
+- [x] Implement parallel sensor collection - COMPLETED
+- [ ] Add workflow monitoring and alerting (partially complete)
+- [x] Create reusable workflow templates - COMPLETED
 
 #### Week 10-11: POS Connectivity
 - [ ] Shopify integration
@@ -364,7 +383,7 @@ total_estimate: ~$500-800/month
 **Version**: 1.3  
 **Owner**: blipee Product Team
 
-## Next Activities (Updated 2025-07-22)
+## Next Activities (Updated 2025-07-23)
 
 Based on completed work and roadmap, the next immediate priorities are:
 
@@ -398,7 +417,16 @@ Based on completed work and roadmap, the next immediate priorities are:
 - ✅ Documented new structure in README and CLAUDE.md
 - ✅ Created comprehensive documentation structure
 
-### 5. 🚧 Connect Frontend to Backend (Week 7-8) - IN PROGRESS
+### 5. ✅ Database Optimization (Week 7) - COMPLETED (2025-07-23)
+- ✅ Analyzed all 34 tables for usage and redundancy
+- ✅ Reduced to 11 essential tables (68% reduction)
+- ✅ Fixed critical data quality issues (NULL sensor_ids)
+- ✅ Implemented sensor health monitoring
+- ✅ Added audit trail system for changes
+- ✅ Created optimized indexes for performance
+- ✅ Updated all documentation to reflect changes
+
+### 6. 🚧 Connect Frontend to Backend (Week 8) - IN PROGRESS
 - ✅ Converted HTML mockups to Next.js components
 - ✅ Created protected routes based on roles
 - ✅ Added timezone-aware date displays
@@ -406,10 +434,49 @@ Based on completed work and roadmap, the next immediate priorities are:
 - 🚧 Implement real-time data updates
 - 🚧 Build interactive heat map visualization
 
-### 6. Next Phase: Week 7-8 Dashboard & Visualization
+### 7. Next Phase: Week 8 Dashboard & Visualization
 The immediate focus is on:
 - Connecting live sensor data to dashboards
 - Real-time metrics display with timezone support
 - Heat map visualization
 - Forgot password functionality
 - Basic charts and export features
+- Migrating to the optimized database schema
+
+### 8. ✅ GitHub Actions Workflow Optimization (Week 8-9) - COMPLETED (2025-07-23)
+**Goal**: Modernize data collection workflows with enterprise-grade reliability
+
+#### Immediate Actions (Week 8) - COMPLETED:
+- [x] Fix table references in workflows (people_counting_data → people_counting_raw)
+- [x] Remove hardcoded credentials from all workflow files
+- [x] Implement GitHub Secrets for all authentication
+- [x] Add sensor health monitoring updates to collection workflows
+- [x] Create alerts on collection failures using new alerts table
+
+#### Architecture Improvements (Week 9) - COMPLETED:
+- [x] Implement single-cron pipeline controller pattern
+- [x] Convert workflows to reusable workflow templates
+- [x] Add event-driven orchestration (finish-to-start dependencies)
+- [x] Implement parallel sensor collection (5x performance improvement)
+- [x] Add retry logic with exponential backoff
+- [x] Create modular script architecture (scripts/workflows/)
+
+#### Monitoring & Observability (Week 9):
+- [ ] Add workflow metrics collection
+- [ ] Implement failure alerting via Slack/Email
+- [ ] Create Grafana dashboards for pipeline health
+- [ ] Add structured logging with correlation IDs
+- [ ] Implement workflow state management
+
+#### Testing & Reliability (Week 9):
+- [ ] Create workflow testing framework
+- [ ] Add integration tests for data collection
+- [ ] Implement blue-green deployment for workflows
+- [ ] Add rollback capabilities
+- [ ] Create disaster recovery procedures
+
+**Deliverables**: 
+- Secure, reliable data collection pipeline
+- 50-70% faster collection through parallelization
+- 99%+ reliability with retry mechanisms
+- Complete observability into pipeline health
