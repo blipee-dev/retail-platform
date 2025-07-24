@@ -132,23 +132,56 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
       const rawData = await rawResponse.json();
       if (rawData.length === 0) continue;
       
-      // Calculate aggregates
+      // Calculate aggregates with proper separation
       let totals = {
-        entries: 0,
-        exits: 0,
+        storeEntries: 0,      // Lines 1-3 only
+        storeExits: 0,        // Lines 1-3 only
+        passerbyTotal: 0,     // Line 4 total
+        passerbyIn: 0,        // Line 4 in
+        passerbyOut: 0,       // Line 4 out
         lines: { in: [0, 0, 0, 0], out: [0, 0, 0, 0] }
       };
       
       for (const record of rawData) {
+        // Process each line
         for (let i = 1; i <= 4; i++) {
           const lineIn = record[`line${i}_in`] || 0;
           const lineOut = record[`line${i}_out`] || 0;
-          totals.entries += lineIn;
-          totals.exits += lineOut;
+          
           totals.lines.in[i-1] += lineIn;
           totals.lines.out[i-1] += lineOut;
+          
+          // Lines 1-3 are store traffic
+          if (i <= 3) {
+            totals.storeEntries += lineIn;
+            totals.storeExits += lineOut;
+          } else {
+            // Line 4 is passerby traffic
+            totals.passerbyIn += lineIn;
+            totals.passerbyOut += lineOut;
+            totals.passerbyTotal += lineIn + lineOut;
+          }
         }
       }
+      
+      // Calculate distribution percentages
+      const entryLine1Pct = totals.storeEntries > 0 ? 
+        Math.round((totals.lines.in[0] / totals.storeEntries) * 100) : 0;
+      const entryLine2Pct = totals.storeEntries > 0 ? 
+        Math.round((totals.lines.in[1] / totals.storeEntries) * 100) : 0;
+      const entryLine3Pct = totals.storeEntries > 0 ? 
+        Math.round((totals.lines.in[2] / totals.storeEntries) * 100) : 0;
+      
+      const exitLine1Pct = totals.storeExits > 0 ? 
+        Math.round((totals.lines.out[0] / totals.storeExits) * 100) : 0;
+      const exitLine2Pct = totals.storeExits > 0 ? 
+        Math.round((totals.lines.out[1] / totals.storeExits) * 100) : 0;
+      const exitLine3Pct = totals.storeExits > 0 ? 
+        Math.round((totals.lines.out[2] / totals.storeExits) * 100) : 0;
+      
+      // Calculate capture rate
+      const captureRate = totals.passerbyTotal > 0 ? 
+        Math.round((totals.storeEntries / totals.passerbyTotal) * 100 * 100) / 100 : 0;
       
       // Prepare hourly record
       const hourlyRecord = {
@@ -157,11 +190,25 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
         hour_start: hourStart.toISOString(),
         date: hourStart.toISOString().split('T')[0],
         hour: hourStart.getHours(),
-        total_entries: totals.entries,
-        total_exits: totals.exits,
-        total_in: totals.entries,
-        total_out: totals.exits,
-        net_flow: totals.entries - totals.exits,
+        // Legacy fields (for backward compatibility)
+        total_entries: totals.storeEntries,
+        total_exits: totals.storeExits,
+        total_in: totals.storeEntries,
+        total_out: totals.storeExits,
+        net_flow: totals.storeEntries - totals.storeExits,
+        // New comprehensive metrics
+        store_entries: totals.storeEntries,
+        store_exits: totals.storeExits,
+        passerby_count: totals.passerbyTotal,
+        passerby_in: totals.passerbyIn,
+        passerby_out: totals.passerbyOut,
+        capture_rate: captureRate,
+        entry_line1_pct: entryLine1Pct,
+        entry_line2_pct: entryLine2Pct,
+        entry_line3_pct: entryLine3Pct,
+        exit_line1_pct: exitLine1Pct,
+        exit_line2_pct: exitLine2Pct,
+        exit_line3_pct: exitLine3Pct,
         sample_count: rawData.length,
         avg_occupancy: 0,
         peak_occupancy: 0
