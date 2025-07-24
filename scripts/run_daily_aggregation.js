@@ -2,6 +2,21 @@
 
 const fetch = require('node-fetch');
 
+// Helper function to get local hour for a given timezone
+function getLocalHour(date, timezone) {
+  try {
+    const options = {
+      timeZone: timezone,
+      hour: 'numeric',
+      hour12: false
+    };
+    return parseInt(new Intl.DateTimeFormat('en-US', options).format(date));
+  } catch (e) {
+    // Fallback to UTC if timezone is invalid
+    return date.getUTCHours();
+  }
+}
+
 async function runDailyAggregation() {
   console.log('🚀 Starting Daily Analytics Aggregation');
   console.log('=' .repeat(60));
@@ -18,15 +33,22 @@ async function runDailyAggregation() {
   
   try {
     // Get date range for aggregation
+    const now = new Date();
     const endDate = new Date();
     endDate.setUTCHours(0, 0, 0, 0); // Today at midnight
     const startDate = new Date(endDate);
     startDate.setDate(startDate.getDate() - 1); // Yesterday
     
+    // Don't aggregate future days
+    if (startDate > now) {
+      console.log('⏭️  Skipping future date aggregation');
+      return;
+    }
+    
     console.log(`\n📊 Aggregating daily data for: ${startDate.toISOString().split('T')[0]}`);
     
-    // Get all stores
-    const storesResponse = await fetch(`${supabaseUrl}/rest/v1/stores?is_active=eq.true`, {
+    // Get all stores with timezone
+    const storesResponse = await fetch(`${supabaseUrl}/rest/v1/stores?is_active=eq.true&select=*,timezone`, {
       headers
     });
     
@@ -79,8 +101,9 @@ async function runDailyAggregation() {
           acc.peak_hour = hour.hour;
         }
         
-        // Business hours (9 AM - 10 PM)
-        if (hour.hour >= 9 && hour.hour <= 22) {
+        // Business hours (9 AM - 1 AM next day)
+        // Note: hour 0 is 12 AM (midnight), which is within business hours
+        if (hour.hour >= 9 || hour.hour === 0) {
           acc.business_hours_traffic += hour.total_entries || 0;
         }
         

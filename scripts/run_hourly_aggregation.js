@@ -2,6 +2,21 @@
 
 const fetch = require('node-fetch');
 
+// Helper function to get local hour for a given timezone
+function getLocalHour(date, timezone) {
+  try {
+    const options = {
+      timeZone: timezone,
+      hour: 'numeric',
+      hour12: false
+    };
+    return parseInt(new Intl.DateTimeFormat('en-US', options).format(date));
+  } catch (e) {
+    // Fallback to UTC if timezone is invalid
+    return date.getUTCHours();
+  }
+}
+
 async function runHourlyAggregation() {
   console.log('🚀 Starting Hourly Analytics Aggregation');
   console.log('=' .repeat(60));
@@ -57,8 +72,8 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
   
   console.log(`\n📊 Manual aggregation from ${threeHoursAgo.toISOString()} to ${now.toISOString()}`);
   
-  // Get all stores with organization_id
-  const storesResponse = await fetch(`${supabaseUrl}/rest/v1/stores?select=id,name,organization_id`, {
+  // Get all stores with organization_id and timezone
+  const storesResponse = await fetch(`${supabaseUrl}/rest/v1/stores?select=id,name,organization_id,timezone`, {
     headers
   });
   
@@ -78,12 +93,29 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
     const hourEnd = new Date(hourStart.getTime() + 60 * 60 * 1000);
     
     for (const store of stores) {
+      // Check business hours for this store's timezone
+      const storeTimezone = store.timezone || 'UTC';
+      const storeLocalHour = getLocalHour(hourStart, storeTimezone);
+      
+      // Skip if outside business hours (1 AM - 9 AM)
+      if (storeLocalHour >= 1 && storeLocalHour < 9) {
+        console.log(`    ⏰ Skipping ${store.name} - outside business hours (${storeLocalHour}:00 local)`);
+        continue;
+      }
+      
+      // Skip future hours
+      if (hourStart > now) {
+        console.log(`    ⏭️  Skipping ${store.name} - future hour`);
+        continue;
+      }
+      
       // Get raw data for this hour
       const rawResponse = await fetch(
         `${supabaseUrl}/rest/v1/people_counting_raw?` +
         `store_id=eq.${store.id}&` +
         `timestamp=gte.${hourStart.toISOString()}&` +
-        `timestamp=lt.${hourEnd.toISOString()}`,
+        `timestamp=lt.${hourEnd.toISOString()}&` +
+        `timestamp=lte.${now.toISOString()}`, // Exclude future data
         { headers }
       );
       
