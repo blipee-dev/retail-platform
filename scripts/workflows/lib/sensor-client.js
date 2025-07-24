@@ -4,9 +4,9 @@ const config = require('./config');
 
 class SensorClient {
   constructor(type) {
-    // Normalize sensor types to match config
-    const normalizedType = type.includes('milesight') ? 'milesight' : 
-                          type.includes('omnia') ? 'omnia' : type;
+    // All sensors are now standardized as milesight_sensor
+    // But config still uses 'milesight' key for backward compatibility
+    const normalizedType = 'milesight';
     
     this.type = normalizedType;
     this.config = config.sensors[normalizedType];
