@@ -27,23 +27,22 @@ async function collectRegionalData() {
     // Initialize Supabase client
     const supabase = new SupabaseClient();
     
-    // Get active Omnia sensors (only these support regional counting)
-    console.log('📡 Fetching active Omnia sensors...');
+    // Get all active sensors (all Milesight sensors support regional counting)
+    console.log('📡 Fetching active sensors...');
     const sensors = await supabase.getActiveSensors();
-    const omniaSensors = sensors.filter(s => s.sensor_type === 'omnia');
     
-    console.log(`  Found ${omniaSensors.length} active Omnia sensors\n`);
+    console.log(`  Found ${sensors.length} active sensors\n`);
     
-    if (omniaSensors.length === 0) {
-      console.log('⚠️  No active Omnia sensors found');
+    if (sensors.length === 0) {
+      console.log('⚠️  No active sensors found');
       return results;
     }
     
     // Process sensors with concurrency limit
-    const limit = pLimit(config.sensors.omnia.concurrency);
-    console.log(`📊 Processing ${omniaSensors.length} sensors...`);
+    const limit = pLimit(config.sensors.milesight?.concurrency || 5);
+    console.log(`📊 Processing ${sensors.length} sensors...`);
     
-    const promises = omniaSensors.map(sensor => 
+    const promises = sensors.map(sensor => 
       limit(async () => {
         console.log(`  Processing ${sensor.sensor_name} (${sensor.sensor_id})...`);
         
