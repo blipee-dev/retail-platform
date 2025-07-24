@@ -111,8 +111,9 @@ async function main() {
     console.log(`total=${results.total}`);
   }
 
-  // Exit with error if any failures
-  if (results.failed > 0) {
+  // Exit with error only if all sensors failed
+  if (results.failed > 0 && results.successful === 0) {
+    console.log('\n❌ All sensors failed - exiting with error');
     process.exit(1);
   }
 }
