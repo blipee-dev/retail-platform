@@ -13,12 +13,14 @@ module.exports = {
     milesight: {
       auth: process.env.SENSOR_AUTH_MILESIGHT || 'Basic ' + Buffer.from('admin:grnl.2024').toString('base64'),
       timeout: 30000,
-      retries: 3
+      retries: 3,
+      concurrency: 5
     },
     omnia: {
       auth: process.env.SENSOR_AUTH_OMNIA || 'Basic ' + Buffer.from('admin:grnl.2024').toString('base64'),
       timeout: 30000,
-      retries: 3
+      retries: 3,
+      concurrency: 3
     }
   },
   
@@ -28,6 +30,8 @@ module.exports = {
     retryDelay: 1000,
     maxRetries: 3
   },
+  
+  environment: process.env.NODE_ENV || 'production',
   
   monitoring: {
     slackWebhook: process.env.SLACK_WEBHOOK_URL,

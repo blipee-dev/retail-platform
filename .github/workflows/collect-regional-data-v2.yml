@@ -44,7 +44,7 @@ jobs:
         run: |
           cd scripts/workflows
           npm init -y
-          npm install @supabase/supabase-js node-fetch@2
+          npm install @supabase/supabase-js node-fetch@2 p-limit date-fns-tz
 
       - name: Collect regional data
         id: collect
@@ -55,8 +55,31 @@ jobs:
           GITHUB_RUN_ID: ${{ github.run_id }}
           PIPELINE_ID: ${{ inputs.pipeline_id }}
         run: |
-          echo "Regional data collection placeholder"
-          echo "successful=0" >> $GITHUB_OUTPUT
-          echo "failed=0" >> $GITHUB_OUTPUT  
-          echo "total=0" >> $GITHUB_OUTPUT
-          # TODO: Implement regional data collection script
+          cd scripts/workflows
+          node collect-regional-data.js
+
+      - name: Upload collection results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: regional-collection-results-${{ github.run_id }}
+          path: scripts/workflows/results/
+          retention-days: 7
+
+      - name: Send notification on failure
+        if: failure() && env.SLACK_WEBHOOK != ''
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        run: |
+          curl -X POST $SLACK_WEBHOOK \
+            -H 'Content-Type: application/json' \
+            -d '{
+              "text": "❌ Regional Data Collection Failed",
+              "blocks": [{
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Regional Data Collection Failed*\n• Workflow: <https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>\n• Error: Check logs for details"
+                }
+              }]
+            }'
