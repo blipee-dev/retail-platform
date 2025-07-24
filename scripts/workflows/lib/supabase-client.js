@@ -187,9 +187,11 @@ class SupabaseClient {
         .insert({
           sensor_id: sensorId,
           status: status,
-          response_time_ms: responseTime,
-          checked_at: new Date().toISOString()
-          // Note: records_collected column might not exist, so we're not including it
+          changed_at: new Date().toISOString(),
+          metrics: {
+            response_time_ms: responseTime,
+            records_collected: recordsCollected || 0
+          }
         });
 
       if (error) {

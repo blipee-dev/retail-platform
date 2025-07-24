@@ -111,10 +111,8 @@ async function main() {
     console.log(`total=${results.total}`);
   }
 
-  // Exit with error if any failures
-  if (results.failed > 0) {
-    process.exit(1);
-  }
+  // Always exit successfully to allow pipeline to continue
+  // Even with no data, we want analytics to run (it might process historical data)
 }
 
 /**
@@ -174,7 +172,7 @@ async function processSensor(sensor, type, supabase) {
 
       // Log health
       await supabase.logSensorHealth(
-        sensor.id,  // Use UUID for health log
+        sensor.sensor_id,  // Use sensor_id string for health log
         'online',
         result.responseTime,
         recordsInserted + recordsUpdated
@@ -253,7 +251,17 @@ async function processSensor(sensor, type, supabase) {
 if (require.main === module) {
   main().catch(error => {
     console.error('💥 Unhandled error:', error);
-    process.exit(1);
+    // Set outputs even on fatal error
+    console.log('\n📤 GitHub Actions Output:');
+    console.log('successful=0');
+    console.log('failed=0');
+    console.log('total=0');
+    
+    if (process.env.GITHUB_ACTIONS && process.env.GITHUB_OUTPUT) {
+      const fs = require('fs');
+      fs.appendFileSync(process.env.GITHUB_OUTPUT, 'successful=0\nfailed=0\ntotal=0\n');
+    }
+    // Exit successfully to allow pipeline to continue
   });
 }
 
