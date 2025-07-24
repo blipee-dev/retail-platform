@@ -49,7 +49,7 @@ async function collectRegionalData() {
         try {
           // Get sensor's timezone and check business hours
           const timezone = sensor.stores?.timezone || 'UTC';
-          const client = new SensorClient('omnia');
+          const client = new SensorClient('milesight');
           const localTime = client.getLocalTime(timezone);
           
           console.log(`    📍 Store timezone: ${timezone}`);
@@ -120,7 +120,7 @@ async function collectRegionalData() {
     );
     
     await Promise.all(promises);
-    results.total = omniaSensors.length;
+    results.total = sensors.length;
     
   } catch (error) {
     console.error('\n💥 Fatal error:', error.message);
@@ -195,7 +195,7 @@ async function collectSensorRegionalData(sensor, supabase) {
   const startTime = Date.now();
   
   try {
-    const client = new SensorClient('omnia');
+    const client = new SensorClient('milesight');
     
     // Get current time and calculate query range
     const now = new Date();

@@ -86,22 +86,10 @@ jobs:
       regional_data_status: ${{ needs.collect-regional-data.result }}
     secrets: inherit
 
-  # Virtual regions calculation (sequential after aggregation)
-  calculate-virtual-regions:
-    name: Calculate Virtual Regions
-    needs: [initialize, analytics-aggregation]
-    if: |
-      needs.analytics-aggregation.result == 'success' || 
-      inputs.force_all_stages
-    uses: ./.github/workflows/calculate-virtual-regions-v2.yml
-    with:
-      pipeline_id: ${{ needs.initialize.outputs.pipeline_id }}
-    secrets: inherit
-
   # Pipeline validation and cleanup
   finalize:
     name: Finalize Pipeline
-    needs: [initialize, collect-sensor-data, collect-regional-data, analytics-aggregation, calculate-virtual-regions]
+    needs: [initialize, collect-sensor-data, collect-regional-data, analytics-aggregation]
     if: always()
     runs-on: ubuntu-latest
     
@@ -117,8 +105,7 @@ jobs:
           
           if [[ "${{ needs.collect-sensor-data.result }}" == "failure" ]] || \
              [[ "${{ needs.collect-regional-data.result }}" == "failure" ]] || \
-             [[ "${{ needs.analytics-aggregation.result }}" == "failure" ]] || \
-             [[ "${{ needs.calculate-virtual-regions.result }}" == "failure" ]]; then
+             [[ "${{ needs.analytics-aggregation.result }}" == "failure" ]]; then
             STATUS="failure"
           fi
           
@@ -141,7 +128,6 @@ jobs:
           | Sensor Collection | ${{ needs.collect-sensor-data.result }} | ${{ needs.collect-sensor-data.outputs.successful }}/${{ needs.collect-sensor-data.outputs.total }} successful |
           | Regional Collection | ${{ needs.collect-regional-data.result }} | - |
           | Analytics Aggregation | ${{ needs.analytics-aggregation.result }} | - |
-          | Virtual Regions | ${{ needs.calculate-virtual-regions.result }} | - |
           
           ## Links
           
@@ -206,8 +192,7 @@ jobs:
                 "stages": {
                   "sensor_collection": "${{ needs.collect-sensor-data.result }}",
                   "regional_collection": "${{ needs.collect-regional-data.result }}",
-                  "analytics_aggregation": "${{ needs.analytics-aggregation.result }}",
-                  "virtual_regions": "${{ needs.calculate-virtual-regions.result }}"
+                  "analytics_aggregation": "${{ needs.analytics-aggregation.result }}"
                 },
                 "metrics": {
                   "sensors_successful": ${{ needs.collect-sensor-data.outputs.successful || 0 }},

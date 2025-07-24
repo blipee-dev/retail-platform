@@ -33,13 +33,11 @@ async function main() {
       return results;
     }
 
-    // Group sensors by type
-    const sensorsByType = sensors.reduce((acc, sensor) => {
-      const type = sensor.sensor_type || 'milesight';
-      if (!acc[type]) acc[type] = [];
-      acc[type].push(sensor);
-      return acc;
-    }, {});
+    // All sensors are now standardized as milesight_sensor
+    // Group all sensors together for processing
+    const sensorsByType = {
+      'milesight': sensors
+    };
 
     // Process each sensor type
     for (const [type, typeSensors] of Object.entries(sensorsByType)) {
@@ -123,8 +121,8 @@ async function processSensor(sensor, type, supabase) {
   console.log(`  Processing ${sensor.sensor_name} (${sensor.sensor_id})...`);
 
   try {
-    // Create sensor client
-    const client = new SensorClient(type);
+    // Create sensor client - always use 'milesight' for client creation
+    const client = new SensorClient('milesight');
     
     // Collect data
     const result = await client.collect(sensor);
@@ -134,7 +132,7 @@ async function processSensor(sensor, type, supabase) {
       let recordsInserted = 0;
       let recordsUpdated = 0;
       
-      if (type === 'milesight' || type === 'milesight_people_counter') {
+      if (type === 'milesight' || type === 'milesight_sensor' || type === 'milesight_people_counter') {
         // Insert each record
         if (Array.isArray(result.data) && result.data.length > 0) {
           console.log(`    📦 Processing ${result.data.length} records...`);
