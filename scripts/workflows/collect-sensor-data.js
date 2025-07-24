@@ -174,7 +174,7 @@ async function processSensor(sensor, type, supabase) {
 
       // Log health
       await supabase.logSensorHealth(
-        sensor.id,  // Use UUID for health log
+        sensor.sensor_id,  // Use sensor_id string for health log
         'online',
         result.responseTime,
         recordsInserted + recordsUpdated
