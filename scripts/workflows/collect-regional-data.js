@@ -120,7 +120,7 @@ async function collectRegionalData() {
     );
     
     await Promise.all(promises);
-    results.total = omniaSensors.length;
+    results.total = sensors.length;
     
   } catch (error) {
     console.error('\n💥 Fatal error:', error.message);
