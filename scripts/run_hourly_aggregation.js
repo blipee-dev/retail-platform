@@ -66,9 +66,16 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
     'Content-Type': 'application/json'
   };
   
-  // Get data from last 3 hours
+  // Get data from last 3 hours (matching collection window)
   const now = new Date();
   const threeHoursAgo = new Date(now.getTime() - 3 * 60 * 60 * 1000);
+  
+  // Don't process data older than 24 hours
+  const maxAge = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  if (threeHoursAgo < maxAge) {
+    console.log('⏰ Limiting aggregation to last 24 hours');
+    threeHoursAgo.setTime(maxAge.getTime());
+  }
   
   console.log(`\n📊 Manual aggregation from ${threeHoursAgo.toISOString()} to ${now.toISOString()}`);
   
@@ -86,11 +93,12 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
   
   let totalProcessed = 0;
   
-  // Process each hour
+  // Process each hour (complete hour periods only)
   for (let h = 0; h < 3; h++) {
     const hourStart = new Date(now.getTime() - (h + 1) * 60 * 60 * 1000);
-    hourStart.setMinutes(0, 0, 0);
-    const hourEnd = new Date(hourStart.getTime() + 60 * 60 * 1000);
+    hourStart.setMinutes(0, 0, 0); // HH:00:00
+    const hourEnd = new Date(hourStart);
+    hourEnd.setMinutes(59, 59, 999); // HH:59:59
     
     for (const store of stores) {
       // Check business hours for this store's timezone
@@ -109,12 +117,12 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
         continue;
       }
       
-      // Get raw data for this hour
+      // Get raw data for this hour (complete hour period)
       const rawResponse = await fetch(
         `${supabaseUrl}/rest/v1/people_counting_raw?` +
         `store_id=eq.${store.id}&` +
         `timestamp=gte.${hourStart.toISOString()}&` +
-        `timestamp=lt.${hourEnd.toISOString()}&` +
+        `timestamp=lte.${hourEnd.toISOString()}&` +
         `timestamp=lte.${now.toISOString()}`, // Exclude future data
         { headers }
       );
