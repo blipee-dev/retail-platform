@@ -1,0 +1,46 @@
+name: Test Discord Notification
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-notification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send test Discord notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "❌ DISCORD_WEBHOOK_URL secret not configured"
+            echo "Please add your Discord webhook URL as a GitHub secret named DISCORD_WEBHOOK_URL"
+            exit 1
+          fi
+          
+          curl -X POST $DISCORD_WEBHOOK \
+            -H 'Content-Type: application/json' \
+            -d '{
+              "embeds": [{
+                "title": "✅ Discord Notification Test",
+                "description": "Your Discord webhook is configured correctly!",
+                "color": 5763719,
+                "fields": [
+                  {
+                    "name": "Repository",
+                    "value": "'${{ github.repository }}'",
+                    "inline": true
+                  },
+                  {
+                    "name": "Triggered By",
+                    "value": "'${{ github.actor }}'",
+                    "inline": true
+                  }
+                ],
+                "footer": {
+                  "text": "GitHub Actions Test"
+                },
+                "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'"
+              }]
+            }'
+          
+          echo "✅ Test notification sent successfully!"
