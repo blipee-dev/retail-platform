@@ -135,20 +135,44 @@ class SupabaseClient {
    * Create alert
    */
   async createAlert(alert) {
-    const { error } = await this.client
-      .from('alerts')
-      .insert({
-        organization_id: alert.organizationId,
-        store_id: alert.storeId,
-        sensor_id: alert.sensorId,
-        alert_type: alert.type,
-        severity: alert.severity,
-        title: alert.title,
-        description: alert.description,
-        metadata: alert.metadata
-      });
+    try {
+      // Try with sensor_id first
+      const { error } = await this.client
+        .from('alerts')
+        .insert({
+          organization_id: alert.organizationId,
+          store_id: alert.storeId,
+          sensor_id: alert.sensorId,
+          alert_type: alert.type,
+          severity: alert.severity,
+          title: alert.title,
+          description: alert.description,
+          metadata: alert.metadata
+        });
 
-    if (error) throw error;
+      if (error) {
+        if (error.message.includes('sensor_id')) {
+          // Retry without sensor_id
+          const { error: retryError } = await this.client
+            .from('alerts')
+            .insert({
+              organization_id: alert.organizationId,
+              store_id: alert.storeId,
+              alert_type: alert.type,
+              severity: alert.severity,
+              title: alert.title,
+              description: alert.description,
+              metadata: { ...alert.metadata, sensor_id: alert.sensorId }
+            });
+          
+          if (retryError) throw retryError;
+        } else {
+          throw error;
+        }
+      }
+    } catch (e) {
+      throw e;
+    }
   }
 
   /**
