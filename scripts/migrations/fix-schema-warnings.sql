@@ -42,10 +42,27 @@ CREATE TABLE IF NOT EXISTS sensor_health_log (
     sensor_id UUID NOT NULL REFERENCES sensor_metadata(id),
     status TEXT NOT NULL CHECK (status IN ('online', 'offline', 'warning')),
     response_time INTEGER,
+    response_time_ms INTEGER, -- Add this column for millisecond precision
     error_message TEXT,
     checked_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+-- 4. Add response_time_ms column if it doesn't exist
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM information_schema.columns 
+        WHERE table_name = 'sensor_health_log' 
+        AND column_name = 'response_time_ms'
+    ) THEN
+        ALTER TABLE sensor_health_log 
+        ADD COLUMN response_time_ms INTEGER;
+        
+        COMMENT ON COLUMN sensor_health_log.response_time_ms IS 'Response time in milliseconds';
+    END IF;
+END $$;
 
 -- Create indexes if they don't exist
 CREATE INDEX IF NOT EXISTS idx_sensor_health_log_sensor_id ON sensor_health_log(sensor_id);
