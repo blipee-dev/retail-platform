@@ -163,7 +163,7 @@ jobs:
               
               // Check processed data
               const processedResponse = await fetch(
-                \`\${supabaseUrl}/rest/v1/people_counting_data?timestamp=gte.\${oneHourAgo}&select=count\`,
+                \`\${supabaseUrl}/rest/v1/people_counting_raw?timestamp=gte.\${oneHourAgo}&select=count\`,
                 {
                   headers: {
                     'apikey': supabaseKey,

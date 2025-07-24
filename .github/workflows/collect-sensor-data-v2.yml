@@ -1,0 +1,107 @@
+name: Collect Sensor Data V2
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      pipeline_id:
+        description: 'Pipeline run ID'
+        required: false
+        type: string
+    outputs:
+      successful:
+        description: 'Number of successful collections'
+        value: ${{ jobs.collect.outputs.successful }}
+      failed:
+        description: 'Number of failed collections'
+        value: ${{ jobs.collect.outputs.failed }}
+      total:
+        description: 'Total number of sensors'
+        value: ${{ jobs.collect.outputs.total }}
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      successful: ${{ steps.collect.outputs.successful }}
+      failed: ${{ steps.collect.outputs.failed }}
+      total: ${{ steps.collect.outputs.total }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          cd scripts/workflows
+          npm init -y
+          npm install @supabase/supabase-js node-fetch@2 p-limit
+
+      - name: Collect sensor data
+        id: collect
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SENSOR_AUTH_MILESIGHT: ${{ secrets.SENSOR_AUTH_MILESIGHT }}
+          SENSOR_AUTH_OMNIA: ${{ secrets.SENSOR_AUTH_OMNIA }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          PIPELINE_ID: ${{ inputs.pipeline_id }}
+        run: |
+          cd scripts/workflows
+          node collect-sensor-data.js
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: sensor-collection-results-${{ github.run_id }}
+          path: scripts/workflows/results/
+          retention-days: 7
+
+      - name: Send success notification
+        if: success() && github.event_name == 'schedule'
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          curl -X POST $SLACK_WEBHOOK \
+            -H 'Content-Type: application/json' \
+            -d '{
+              "text": "✅ Sensor Collection Successful",
+              "blocks": [{
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Sensor Collection Complete*\n• Successful: ${{ steps.collect.outputs.successful }}\n• Failed: ${{ steps.collect.outputs.failed }}\n• Total: ${{ steps.collect.outputs.total }}"
+                }
+              }]
+            }'
+
+      - name: Send failure notification
+        if: failure()
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          curl -X POST $SLACK_WEBHOOK \
+            -H 'Content-Type: application/json' \
+            -d '{
+              "text": "❌ Sensor Collection Failed",
+              "blocks": [{
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Sensor Collection Failed*\n• Workflow: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>\n• Error: Check logs for details"
+                }
+              }]
+            }'

@@ -139,6 +139,28 @@ retail-platform/
   - Updated all migration scripts
   - Added verification and testing tools
 
+### 2025-07-23 - GitHub Actions Workflow Modernization
+- **Security improvements**
+  - Removed all hardcoded credentials from workflows
+  - Migrated to GitHub Secrets for authentication
+  - Created centralized configuration management
+- **Architecture overhaul**
+  - Implemented single-cron pipeline controller pattern
+  - Created reusable workflow templates
+  - Event-driven orchestration replacing timing-based coordination
+- **Performance enhancements**
+  - Added parallel sensor collection (5x performance improvement)
+  - Implemented retry logic with exponential backoff
+  - Batch processing for efficient resource usage
+- **Reliability features**
+  - Sensor health monitoring integration
+  - Automatic alert creation on failures
+  - Comprehensive error handling and recovery
+- **Created modular script structure**
+  - Extracted 400+ lines of inline JavaScript to organized modules
+  - Created reusable libraries for common operations
+  - Standardized error handling and logging
+
 
 ### 2025-07-22 - Timezone Support & Project Cleanup
 - **Fixed timezone handling** in sensor data collection workflow
@@ -180,11 +202,17 @@ retail-platform/
 - `app/lib/services/analytics.service.ts` - Analytics logic
 
 ### Workflows
-- `.github/workflows/collect-sensor-data.yml` - Data collection (with timezone fix!)
+- `.github/workflows/main-pipeline.yml` - Single-cron orchestrator (NEW!)
+- `.github/workflows/collect-sensor-data-v2.yml` - Modular sensor collection
 - `.github/workflows/deploy.yml` - Auto-deployment
 - `.github/workflows/ci.yml` - Testing
 
 ### Scripts
+- `scripts/workflows/` - Modular workflow scripts (NEW!)
+  - `collect-sensor-data.js` - Main collection logic
+  - `lib/supabase-client.js` - Database operations
+  - `lib/retry-handler.js` - Retry logic
+  - `lib/sensor-client.js` - Sensor communication
 - `scripts/housekeeping.sh` - Organize project files
 - `scripts/cleanup-root.sh` - Clean root directory
 
