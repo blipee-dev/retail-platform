@@ -51,8 +51,8 @@ jobs:
           
           # Run the existing aggregation script
           cd scripts
-          if [ -f "data-processing/run_hourly_aggregation.js" ]; then
-            node data-processing/run_hourly_aggregation.js
+          if [ -f "run_hourly_aggregation.js" ]; then
+            node run_hourly_aggregation.js
           else
             echo "⚠️ Aggregation script not found, skipping..."
           fi
