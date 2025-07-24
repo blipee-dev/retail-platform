@@ -11,12 +11,12 @@ module.exports = {
   
   sensors: {
     milesight: {
-      auth: process.env.SENSOR_AUTH_MILESIGHT || '',
+      auth: process.env.SENSOR_AUTH_MILESIGHT || 'Basic ' + Buffer.from('admin:grnl.2024').toString('base64'),
       timeout: 30000,
       retries: 3
     },
     omnia: {
-      auth: process.env.SENSOR_AUTH_OMNIA || '',
+      auth: process.env.SENSOR_AUTH_OMNIA || 'Basic ' + Buffer.from('admin:grnl.2024').toString('base64'),
       timeout: 30000,
       retries: 3
     }

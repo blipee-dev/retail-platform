@@ -41,7 +41,14 @@ class SensorClient {
         throw error;
       }
 
-      return response.json();
+      const text = await response.text();
+      
+      // Try to parse as JSON, otherwise return text
+      try {
+        return JSON.parse(text);
+      } catch {
+        return text;
+      }
     });
   }
 
@@ -49,34 +56,78 @@ class SensorClient {
    * Collect people counting data from Milesight sensor
    */
   async collectMilesightData(sensor) {
-    // Use the API endpoint from sensor config or default
-    const endpoint = sensor.config?.api_endpoint || '/dataloader.cgi';
+    // Get current time for query
+    const now = new Date();
+    const threeHoursAgo = new Date(now.getTime() - 3 * 60 * 60 * 1000);
+    
+    // Format date for Milesight API
+    const formatDate = (date) => {
+      const pad = (n) => n.toString().padStart(2, '0');
+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}-${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+    };
+    
+    // Build endpoint with query parameters like the working version
+    const endpoint = `/dataloader.cgi?dw=vcalogcsv&report_type=0&statistics_type=3&linetype=31&time_start=${formatDate(threeHoursAgo)}&time_end=${formatDate(now)}`;
+    
     const data = await this.fetchData(sensor, endpoint);
     
-    // Parse Milesight response - it returns array of line data
-    let totalIn = 0;
-    let totalOut = 0;
-    
-    if (Array.isArray(data)) {
-      data.forEach(line => {
-        totalIn += line.in || 0;
-        totalOut += line.out || 0;
-      });
-    } else if (data.in !== undefined || data.out !== undefined) {
-      totalIn = data.in || 0;
-      totalOut = data.out || 0;
+    // Parse CSV response
+    if (typeof data === 'string') {
+      const lines = data.trim().split('\n');
+      if (lines.length < 2) {
+        return {
+          sensor_id: sensor.sensor_id,
+          store_id: sensor.store_id,
+          timestamp: new Date().toISOString(),
+          total_in: 0,
+          total_out: 0,
+          metadata: {
+            sensor_type: 'milesight',
+            sensor_name: sensor.sensor_name,
+            ip: sensor.sensor_ip,
+            no_data: true
+          }
+        };
+      }
+      
+      // Get the latest record (last line)
+      const lastLine = lines[lines.length - 1];
+      const parts = lastLine.split(',');
+      
+      if (parts.length >= 17) {
+        // Sum all lines (like the working version)
+        const totalIn = (parseInt(parts[5]) || 0) + (parseInt(parts[8]) || 0) + 
+                       (parseInt(parts[11]) || 0) + (parseInt(parts[14]) || 0);
+        const totalOut = (parseInt(parts[6]) || 0) + (parseInt(parts[9]) || 0) + 
+                        (parseInt(parts[12]) || 0) + (parseInt(parts[15]) || 0);
+        
+        return {
+          sensor_id: sensor.sensor_id,
+          store_id: sensor.store_id,
+          timestamp: new Date().toISOString(),
+          total_in: totalIn,
+          total_out: totalOut,
+          metadata: {
+            sensor_type: 'milesight',
+            sensor_name: sensor.sensor_name,
+            ip: sensor.sensor_ip
+          }
+        };
+      }
     }
     
+    // Fallback for unexpected format
     return {
-      sensor_id: sensor.id,
+      sensor_id: sensor.sensor_id,
       store_id: sensor.store_id,
       timestamp: new Date().toISOString(),
-      total_in: totalIn,
-      total_out: totalOut,
+      total_in: 0,
+      total_out: 0,
       metadata: {
         sensor_type: 'milesight',
         sensor_name: sensor.sensor_name,
-        ip: sensor.sensor_ip
+        ip: sensor.sensor_ip,
+        parse_error: true
       }
     };
   }
