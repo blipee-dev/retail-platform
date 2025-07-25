@@ -1,11 +1,13 @@
 -- Create user profiles for Jesús Muñoz and João Melo
 -- Run this in Supabase SQL Editor
+-- NOTE: This only creates user_profiles entries. The users need to sign up via the app to create auth.users entries.
 
 -- First, find the JJ organization
 DO $$
 DECLARE
     v_org_id UUID;
     v_user_id UUID;
+    v_auth_user_id UUID;
 BEGIN
     -- Find the Jack & Jones organization
     SELECT id INTO v_org_id
