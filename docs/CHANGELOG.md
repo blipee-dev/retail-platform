@@ -2,6 +2,50 @@
 
 All notable changes to the Retail Platform project will be documented in this file.
 
+## [0.5.0] - 2025-07-25
+
+### Added
+- Analytics aggregation pipeline fixes
+  - Comprehensive debugging tools for data verification
+  - Column listing utilities for schema inspection
+  - Delete scripts for testing fresh aggregations
+  - Extended hourly aggregation script (24 hours)
+- Daily aggregation integration into main pipeline
+  - Automatic execution during midnight window (00:00-02:59 UTC)
+  - Conditional logic to prevent unnecessary runs
+  - Support for both original and fixed aggregation scripts
+
+### Changed
+- Fixed analytics aggregation issues
+  - Removed hardcoded API keys in aggregation scripts
+  - Added proper environment variable usage from GitHub Secrets
+  - Enhanced error logging to show actual error messages
+  - Fixed column name mismatches in daily_analytics table
+- Updated project structure
+  - Organized 50+ scripts into logical subdirectories
+  - Moved debug scripts to debug/data/, debug/workflow/, debug/timezone/
+  - Moved SQL migrations to migrations/
+  - Created archive/ for old versions
+- Enhanced workflows
+  - Updated run-analytics-aggregation-v2.yml to include daily aggregation
+  - Added time window check for daily aggregation efficiency
+
+### Fixed
+- Missing timestamp fields (start_time, end_time) in aggregations
+- Column name mismatches between scripts and database schema
+  - Changed store_entries/store_exits to total_entries/total_exits
+  - Added all missing columns: passerby metrics, zone analytics, line percentages
+  - Fixed business hours metrics and peak hour tracking
+- Data visibility issues in Supabase UI
+- Daily aggregation requiring manual triggers
+
+### Technical Details
+- Created run_daily_aggregation_fixed.js with correct column mappings
+- Updated run_hourly_aggregation.js to use environment variables
+- Added verification scripts to confirm data insertion
+- Integrated daily aggregation into main pipeline workflow
+- Improved error handling and logging throughout
+
 ## [0.4.0] - 2025-07-23
 
 ### Added
