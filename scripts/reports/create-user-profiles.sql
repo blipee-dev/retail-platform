@@ -25,55 +25,71 @@ BEGIN
     
     RAISE NOTICE 'Found Jack & Jones organization: %', v_org_id;
     
-    -- Create or update Jesús Muñoz
-    INSERT INTO user_profiles (
-        id,
-        email,
-        full_name,
-        role,
-        organization_id,
-        created_at,
-        updated_at
-    ) VALUES (
-        gen_random_uuid(),
-        'jmunoz@patrimi.com',
-        'Jesús Muñoz Casas',
-        'viewer',
-        v_org_id,
-        NOW(),
-        NOW()
-    )
-    ON CONFLICT (email) DO UPDATE
-    SET full_name = EXCLUDED.full_name,
-        updated_at = NOW()
-    RETURNING id INTO v_user_id;
+    -- Check if Jesús already exists
+    SELECT id INTO v_user_id FROM user_profiles WHERE email = 'jmunoz@patrimi.com';
     
-    RAISE NOTICE 'Created/updated user Jesús Muñoz: %', v_user_id;
+    IF v_user_id IS NOT NULL THEN
+        -- Update existing user
+        UPDATE user_profiles 
+        SET full_name = 'Jesús Muñoz Casas',
+            organization_id = v_org_id,
+            updated_at = NOW()
+        WHERE id = v_user_id;
+        RAISE NOTICE 'Updated existing user Jesús Muñoz: %', v_user_id;
+    ELSE
+        -- Create new user
+        INSERT INTO user_profiles (
+            id,
+            email,
+            full_name,
+            role,
+            organization_id,
+            created_at,
+            updated_at
+        ) VALUES (
+            gen_random_uuid(),
+            'jmunoz@patrimi.com',
+            'Jesús Muñoz Casas',
+            'viewer',
+            v_org_id,
+            NOW(),
+            NOW()
+        ) RETURNING id INTO v_user_id;
+        RAISE NOTICE 'Created new user Jesús Muñoz: %', v_user_id;
+    END IF;
     
-    -- Create or update João Melo
-    INSERT INTO user_profiles (
-        id,
-        email,
-        full_name,
-        role,
-        organization_id,
-        created_at,
-        updated_at
-    ) VALUES (
-        gen_random_uuid(),
-        'jmelo@patrimi.com',
-        'João Célio Melo Pinta Moreira',
-        'viewer',
-        v_org_id,
-        NOW(),
-        NOW()
-    )
-    ON CONFLICT (email) DO UPDATE
-    SET full_name = EXCLUDED.full_name,
-        updated_at = NOW()
-    RETURNING id INTO v_user_id;
+    -- Check if João already exists
+    SELECT id INTO v_user_id FROM user_profiles WHERE email = 'jmelo@patrimi.com';
     
-    RAISE NOTICE 'Created/updated user João Melo: %', v_user_id;
+    IF v_user_id IS NOT NULL THEN
+        -- Update existing user
+        UPDATE user_profiles 
+        SET full_name = 'João Célio Melo Pinta Moreira',
+            organization_id = v_org_id,
+            updated_at = NOW()
+        WHERE id = v_user_id;
+        RAISE NOTICE 'Updated existing user João Melo: %', v_user_id;
+    ELSE
+        -- Create new user
+        INSERT INTO user_profiles (
+            id,
+            email,
+            full_name,
+            role,
+            organization_id,
+            created_at,
+            updated_at
+        ) VALUES (
+            gen_random_uuid(),
+            'jmelo@patrimi.com',
+            'João Célio Melo Pinta Moreira',
+            'viewer',
+            v_org_id,
+            NOW(),
+            NOW()
+        ) RETURNING id INTO v_user_id;
+        RAISE NOTICE 'Created new user João Melo: %', v_user_id;
+    END IF;
     
 END $$;
 
