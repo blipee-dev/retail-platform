@@ -1,0 +1,45 @@
+name: Diagnose Analytics Issues
+
+on:
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          cd scripts/workflows
+          npm install
+
+      - name: Run diagnostic
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          cd scripts/workflows
+          node diagnose-analytics.js
+
+      - name: Generate summary
+        if: always()
+        run: |
+          cat << EOF > $GITHUB_STEP_SUMMARY
+          ## Analytics Diagnosis Summary
+          
+          **Time**: $(date -u)
+          **Status**: ${{ job.status }}
+          
+          Check the logs above for detailed diagnosis results.
+          EOF

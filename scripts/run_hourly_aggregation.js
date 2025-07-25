@@ -22,8 +22,13 @@ async function runHourlyAggregation() {
   console.log('=' .repeat(60));
   console.log(`📅 Current UTC time: ${new Date().toISOString()}`);
   
-  const supabaseUrl = process.env.SUPABASE_URL || 'https://amqxsmdcvhyaudzbmhaf.supabase.co';
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtcXhzbWRjdmh5YXVkemJtaGFmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzAyNDA4MSwiZXhwIjoyMDY4NjAwMDgxfQ.g4nfj2zykEKdSYa_vsY5MjObnHYY2Uq8JBHtyYEfD1M';
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  
+  if (!supabaseUrl || !supabaseKey) {
+    console.error('❌ Missing required environment variables: SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
+    process.exit(1);
+  }
   
   try {
     // Method 1: Try calling the database function
@@ -100,14 +105,18 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
     const hourEnd = new Date(hourStart);
     hourEnd.setMinutes(59, 59, 999); // HH:59:59
     
+    console.log(`\n⏰ Processing hour: ${hourStart.toISOString()} to ${hourEnd.toISOString()}`);
+    
     for (const store of stores) {
       // Check business hours for this store's timezone
       const storeTimezone = store.timezone || 'UTC';
       const storeLocalHour = getLocalHour(hourStart, storeTimezone);
       
+      console.log(`  🏪 ${store.name} (${storeTimezone}): Local hour is ${storeLocalHour}:00`);
+      
       // Skip if outside business hours (1 AM - 9 AM)
       if (storeLocalHour >= 1 && storeLocalHour < 9) {
-        console.log(`    ⏰ Skipping ${store.name} - outside business hours (${storeLocalHour}:00 local)`);
+        console.log(`    ⏰ Skipping - outside business hours`);
         continue;
       }
       
@@ -118,18 +127,24 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
       }
       
       // Get raw data for this hour (complete hour period)
-      const rawResponse = await fetch(
-        `${supabaseUrl}/rest/v1/people_counting_raw?` +
+      const queryUrl = `${supabaseUrl}/rest/v1/people_counting_raw?` +
         `store_id=eq.${store.id}&` +
         `timestamp=gte.${hourStart.toISOString()}&` +
         `timestamp=lte.${hourEnd.toISOString()}&` +
-        `timestamp=lte.${now.toISOString()}`, // Exclude future data
-        { headers }
-      );
+        `timestamp=lte.${now.toISOString()}`; // Exclude future data
+        
+      console.log(`    📥 Fetching data...`);
       
-      if (!rawResponse.ok) continue;
+      const rawResponse = await fetch(queryUrl, { headers });
+      
+      if (!rawResponse.ok) {
+        console.log(`    ❌ Failed to fetch data: ${rawResponse.status}`);
+        continue;
+      }
       
       const rawData = await rawResponse.json();
+      console.log(`    📊 Found ${rawData.length} records`);
+      
       if (rawData.length === 0) continue;
       
       // Calculate aggregates with proper separation
@@ -393,22 +408,37 @@ async function showRecentAnalytics(supabaseUrl, supabaseKey) {
   if (recentResponse.ok) {
     const recentData = await recentResponse.json();
     console.log('\n📊 Recent Hourly Analytics:');
-    console.log('Hour                     | Entries | Exits | Net Flow | Samples');
-    console.log('-'.repeat(65));
+    console.log(`Total records found: ${recentData.length}`);
     
-    for (const record of recentData.slice(0, 5)) {
-      const hourStr = record.hour_start ? 
-        new Date(record.hour_start).toISOString().replace('T', ' ').slice(0, 19) : 
-        'Unknown';
-      const entries = record.total_entries || record.total_in || 0;
-      const exits = record.total_exits || record.total_out || 0;
-      const netFlow = record.net_flow || (entries - exits);
-      const samples = record.sample_count || 0;
+    if (recentData.length > 0) {
+      console.log('\nHour                     | Store    | Entries | Exits | Samples');
+      console.log('-'.repeat(70));
       
-      console.log(
-        `${hourStr.padEnd(24)} | ${entries.toString().padStart(7)} | ${exits.toString().padStart(5)} | ${netFlow.toString().padStart(8)} | ${samples.toString().padStart(7)}`
-      );
+      for (const record of recentData.slice(0, 10)) {
+        const hourStr = record.hour_start ? 
+          new Date(record.hour_start).toISOString().replace('T', ' ').slice(0, 19) : 
+          'Unknown';
+        const storeName = (record.stores?.name || record.store_id || 'Unknown').slice(0, 8);
+        const entries = record.store_entries || record.total_entries || record.total_in || 0;
+        const exits = record.store_exits || record.total_exits || record.total_out || 0;
+        const samples = record.sample_count || 0;
+        
+        console.log(
+          `${hourStr.padEnd(24)} | ${storeName.padEnd(8)} | ${entries.toString().padStart(7)} | ${exits.toString().padStart(5)} | ${samples.toString().padStart(7)}`
+        );
+      }
+      
+      // Show data age
+      const latestRecord = recentData[0];
+      if (latestRecord.hour_start) {
+        const hoursAgo = Math.round((Date.now() - new Date(latestRecord.hour_start).getTime()) / 1000 / 60 / 60);
+        console.log(`\n⏰ Latest record is ${hoursAgo} hours old`);
+      }
+    } else {
+      console.log('⚠️  No hourly analytics records found');
     }
+  } else {
+    console.log('❌ Failed to fetch recent analytics');
   }
 }
 

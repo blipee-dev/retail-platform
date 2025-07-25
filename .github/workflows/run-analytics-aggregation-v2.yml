@@ -1,6 +1,23 @@
 name: Run Analytics Aggregation V2
 
 on:
+  workflow_dispatch:
+    inputs:
+      pipeline_id:
+        description: 'Pipeline run ID (optional)'
+        required: false
+        type: string
+        default: 'manual-run'
+      sensor_data_status:
+        description: 'Status of sensor data collection'
+        required: false
+        type: string
+        default: 'manual'
+      regional_data_status:
+        description: 'Status of regional data collection'
+        required: false
+        type: string
+        default: 'manual'
   workflow_call:
     inputs:
       pipeline_id:
