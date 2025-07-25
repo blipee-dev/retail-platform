@@ -1,0 +1,63 @@
+name: Verify Analytics Column Names
+
+on:
+  workflow_dispatch:
+  
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  verify-columns:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm install node-fetch@2
+
+      - name: Verify column names
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          echo "🔍 Verifying analytics table column names..."
+          echo ""
+          
+          # Run the verification script
+          cd scripts/debug
+          node verify-aggregation-columns.js
+
+      - name: Generate summary
+        if: always()
+        run: |
+          cat << EOF > $GITHUB_STEP_SUMMARY
+          ## Analytics Column Verification
+          
+          **Status**: ${{ job.status }}
+          
+          ### Purpose
+          This workflow verifies that the column names used in our aggregation scripts
+          match the actual columns in the hourly_analytics and daily_analytics tables.
+          
+          ### Results
+          Check the logs above for:
+          - Missing columns that the scripts expect but don't exist
+          - Extra columns in the tables that aren't being used
+          - Recommendations for updating the aggregation scripts
+          
+          ### Next Steps
+          If there are mismatches:
+          1. Update the aggregation scripts to use correct column names
+          2. Remove references to non-existent columns
+          3. Consider adding logic for unused columns if they're important
+          EOF
