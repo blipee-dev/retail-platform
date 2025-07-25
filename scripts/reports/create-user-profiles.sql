@@ -7,17 +7,23 @@ DECLARE
     v_org_id UUID;
     v_user_id UUID;
 BEGIN
-    -- Find the JJ organization
+    -- Find the Jack & Jones organization
     SELECT id INTO v_org_id
     FROM organizations
-    WHERE name ILIKE '%J&J%' OR name ILIKE '%JJ%'
+    WHERE name ILIKE '%Jack & Jones%' OR name ILIKE '%Jack%Jones%'
     LIMIT 1;
     
+    -- If not found by name, use the known ID
     IF v_org_id IS NULL THEN
-        RAISE EXCEPTION 'JJ organization not found';
+        v_org_id := '12345678-1234-1234-1234-123456789012'::UUID;
+        
+        -- Verify this organization exists
+        IF NOT EXISTS (SELECT 1 FROM organizations WHERE id = v_org_id) THEN
+            RAISE EXCEPTION 'Jack & Jones organization not found with ID: %', v_org_id;
+        END IF;
     END IF;
     
-    RAISE NOTICE 'Found JJ organization: %', v_org_id;
+    RAISE NOTICE 'Found Jack & Jones organization: %', v_org_id;
     
     -- Create or update Jesús Muñoz
     INSERT INTO user_profiles (
