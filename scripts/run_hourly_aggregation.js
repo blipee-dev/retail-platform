@@ -221,8 +221,8 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
         sample_count: rawData.length,
         // Additional columns that exist in the table
         total_entries: totals.storeEntries,
-        total_exits: totals.storeExits,
-        net_flow: totals.storeEntries - totals.storeExits
+        total_exits: totals.storeExits
+        // net_flow is a generated column - don't insert it
       };
       
       // Add line data
