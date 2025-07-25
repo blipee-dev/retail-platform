@@ -229,7 +229,7 @@ async function getReportData(store, reportDate) {
 }
 
 // Generate HTML report
-function generateReport(store, data, reportDate, language) {
+function generateReport(store, data, reportDate, language, recipientName = '') {
   // Read the appropriate language template
   const templatePath = path.join(__dirname, `daily-report-template-${language}.html`);
   let template = fs.readFileSync(templatePath, 'utf8');
@@ -284,7 +284,7 @@ function generateReport(store, data, reportDate, language) {
   
   // Replace placeholders
   const replacements = {
-    recipient_name: store.contact_name || 'Store Manager',
+    recipient_name: recipientName || store.contact_name || 'Store Manager',
     store_name: store.name,
     report_date: format(reportDate, dateFormatStr, { locale: dateLocale }),
     total_visitors: new Intl.NumberFormat(locale).format(data.totalVisitors),
@@ -344,8 +344,15 @@ function getLanguageForStore(store) {
   return 'pt';
 }
 
-// Send email report
-async function sendReport(store, html, reportDate) {
+// Map of email addresses to first names
+const EMAIL_TO_NAME = {
+  'pedro@blipee.com': 'Pedro',
+  'jmunoz@patrimi.com': 'Jesús',
+  'jmelo@patrimi.com': 'João'
+};
+
+// Send email report to multiple recipients with personalized greetings
+async function sendReport(store, data, reportDate) {
   // Default recipient for all reports
   const DEFAULT_RECIPIENT = 'pedro@blipee.com';
   
@@ -360,26 +367,38 @@ async function sendReport(store, html, reportDate) {
   // Combine store recipients with additional recipients
   const recipientList = Array.isArray(storeRecipients) ? storeRecipients : [storeRecipients];
   const allRecipients = [...new Set([...recipientList, ...ADDITIONAL_RECIPIENTS])]; // Remove duplicates
-  const recipients = allRecipients.join(', ');
     
-  // Recipients are now guaranteed to exist due to ADDITIONAL_RECIPIENTS
-  
   const subject = `Daily Traffic Report - ${store.name} - ${format(reportDate, 'MMM d, yyyy')}`;
+  const language = getLanguageForStore(store);
   
-  try {
-    await transporter.sendMail({
-      from: process.env.EMAIL_FROM || 'analytics@blipee.com',
-      to: recipients,
-      subject: subject,
-      html: html
-    });
-    
-    console.log(`✅ Report sent to ${recipients} for ${store.name}`);
-    return true;
-  } catch (error) {
-    console.error(`❌ Failed to send email for ${store.name}:`, error);
-    return false;
+  let successCount = 0;
+  let failureCount = 0;
+  
+  // Send personalized email to each recipient
+  for (const recipient of allRecipients) {
+    try {
+      // Get recipient's first name
+      const recipientName = EMAIL_TO_NAME[recipient] || recipient.split('@')[0];
+      
+      // Generate personalized HTML
+      const html = generateReport(store, data, reportDate, language, recipientName);
+      
+      await transporter.sendMail({
+        from: process.env.EMAIL_FROM || 'analytics@blipee.com',
+        to: recipient,
+        subject: subject,
+        html: html
+      });
+      
+      console.log(`✅ Report sent to ${recipient} (${recipientName}) for ${store.name}`);
+      successCount++;
+    } catch (error) {
+      console.error(`❌ Failed to send email to ${recipient} for ${store.name}:`, error);
+      failureCount++;
+    }
   }
+  
+  return successCount > 0;
 }
 
 // Main execution
@@ -410,12 +429,8 @@ async function main() {
         continue;
       }
       
-      // Generate HTML report
-      const language = getLanguageForStore(store);
-      const html = generateReport(store, data, reportDate, language);
-      
-      // Send email
-      const sent = await sendReport(store, html, reportDate);
+      // Send email with personalized reports
+      const sent = await sendReport(store, data, reportDate);
       if (sent) {
         successCount++;
       } else {
