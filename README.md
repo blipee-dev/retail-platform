@@ -27,6 +27,10 @@ Visit [http://localhost:3000](http://localhost:3000) to see the application.
 - **📱 Responsive Design**: Works seamlessly on desktop and mobile devices
 - **🔌 Multi-sensor Support**: Milesight and Omnia sensor integration
 
+## 📍 Project Roadmap
+
+See [ROADMAP.md](ROADMAP.md) for detailed development plans and progress.
+
 ## 📁 Project Structure
 
 ```
