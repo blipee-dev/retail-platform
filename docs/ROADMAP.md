@@ -4,7 +4,7 @@
 
 This roadmap outlines the development phases for the Retail Platform, focusing on sensor integration, analytics, and visualization capabilities.
 
-## Current State (2025-07-23)
+## Current State (2025-07-25)
 
 ### ✅ Completed Components
 - **Connector System**: Modular sensor integration framework
@@ -28,6 +28,8 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 - **Database Schema Optimization**: Reduced from 34 to 11 tables with 68% complexity reduction (2025-07-23)
 - **Sensor Health Monitoring**: Automatic offline detection and status tracking (2025-07-23)
 - **Audit Trail System**: Configuration change tracking for compliance (2025-07-23)
+- **Analytics Aggregation Pipeline**: Fixed hourly/daily aggregation with proper column mapping (2025-07-25)
+- **Integrated Daily Aggregation**: Automatic daily analytics during midnight window (2025-07-25)
 
 ### 🚧 In Progress
 - **Real-time Data Processing**: Need WebSocket/polling implementation
@@ -104,7 +106,7 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 - [x] Fixed aggregation mismatches in analytics
 - [x] Documented new schema in all relevant docs
 
-#### Week 8: Dashboard & Visualization (CURRENT PHASE)
+#### Week 8: Dashboard & Visualization (CURRENT PHASE - PARTIALLY COMPLETE)
 - [ ] Main dashboard layout
 - [ ] Real-time metrics display
 - [ ] Basic charts (footfall, occupancy)
@@ -115,6 +117,8 @@ This roadmap outlines the development phases for the Retail Platform, focusing o
 - [ ] Implement password reset flow with email
 - [x] GitHub Actions workflow security fixes (COMPLETED)
 - [x] Implement sensor health monitoring in workflows (COMPLETED)
+- [x] Analytics aggregation pipeline fixed (COMPLETED 2025-07-25)
+- [x] Daily aggregation integrated into main pipeline (COMPLETED 2025-07-25)
 
 **Deliverables**: MVP with basic people counting analytics
 
@@ -379,11 +383,11 @@ total_estimate: ~$500-800/month
 
 **Note**: This roadmap is a living document and will be updated based on customer feedback, technical discoveries, and business priorities.
 
-**Last Updated**: 2025-07-22  
-**Version**: 1.3  
+**Last Updated**: 2025-07-25  
+**Version**: 1.4  
 **Owner**: blipee Product Team
 
-## Next Activities (Updated 2025-07-23)
+## Next Activities (Updated 2025-07-25)
 
 Based on completed work and roadmap, the next immediate priorities are:
 
@@ -426,24 +430,33 @@ Based on completed work and roadmap, the next immediate priorities are:
 - ✅ Created optimized indexes for performance
 - ✅ Updated all documentation to reflect changes
 
-### 6. 🚧 Connect Frontend to Backend (Week 8) - IN PROGRESS
+### 6. ✅ Analytics Aggregation Pipeline (Week 8) - COMPLETED (2025-07-25)
+- ✅ Fixed hardcoded API keys in aggregation scripts
+- ✅ Added missing timestamp fields (start_time, end_time)
+- ✅ Fixed column name mismatches in daily_analytics
+- ✅ Integrated daily aggregation into main pipeline
+- ✅ Created comprehensive debugging tools
+- ✅ Organized 50+ scripts into logical directories
+
+### 7. 🚧 Connect Frontend to Backend (Week 8) - IN PROGRESS
 - ✅ Converted HTML mockups to Next.js components
 - ✅ Created protected routes based on roles
 - ✅ Added timezone-aware date displays
+- ✅ Analytics aggregation pipeline working
 - 🚧 Connect live sensor data to dashboards
 - 🚧 Implement real-time data updates
 - 🚧 Build interactive heat map visualization
 
-### 7. Next Phase: Week 8 Dashboard & Visualization
+### 8. Next Phase: Week 8-9 Dashboard & Visualization
 The immediate focus is on:
-- Connecting live sensor data to dashboards
+- Connecting live aggregated data to dashboards
 - Real-time metrics display with timezone support
 - Heat map visualization
 - Forgot password functionality
 - Basic charts and export features
-- Migrating to the optimized database schema
+- Performance optimization with caching
 
-### 8. ✅ GitHub Actions Workflow Optimization (Week 8-9) - COMPLETED (2025-07-23)
+### 9. ✅ GitHub Actions Workflow Optimization (Week 8-9) - COMPLETED (2025-07-23)
 **Goal**: Modernize data collection workflows with enterprise-grade reliability
 
 #### Immediate Actions (Week 8) - COMPLETED:
