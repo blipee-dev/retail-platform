@@ -320,7 +320,8 @@ async function runDailyAggregation() {
           console.log(`✅ Updated daily analytics for ${store.name}`);
           totalUpdated++;
         } else {
-          console.log(`❌ Failed to update daily analytics for ${store.name}`);
+          const errorText = await updateResponse.text();
+          console.log(`❌ Failed to update daily analytics for ${store.name}: ${updateResponse.status} - ${errorText}`);
         }
       } else {
         // Insert new record
@@ -337,7 +338,8 @@ async function runDailyAggregation() {
           console.log(`✅ Inserted daily analytics for ${store.name}`);
           totalInserted++;
         } else {
-          console.log(`❌ Failed to insert daily analytics for ${store.name}`);
+          const errorText = await insertResponse.text();
+          console.log(`❌ Failed to insert daily analytics for ${store.name}: ${insertResponse.status} - ${errorText}`);
         }
       }
       
