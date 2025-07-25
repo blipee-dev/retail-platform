@@ -69,8 +69,10 @@ jobs:
           echo "Regional data status: ${{ inputs.regional_data_status }}"
           echo "Hours to aggregate: $HOURS_TO_AGGREGATE"
           
-          # Run the aggregation script
+          # Run the aggregation scripts
           cd scripts
+          
+          # 1. Run hourly aggregation
           if [ -f "run_hourly_aggregation.js" ]; then
             echo "Running standard aggregation (last 3 hours)..."
             node run_hourly_aggregation.js
@@ -82,7 +84,23 @@ jobs:
               node run_hourly_aggregation_extended.js
             fi
           else
-            echo "⚠️ Aggregation script not found, skipping..."
+            echo "⚠️ Hourly aggregation script not found, skipping..."
+          fi
+          
+          # 2. Run daily aggregation (only if it's past midnight UTC)
+          CURRENT_HOUR=$(date -u +%H)
+          if [ "$CURRENT_HOUR" -eq "00" ] || [ "$CURRENT_HOUR" -eq "01" ] || [ "$CURRENT_HOUR" -eq "02" ]; then
+            echo ""
+            echo "🌅 Running daily aggregation (midnight window)..."
+            if [ -f "run_daily_aggregation_fixed.js" ]; then
+              node run_daily_aggregation_fixed.js
+            elif [ -f "run_daily_aggregation.js" ]; then
+              node run_daily_aggregation.js
+            else
+              echo "⚠️ Daily aggregation script not found, skipping..."
+            fi
+          else
+            echo "⏭️ Skipping daily aggregation (not in midnight window)"
           fi
 
       - name: Generate summary
