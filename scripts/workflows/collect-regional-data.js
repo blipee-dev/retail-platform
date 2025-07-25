@@ -203,10 +203,8 @@ async function collectSensorRegionalData(sensor, supabase) {
     const localTime = client.getLocalTime(timezone, now);
     
     // Round to complete hour periods
-    // End time: Previous completed hour at HH:59:59 to avoid incomplete/future data
     const queryEndTime = new Date(localTime.localTime);
-    queryEndTime.setMinutes(0, 0, 0);
-    queryEndTime.setTime(queryEndTime.getTime() - 1000); // Go to previous hour's 59:59:59
+    queryEndTime.setMinutes(59, 59, 999);
     
     // Query last 3 hours
     const queryStartTime = new Date(localTime.localTime.getTime() - 3 * 60 * 60 * 1000);
@@ -269,8 +267,13 @@ async function collectSensorRegionalData(sensor, supabase) {
         const sensorTimestamp = new Date(values[0].replace(/\//g, '-'));
         const sensorEndTime = new Date(values[1].replace(/\//g, '-'));
         
-        // Skip future data
-        if (sensorTimestamp > localTime.localTime) {
+        // Skip future data - only skip if the hour START is in the future
+        // e.g., at 14:35, keep 14:00 data but skip 15:00 data
+        const currentHour = new Date(localTime.localTime);
+        currentHour.setMinutes(0, 0, 0);
+        currentHour.setHours(currentHour.getHours() + 1); // Next hour start
+        
+        if (sensorTimestamp >= currentHour) {
           console.log(`      ⏭️  Skipping future record: ${formatLocalTime(sensorTimestamp)}`);
           skippedFuture++;
           continue;

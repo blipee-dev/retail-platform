@@ -162,11 +162,9 @@ class SensorClient {
     const sensorLocalNow = localTimeInfo.localTime;
     
     // Round to complete hour periods
-    // End time: Previous completed hour at HH:59:59 
-    // (e.g., if it's 14:35, query up to 13:59:59 to avoid incomplete/future data)
+    // End time: Current hour at HH:59:59
     const queryEndTime = new Date(sensorLocalNow);
-    queryEndTime.setMinutes(0, 0, 0);
-    queryEndTime.setTime(queryEndTime.getTime() - 1000); // Go to previous hour's 59:59:59
+    queryEndTime.setMinutes(59, 59, 999);
     
     // Start time: 3 hours ago at HH:00:00
     const queryStartTime = new Date(sensorLocalNow.getTime() - 3 * 60 * 60 * 1000);
@@ -210,8 +208,13 @@ class SensorClient {
               const sensorTimestamp = new Date(parts[0].replace(/\//g, '-'));
               const sensorEndTime = new Date(parts[1].replace(/\//g, '-'));
               
-              // Skip future data (according to sensor local time)
-              if (sensorTimestamp > localNow) {
+              // Skip future data - only skip if the hour START is in the future
+              // e.g., at 14:35, keep 14:00 data but skip 15:00 data
+              const currentHour = new Date(localNow);
+              currentHour.setMinutes(0, 0, 0);
+              currentHour.setHours(currentHour.getHours() + 1); // Next hour start
+              
+              if (sensorTimestamp >= currentHour) {
                 console.log(`      ⏭️  Skipping future record: ${this.formatLocalTime(sensorTimestamp)}`);
                 skippedFuture++;
                 continue;
