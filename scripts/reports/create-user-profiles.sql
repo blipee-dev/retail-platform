@@ -33,6 +33,7 @@ BEGIN
         UPDATE user_profiles 
         SET full_name = 'Jesús Muñoz Casas',
             organization_id = v_org_id,
+            is_active = TRUE,
             updated_at = NOW()
         WHERE id = v_user_id;
         RAISE NOTICE 'Updated existing user Jesús Muñoz: %', v_user_id;
@@ -44,14 +45,18 @@ BEGIN
             full_name,
             role,
             organization_id,
+            permissions,
+            is_active,
             created_at,
             updated_at
         ) VALUES (
             gen_random_uuid(),
             'jmunoz@patrimi.com',
             'Jesús Muñoz Casas',
-            'viewer',
+            'tenant_admin',
             v_org_id,
+            '{}',
+            TRUE,
             NOW(),
             NOW()
         ) RETURNING id INTO v_user_id;
@@ -66,6 +71,7 @@ BEGIN
         UPDATE user_profiles 
         SET full_name = 'João Célio Melo Pinta Moreira',
             organization_id = v_org_id,
+            is_active = TRUE,
             updated_at = NOW()
         WHERE id = v_user_id;
         RAISE NOTICE 'Updated existing user João Melo: %', v_user_id;
@@ -77,14 +83,18 @@ BEGIN
             full_name,
             role,
             organization_id,
+            permissions,
+            is_active,
             created_at,
             updated_at
         ) VALUES (
             gen_random_uuid(),
             'jmelo@patrimi.com',
             'João Célio Melo Pinta Moreira',
-            'viewer',
+            'tenant_admin',
             v_org_id,
+            '{}',
+            TRUE,
             NOW(),
             NOW()
         ) RETURNING id INTO v_user_id;
