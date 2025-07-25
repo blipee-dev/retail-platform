@@ -202,7 +202,6 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
       const hourlyRecord = {
         store_id: store.id,
         organization_id: store.organization_id,
-        hour_start: hourStart.toISOString(),
         date: hourStart.toISOString().split('T')[0],
         hour: hourStart.getHours(),
         // New comprehensive metrics
@@ -233,7 +232,8 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
       const checkResponse = await fetch(
         `${supabaseUrl}/rest/v1/hourly_analytics?` +
         `store_id=eq.${store.id}&` +
-        `hour_start=eq.${hourStart.toISOString()}`,
+        `date=eq.${hourStart.toISOString().split('T')[0]}&` +
+        `hour=eq.${hourStart.getHours()}`,
         { headers }
       );
       
@@ -258,7 +258,8 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
         const updateResponse = await fetch(
           `${supabaseUrl}/rest/v1/hourly_analytics?` +
           `store_id=eq.${store.id}&` +
-          `hour_start=eq.${hourStart.toISOString()}`,
+          `date=eq.${hourStart.toISOString().split('T')[0]}&` +
+          `hour=eq.${hourStart.getHours()}`,
           {
             method: 'PATCH',
             headers,
@@ -320,7 +321,8 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
             const updateRegionalResponse = await fetch(
               `${supabaseUrl}/rest/v1/hourly_analytics?` +
               `store_id=eq.${store.id}&` +
-              `hour_start=eq.${hourStart.toISOString()}`,
+              `date=eq.${hourStart.toISOString().split('T')[0]}&` +
+              `hour=eq.${hourStart.getHours()}`,
               {
                 method: 'PATCH',
                 headers,
@@ -330,6 +332,9 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
             
             if (updateRegionalResponse.ok) {
               console.log(`  🗺️  Updated regional metrics`);
+            } else {
+              const errorText = await updateRegionalResponse.text();
+              console.log(`  ⚠️  Failed to update regional metrics: ${errorText}`);
             }
           }
         }
@@ -423,7 +428,7 @@ async function showRecentAnalytics(supabaseUrl, supabaseKey) {
   
   // Get recent hourly analytics
   const recentResponse = await fetch(
-    `${supabaseUrl}/rest/v1/hourly_analytics?select=*&order=hour_start.desc&limit=10`,
+    `${supabaseUrl}/rest/v1/hourly_analytics?select=*&order=date.desc,hour.desc&limit=10`,
     { headers }
   );
   
@@ -437,8 +442,8 @@ async function showRecentAnalytics(supabaseUrl, supabaseKey) {
       console.log('-'.repeat(70));
       
       for (const record of recentData.slice(0, 10)) {
-        const hourStr = record.hour_start ? 
-          new Date(record.hour_start).toISOString().replace('T', ' ').slice(0, 19) : 
+        const hourStr = record.date && record.hour !== undefined ? 
+          `${record.date} ${String(record.hour).padStart(2, '0')}:00:00` : 
           'Unknown';
         const storeName = (record.stores?.name || record.store_id || 'Unknown').slice(0, 8);
         const entries = record.store_entries || record.total_entries || record.total_in || 0;
@@ -452,8 +457,9 @@ async function showRecentAnalytics(supabaseUrl, supabaseKey) {
       
       // Show data age
       const latestRecord = recentData[0];
-      if (latestRecord.hour_start) {
-        const hoursAgo = Math.round((Date.now() - new Date(latestRecord.hour_start).getTime()) / 1000 / 60 / 60);
+      if (latestRecord.date && latestRecord.hour !== undefined) {
+        const recordTime = new Date(`${latestRecord.date}T${String(latestRecord.hour).padStart(2, '0')}:00:00Z`);
+        const hoursAgo = Math.round((Date.now() - recordTime.getTime()) / 1000 / 60 / 60);
         console.log(`\n⏰ Latest record is ${hoursAgo} hours old`);
       }
     } else {
