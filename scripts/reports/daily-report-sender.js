@@ -318,11 +318,30 @@ function generateReport(store, data, reportDate, language) {
 
 // Get language preference for store/recipient
 function getLanguageForStore(store) {
-  // You could store language preference in the store or user profile
-  // For now, use store location or default
-  if (store.country === 'ES') return 'es';
-  if (store.country === 'PT') return 'pt';
-  return 'en';
+  // Check store name or organization for hints
+  const storeName = (store.name || '').toLowerCase();
+  const orgName = (store.organizations?.name || '').toLowerCase();
+  
+  // Portuguese indicators
+  if (storeName.includes('portugal') || storeName.includes('lisboa') || 
+      storeName.includes('porto') || orgName.includes('portugal')) {
+    return 'pt';
+  }
+  
+  // Spanish indicators
+  if (storeName.includes('spain') || storeName.includes('españa') || 
+      storeName.includes('madrid') || storeName.includes('barcelona')) {
+    return 'es';
+  }
+  
+  // Timezone-based detection
+  if (store.timezone) {
+    if (store.timezone === 'Europe/Lisbon') return 'pt';
+    if (store.timezone === 'Europe/Madrid') return 'es';
+  }
+  
+  // Default to Portuguese for Portugal-based company
+  return 'pt';
 }
 
 // Send email report
