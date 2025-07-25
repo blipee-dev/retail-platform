@@ -14,7 +14,6 @@ SELECT
     date,
     start_time,
     end_time,
-    sensor_name,
     store_id,
     total_entries,
     total_exits,

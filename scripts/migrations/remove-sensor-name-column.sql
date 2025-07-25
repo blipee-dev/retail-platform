@@ -1,18 +1,15 @@
 -- Migration to remove sensor_name column from hourly_analytics table
 -- Run this in Supabase SQL Editor
 
--- 1. First check if the column exists and see sample data
+-- 1. First check if the column exists
 SELECT 
-    COUNT(*) as total_records,
-    COUNT(sensor_name) as records_with_sensor_name,
-    COUNT(DISTINCT sensor_name) as unique_sensor_names
-FROM hourly_analytics;
+    column_name,
+    data_type
+FROM information_schema.columns 
+WHERE table_name = 'hourly_analytics' 
+AND column_name = 'sensor_name';
 
--- 2. Show sample of sensor_name values (if any)
-SELECT DISTINCT sensor_name 
-FROM hourly_analytics 
-WHERE sensor_name IS NOT NULL 
-LIMIT 10;
+-- If the above query returns a row, the column exists and can be dropped
 
 -- 3. Drop the sensor_name column
 -- IMPORTANT: This is irreversible! Make sure you have a backup

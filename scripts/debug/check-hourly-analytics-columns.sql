@@ -16,7 +16,6 @@ SELECT
     hour,
     start_time,
     end_time,
-    sensor_name,
     store_id,
     created_at
 FROM hourly_analytics
