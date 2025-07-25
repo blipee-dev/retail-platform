@@ -1,0 +1,84 @@
+name: Send Daily Traffic Reports
+
+on:
+  schedule:
+    # Run every hour to check which stores need their 8 AM report
+    # The actual sending logic will check if it's 8 AM in the store's timezone
+    - cron: '0 * * * *'
+  workflow_dispatch:
+    inputs:
+      test_mode:
+        description: 'Run in test mode (sends to test email)?'
+        required: false
+        default: 'false'
+      specific_store:
+        description: 'Send report for specific store only (store_id)'
+        required: false
+        default: ''
+
+jobs:
+  send-daily-reports:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        
+    - name: Install dependencies
+      run: |
+        cd scripts/reports
+        npm init -y
+        npm install @supabase/supabase-js date-fns date-fns-tz nodemailer dotenv
+        
+    - name: Generate and send reports
+      env:
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        EMAIL_HOST: ${{ secrets.SMTP_SERVER }}
+        EMAIL_PORT: ${{ secrets.SMTP_PORT }}
+        EMAIL_USER: ${{ secrets.EMAIL_USER }}
+        EMAIL_PASS: ${{ secrets.EMAIL_PASSWORD }}
+        EMAIL_FROM: ${{ secrets.EMAIL_FROM || 'analytics@blipee.com' }}
+        TEST_MODE: ${{ github.event.inputs.test_mode || 'false' }}
+        SPECIFIC_STORE: ${{ github.event.inputs.specific_store || '' }}
+      run: |
+        cd scripts/reports
+        node daily-report-sender.js
+        
+    - name: Notify on failure
+      if: failure()
+      env:
+        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      run: |
+        if [ -z "$DISCORD_WEBHOOK_URL" ]; then
+          echo "⚠️ DISCORD_WEBHOOK_URL not configured - skipping notification"
+          exit 0
+        fi
+        
+        curl -X POST $DISCORD_WEBHOOK_URL \
+          -H "Content-Type: application/json" \
+          -d "{
+            \"content\": \"❌ **Daily Report Generation Failed**\",
+            \"embeds\": [{
+              \"title\": \"Workflow Failure\",
+              \"description\": \"The daily traffic report generation has failed.\",
+              \"color\": 15158332,
+              \"fields\": [
+                {
+                  \"name\": \"Workflow\",
+                  \"value\": \"daily-reports.yml\",
+                  \"inline\": true
+                },
+                {
+                  \"name\": \"Time\",
+                  \"value\": \"$(date -u '+%Y-%m-%d %H:%M:%S UTC')\",
+                  \"inline\": true
+                }
+              ]
+            }]
+          }"
