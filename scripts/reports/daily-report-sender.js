@@ -349,16 +349,20 @@ async function sendReport(store, html, reportDate) {
   // Default recipient for all reports
   const DEFAULT_RECIPIENT = 'pedro@blipee.com';
   
+  // Additional recipients that should always receive reports
+  const ADDITIONAL_RECIPIENTS = ['jmunoz@patrimi.com', 'jmelo@patrimi.com'];
+  
   // Check for email recipients in various fields
-  const recipients = TEST_MODE ? 
+  const storeRecipients = TEST_MODE ? 
     process.env.EMAIL_TO || 'test@blipee.com' : 
     store.report_emails || store.contact_email || store.email || DEFAULT_RECIPIENT;
+  
+  // Combine store recipients with additional recipients
+  const recipientList = Array.isArray(storeRecipients) ? storeRecipients : [storeRecipients];
+  const allRecipients = [...new Set([...recipientList, ...ADDITIONAL_RECIPIENTS])]; // Remove duplicates
+  const recipients = allRecipients.join(', ');
     
-  if (!recipients) {
-    console.log(`⚠️ No email recipients configured for store ${store.name}`);
-    console.log(`📧 Using default recipient: ${DEFAULT_RECIPIENT}`);
-    return await sendReport({ ...store, report_emails: DEFAULT_RECIPIENT }, html, reportDate);
-  }
+  // Recipients are now guaranteed to exist due to ADDITIONAL_RECIPIENTS
   
   const subject = `Daily Traffic Report - ${store.name} - ${format(reportDate, 'MMM d, yyyy')}`;
   
