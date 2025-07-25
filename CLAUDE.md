@@ -6,7 +6,7 @@ This file provides context for AI assistants (like Claude) working on the Retail
 
 **Retail Platform** is a comprehensive retail analytics system that integrates with people counting sensors to provide real-time analytics, heatmaps, and customer flow insights for retail environments. The platform supports global deployments with automatic timezone handling and multi-language support.
 
-## Current Project State (Last Updated: 2025-07-23)
+## Current Project State (Last Updated: 2025-07-25)
 
 ### ✅ Completed Features
 - **Core Platform**: Next.js 14 with App Router, TypeScript, Supabase
@@ -24,6 +24,7 @@ This file provides context for AI assistants (like Claude) working on the Retail
 - **Sensor Health Monitoring**: Real-time online/offline detection
 - **Audit Trail**: Complete change tracking for compliance
 - **Unified Alerts**: Consolidated alert management system
+- **Analytics Aggregation**: Fixed hourly/daily pipelines with proper column mapping (2025-07-25)
 
 ### 🚧 In Progress
 - WebSocket/real-time updates
@@ -121,6 +122,24 @@ retail-platform/
 
 ## Recent Major Changes
 
+### 2025-07-25 - Analytics Aggregation Pipeline Fixed
+- **Fixed hourly and daily aggregation**
+  - Removed hardcoded API keys from aggregation scripts
+  - Added proper error logging and debugging
+  - Fixed column name mismatches in daily_analytics table
+  - Added start_time and end_time fields to aggregations
+- **Integrated daily aggregation into main pipeline**
+  - Daily aggregation now runs automatically during midnight window (00:00-02:59 UTC)
+  - Uses `run_daily_aggregation_fixed.js` with all correct column mappings
+  - No need for separate manual workflow triggers
+- **Created comprehensive debugging tools**
+  - Data verification scripts
+  - Column listing utilities  
+  - Delete scripts for testing fresh aggregations
+- **Organized project structure**
+  - Moved 50+ scripts into logical subdirectories
+  - Created proper documentation for script organization
+
 ### 2025-07-23 - Database Optimization & Enterprise Features
 - **Implemented enterprise-grade monitoring**
   - Added audit trail system for compliance tracking
@@ -204,6 +223,8 @@ retail-platform/
 ### Workflows
 - `.github/workflows/main-pipeline.yml` - Single-cron orchestrator (NEW!)
 - `.github/workflows/collect-sensor-data-v2.yml` - Modular sensor collection
+- `.github/workflows/run-analytics-aggregation-v2.yml` - Hourly + Daily aggregation
+- `.github/workflows/run-daily-aggregation.yml` - Standalone daily aggregation
 - `.github/workflows/deploy.yml` - Auto-deployment
 - `.github/workflows/ci.yml` - Testing
 
@@ -213,6 +234,11 @@ retail-platform/
   - `lib/supabase-client.js` - Database operations
   - `lib/retry-handler.js` - Retry logic
   - `lib/sensor-client.js` - Sensor communication
+- `scripts/run_hourly_aggregation.js` - Hourly analytics aggregation
+- `scripts/run_daily_aggregation_fixed.js` - Daily analytics with correct columns
+- `scripts/debug/` - Debugging utilities
+  - `verify-inserts.js` - Verify data insertions
+  - `delete-all-daily-analytics.sql` - Clear daily data for testing
 - `scripts/housekeeping.sh` - Organize project files
 - `scripts/cleanup-root.sh` - Clean root directory
 
