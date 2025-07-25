@@ -77,43 +77,44 @@ async function getStoresForReports() {
   return eligibleStores;
 }
 
-// Get report data for a store
+// Get report data for a store using raw data
 async function getReportData(store, reportDate) {
   const reportDateStr = format(reportDate, 'yyyy-MM-dd');
   
   console.log(`📊 Fetching data for ${store.name} (ID: ${store.id})`);
   console.log(`   Date: ${reportDateStr}`);
   
-  // Get daily analytics data
-  const { data: dailyData, error: dailyError } = await supabase
-    .from('daily_analytics')
-    .select('*')
-    .eq('store_id', store.id)
-    .eq('date', reportDateStr)
-    .single();
-    
-  if (dailyError) {
-    console.error('Error fetching daily analytics:', dailyError);
-  }
+  // Get raw data for the report date in store's local timezone
+  const storeTimezone = store.timezone || 'Europe/Lisbon';
+  const reportDateInTz = utcToZonedTime(new Date(reportDateStr), storeTimezone);
   
-  // Get hourly analytics data
-  const { data: hourlyData, error: hourlyError } = await supabase
-    .from('hourly_analytics')
+  // Set start and end times in local timezone (full day)
+  const startLocal = new Date(reportDateInTz);
+  startLocal.setHours(0, 0, 0, 0);
+  const endLocal = new Date(reportDateInTz);
+  endLocal.setHours(23, 59, 59, 999);
+  
+  // Convert to UTC for database query
+  const startUTC = zonedTimeToUtc(startLocal, storeTimezone);
+  const endUTC = zonedTimeToUtc(endLocal, storeTimezone);
+  
+  const { data: rawData, error: rawError } = await supabase
+    .from('people_counting_raw')
     .select('*')
     .eq('store_id', store.id)
-    .eq('date', reportDateStr)
-    .order('hour');
+    .gte('timestamp', startUTC.toISOString())
+    .lte('timestamp', endUTC.toISOString())
+    .order('timestamp');
     
-  if (hourlyError) {
-    console.error('Error fetching hourly analytics:', hourlyError);
+  if (rawError) {
+    console.error('Error fetching raw data:', rawError);
     return null;
   }
   
-  console.log(`   Found daily data: ${dailyData ? 'Yes' : 'No'}`);
-  console.log(`   Found ${hourlyData.length} hourly records`);
+  console.log(`   Found ${rawData.length} raw records`);
   
   // Handle case where no data is found
-  if (!dailyData && hourlyData.length === 0) {
+  if (!rawData || rawData.length === 0) {
     console.log(`   ⚠️ No data found for ${store.name} on ${reportDateStr}`);
     
     // Return empty data structure
@@ -133,41 +134,82 @@ async function getReportData(store, reportDate) {
     };
   }
   
+  // Calculate hourly totals from raw data
+  const hourlyTotals = {};
+  let totalVisitors = 0;
+  let totalPassersby = 0;
+  
+  rawData.forEach(record => {
+    // Convert timestamp to store's local time
+    const localTime = utcToZonedTime(new Date(record.timestamp), storeTimezone);
+    const hour = localTime.getHours();
+    
+    // Total visitors = sum of line1, line2, and line3 ins
+    const visitors = (record.line1_in || 0) + (record.line2_in || 0) + (record.line3_in || 0);
+    
+    // Passersby = line4 in + line4 out
+    const passersby = (record.line4_in || 0) + (record.line4_out || 0);
+    
+    if (!hourlyTotals[hour]) {
+      hourlyTotals[hour] = { visitors: 0, passersby: 0 };
+    }
+    
+    hourlyTotals[hour].visitors += visitors;
+    hourlyTotals[hour].passersby += passersby;
+    
+    totalVisitors += visitors;
+    totalPassersby += passersby;
+  });
+  
+  // Calculate capture rate
+  const captureRate = totalPassersby > 0 ? 
+    ((totalVisitors / totalPassersby) * 100).toFixed(2) : '0';
+  
   // Get previous day data for comparison
   const prevDateStr = format(subDays(reportDate, 1), 'yyyy-MM-dd');
-  const { data: prevDailyData } = await supabase
-    .from('daily_analytics')
+  const prevStartDate = new Date(prevDateStr + 'T00:00:00');
+  const prevEndDate = new Date(prevDateStr + 'T23:59:59');
+  
+  const { data: prevRawData } = await supabase
+    .from('people_counting_raw')
     .select('*')
     .eq('store_id', store.id)
-    .eq('date', prevDateStr)
-    .single();
+    .gte('timestamp', prevStartDate.toISOString())
+    .lte('timestamp', prevEndDate.toISOString());
     
-  // Extract metrics from daily analytics
-  const totalVisitors = dailyData?.store_entries || 0;
-  const totalPassersby = dailyData?.passerby_count || 0;
-  const captureRate = dailyData?.capture_rate || '0';
+  let prevVisitors = 0;
+  if (prevRawData) {
+    prevRawData.forEach(record => {
+      prevVisitors += (record.line1_in || 0) + (record.line2_in || 0) + (record.line3_in || 0);
+    });
+  }
   
-  const prevVisitors = prevDailyData?.store_entries || 0;
-  const changePercent = prevVisitors > 0 ? (((totalVisitors - prevVisitors) / prevVisitors) * 100).toFixed(1) : 0;
+  const changePercent = prevVisitors > 0 ? 
+    (((totalVisitors - prevVisitors) / prevVisitors) * 100).toFixed(1) : 0;
   
-  // Build hourly data array
+  // Build hourly data array (24 hours)
   const hourlyDataArray = Array(24).fill(0);
-  hourlyData.forEach(hour => {
-    if (hour.hour >= 0 && hour.hour < 24) {
-      hourlyDataArray[hour.hour] = hour.store_entries || 0;
+  let peakHour = 0;
+  let peakVisitors = 0;
+  
+  Object.keys(hourlyTotals).forEach(hour => {
+    const hourNum = parseInt(hour);
+    hourlyDataArray[hourNum] = hourlyTotals[hour].visitors;
+    
+    // Track peak hour (only during business hours 10-23)
+    if (hourNum >= 10 && hourNum <= 23 && hourlyTotals[hour].visitors > peakVisitors) {
+      peakVisitors = hourlyTotals[hour].visitors;
+      peakHour = hourNum;
     }
   });
   
-  // Find peak hour
-  const peakHour = dailyData?.peak_hour || 0;
-  const peakVisitors = hourlyDataArray[peakHour];
+  // Calculate period averages (only business hours 10-23)
+  const morningTraffic = hourlyDataArray.slice(10, 14).reduce((a, b) => a + b, 0);
+  const afternoonTraffic = hourlyDataArray.slice(14, 19).reduce((a, b) => a + b, 0);
+  const eveningTraffic = hourlyDataArray.slice(19, 24).reduce((a, b) => a + b, 0);
   
-  // Calculate period averages
-  const morningTraffic = hourlyDataArray.slice(6, 12).reduce((a, b) => a + b, 0);
-  const afternoonTraffic = hourlyDataArray.slice(12, 18).reduce((a, b) => a + b, 0);
-  const eveningTraffic = hourlyDataArray.slice(18, 22).reduce((a, b) => a + b, 0);
-  
-  const businessHours = hourlyData.filter(h => h.hour >= 9 && h.hour <= 21).length;
+  // Count business hours with data (10 AM to 11:59 PM)
+  const businessHours = hourlyDataArray.slice(10, 24).filter(v => v > 0).length;
   const avgHourly = businessHours > 0 ? Math.round(totalVisitors / businessHours) : 0;
   
   return {
@@ -198,29 +240,30 @@ function generateReport(store, data, reportDate, language) {
                        language === 'es' ? "EEEE, d 'de' MMMM 'de' yyyy" :
                        "EEEE, d 'de' MMMM 'de' yyyy";
   
-  // Generate hourly bars
-  const maxValue = Math.max(...data.hourlyData);
+  // Generate hourly bars (only show business hours 10-23)
+  const businessHoursData = data.hourlyData.slice(10, 24); // 10 AM to 11 PM
+  const maxValue = Math.max(...businessHoursData);
   let hourlyBars = '';
-  data.hourlyData.forEach((value) => {
+  businessHoursData.forEach((value) => {
     const height = maxValue > 0 ? Math.round((value / maxValue) * 100) : 0;
     const color = height > 80 ? '#e74c3c' : height > 50 ? '#f39c12' : '#3498db';
-    hourlyBars += `<td width="4.16%" style="vertical-align: bottom; padding: 0 1px;">
+    hourlyBars += `<td width="7.14%" style="vertical-align: bottom; padding: 0 1px;">
       <div style="background-color: ${color}; height: ${height}px; width: 100%; border-radius: 2px 2px 0 0;"></div>
     </td>`;
   });
   
-  // Generate hour labels
+  // Generate hour labels (10-23)
   let hourLabels = '';
-  for (let i = 0; i < 24; i++) {
-    if (i % 3 === 0) {
-      hourLabels += `<td width="12.5%" style="text-align: center;">${i}h</td>`;
-    }
+  for (let i = 10; i <= 23; i += 2) {
+    hourLabels += `<td width="14.28%" style="text-align: center;">${i}h</td>`;
   }
   
   // Comparison text
   const getComparison = (value, type) => {
-    const avgValue = data.avgHourly * 6; // 6 hours per period
-    const diff = ((value - avgValue) / avgValue * 100).toFixed(0);
+    // Adjust hours per period: morning 4h (10-14), afternoon 5h (14-19), evening 5h (19-24)
+    const hoursInPeriod = type === 'morning' ? 4 : 5;
+    const avgValue = data.avgHourly * hoursInPeriod;
+    const diff = avgValue > 0 ? ((value - avgValue) / avgValue * 100).toFixed(0) : 0;
     
     if (language === 'en') {
       return diff > 0 ? `${diff}% above average` : `${Math.abs(diff)}% below average`;

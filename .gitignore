@@ -160,3 +160,7 @@ scripts/test_output/
 # Archive folders
 scripts/archive/temp/
 docs/archive/temp/backup_*/
+
+# Node modules in subdirectories
+scripts/reports/node_modules/
+scripts/workflows/node_modules/
