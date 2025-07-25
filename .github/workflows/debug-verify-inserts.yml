@@ -1,0 +1,118 @@
+name: Debug - Verify Inserts
+
+on:
+  workflow_dispatch:
+    inputs:
+      debug_level:
+        description: 'Debug level (info or verbose)'
+        required: false
+        type: string
+        default: 'verbose'
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  verify-inserts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm install node-fetch@2
+
+      - name: Run verify inserts script
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          DEBUG_LEVEL: ${{ inputs.debug_level }}
+        run: |
+          echo "🔍 Running verify inserts script..."
+          echo "Debug level: $DEBUG_LEVEL"
+          echo ""
+          
+          # Run the verification script
+          cd scripts/debug
+          node verify-inserts.js
+          
+          echo ""
+          echo "🔍 Running enhanced verification..."
+          echo ""
+          
+          # Run the enhanced version if verbose mode
+          if [ "$DEBUG_LEVEL" = "verbose" ]; then
+            node verify-inserts-enhanced.js
+          fi
+
+      - name: Additional diagnostics
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          echo ""
+          echo "🔍 Additional diagnostics..."
+          echo ""
+          
+          # Create inline script to check environment
+          cat > check-env.js << 'EOF'
+          const url = process.env.SUPABASE_URL;
+          const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+          
+          console.log('Environment Check:');
+          console.log('=================');
+          console.log(`SUPABASE_URL: ${url ? url.substring(0, 30) + '...' : 'NOT SET'}`);
+          console.log(`Service key: ${key ? 'SET (' + key.length + ' chars)' : 'NOT SET'}`);
+          
+          // Check if URL matches expected pattern
+          if (url) {
+            const urlPattern = /https:\/\/[a-z0-9]+\.supabase\.co/;
+            console.log(`URL format: ${urlPattern.test(url) ? '✅ Valid' : '❌ Invalid'}`);
+            
+            // Extract project reference
+            const match = url.match(/https:\/\/([a-z0-9]+)\.supabase\.co/);
+            if (match) {
+              console.log(`Project ref: ${match[1]}`);
+            }
+          }
+          EOF
+          
+          node check-env.js
+
+      - name: Generate summary
+        if: always()
+        run: |
+          cat << EOF > $GITHUB_STEP_SUMMARY
+          ## Verify Inserts Debug Summary
+          
+          **Status**: ${{ job.status }}
+          **Debug Level**: ${{ inputs.debug_level }}
+          
+          ### Results
+          Check the logs above for:
+          - Total record count in hourly_analytics
+          - Today's records count
+          - RLS policy checks
+          - Specific store data verification
+          - Test insert capability
+          
+          ### Key Store IDs Checked
+          - d719cc6b (from recent logs)
+          - dfee65ba (from recent logs)
+          
+          ### What This Checks
+          1. **Data Visibility**: Whether records exist but are hidden
+          2. **RLS Policies**: If Row Level Security is blocking access
+          3. **Insert Capability**: If new records can be inserted
+          4. **Environment**: If we're connected to the correct database
+          EOF
