@@ -68,19 +68,36 @@ jobs:
           retention-days: 7
 
       - name: Send notification on failure
-        if: failure() && env.SLACK_WEBHOOK != ''
+        if: failure()
         env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
-          curl -X POST $SLACK_WEBHOOK \
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "⚠️ DISCORD_WEBHOOK_URL not configured - skipping notification"
+            exit 0
+          fi
+          
+          curl -X POST $DISCORD_WEBHOOK \
             -H 'Content-Type: application/json' \
             -d '{
-              "text": "❌ Regional Data Collection Failed",
-              "blocks": [{
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "*Regional Data Collection Failed*\n• Workflow: <https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>\n• Error: Check logs for details"
-                }
+              "embeds": [{
+                "title": "❌ Regional Data Collection Failed",
+                "color": 15158332,
+                "fields": [
+                  {
+                    "name": "Error",
+                    "value": "Check logs for details",
+                    "inline": false
+                  },
+                  {
+                    "name": "Workflow Run",
+                    "value": "[View Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})",
+                    "inline": false
+                  }
+                ],
+                "footer": {
+                  "text": "Regional Data Collection"
+                },
+                "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'"
               }]
             }'
