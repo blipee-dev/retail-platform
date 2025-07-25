@@ -205,6 +205,9 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
         organization_id: store.organization_id,
         date: hourStart.toISOString().split('T')[0],
         hour: hourStart.getHours(),
+        // Time range for this hour
+        start_time: hourStart.toISOString(),
+        end_time: hourEnd.toISOString(),
         // New comprehensive metrics
         store_entries: totals.storeEntries,
         store_exits: totals.storeExits,
