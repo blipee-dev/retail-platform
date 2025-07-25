@@ -217,9 +217,8 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
         exit_line1_pct: exitLine1Pct,
         exit_line2_pct: exitLine2Pct,
         exit_line3_pct: exitLine3Pct,
-        sample_count: rawData.length,
-        avg_occupancy: 0,
-        peak_occupancy: 0
+        sample_count: rawData.length
+        // Removed avg_occupancy and peak_occupancy - columns don't exist
       };
       
       // Add line data
@@ -251,6 +250,7 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
         console.log(`    ✅ Found existing record, updating...`);
       } else {
         console.log(`    ➕ No existing record, inserting new...`);
+        console.log(`    📝 Inserting data:`, JSON.stringify(hourlyRecord, null, 2));
       }
       
       if (existingRecords.length > 0) {
@@ -412,10 +412,7 @@ function calculateRegionalMetrics(regionalData, storeEntries, storeId, hourStart
   metrics.total_zone_occupancy = Math.round(avgTotalOccupancy);
   
   // Combined metrics: Occupancy Validation
-  if (storeEntries > 0) {
-    // This helps validate sensor accuracy
-    metrics.occupancy_accuracy_score = 100; // Placeholder - would need exits to calculate
-  }
+  // Removed occupancy_accuracy_score - column doesn't exist in table
   
   return metrics;
 }
