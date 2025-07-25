@@ -27,7 +27,14 @@ BEGIN
     
     RAISE NOTICE 'Found Jack & Jones organization: %', v_org_id;
     
-    -- Check if Jesús already exists
+    -- Find auth user for Jesús
+    SELECT id INTO v_auth_user_id FROM auth.users WHERE email = 'jmunoz@patrimi.com';
+    
+    IF v_auth_user_id IS NULL THEN
+        RAISE EXCEPTION 'Auth user not found for jmunoz@patrimi.com. Please create the auth user first.';
+    END IF;
+    
+    -- Check if Jesús already exists in user_profiles
     SELECT id INTO v_user_id FROM user_profiles WHERE email = 'jmunoz@patrimi.com';
     
     IF v_user_id IS NOT NULL THEN
@@ -40,7 +47,7 @@ BEGIN
         WHERE id = v_user_id;
         RAISE NOTICE 'Updated existing user Jesús Muñoz: %', v_user_id;
     ELSE
-        -- Create new user
+        -- Create new user profile using auth user id
         INSERT INTO user_profiles (
             id,
             email,
@@ -52,7 +59,7 @@ BEGIN
             created_at,
             updated_at
         ) VALUES (
-            gen_random_uuid(),
+            v_auth_user_id,  -- Use the auth user ID
             'jmunoz@patrimi.com',
             'Jesús Muñoz Casas',
             'tenant_admin',
@@ -65,7 +72,14 @@ BEGIN
         RAISE NOTICE 'Created new user Jesús Muñoz: %', v_user_id;
     END IF;
     
-    -- Check if João already exists
+    -- Find auth user for João
+    SELECT id INTO v_auth_user_id FROM auth.users WHERE email = 'jmelo@patrimi.com';
+    
+    IF v_auth_user_id IS NULL THEN
+        RAISE EXCEPTION 'Auth user not found for jmelo@patrimi.com. Please create the auth user first.';
+    END IF;
+    
+    -- Check if João already exists in user_profiles
     SELECT id INTO v_user_id FROM user_profiles WHERE email = 'jmelo@patrimi.com';
     
     IF v_user_id IS NOT NULL THEN
@@ -78,7 +92,7 @@ BEGIN
         WHERE id = v_user_id;
         RAISE NOTICE 'Updated existing user João Melo: %', v_user_id;
     ELSE
-        -- Create new user
+        -- Create new user profile using auth user id
         INSERT INTO user_profiles (
             id,
             email,
@@ -90,7 +104,7 @@ BEGIN
             created_at,
             updated_at
         ) VALUES (
-            gen_random_uuid(),
+            v_auth_user_id,  -- Use the auth user ID
             'jmelo@patrimi.com',
             'João Célio Melo Pinta Moreira',
             'tenant_admin',
