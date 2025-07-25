@@ -68,12 +68,7 @@ jobs:
           
           # Run the aggregation script
           cd scripts
-          
-          # Use simplified version to avoid column errors
-          if [ -f "run_hourly_aggregation_simple.js" ]; then
-            echo "🔧 Using simplified aggregation (avoids missing columns)..."
-            node run_hourly_aggregation_simple.js
-          elif [ -f "run_hourly_aggregation.js" ]; then
+          if [ -f "run_hourly_aggregation.js" ]; then
             node run_hourly_aggregation.js
           else
             echo "⚠️ Aggregation script not found, skipping..."
