@@ -47,7 +47,14 @@ jobs:
           fi
           
           cd scripts
-          node run_daily_aggregation.js
+          # Try the fixed version first, fall back to original if not found
+          if [ -f "run_daily_aggregation_fixed.js" ]; then
+            echo "Running fixed daily aggregation script..."
+            node run_daily_aggregation_fixed.js
+          else
+            echo "Running original daily aggregation script..."
+            node run_daily_aggregation.js
+          fi
 
       - name: Generate summary
         if: always()
