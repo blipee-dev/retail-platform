@@ -66,7 +66,7 @@ jobs:
           echo "Sensor data status: ${{ inputs.sensor_data_status }}"
           echo "Regional data status: ${{ inputs.regional_data_status }}"
           
-          # Run the existing aggregation script
+          # Run the aggregation script
           cd scripts
           if [ -f "run_hourly_aggregation.js" ]; then
             node run_hourly_aggregation.js
