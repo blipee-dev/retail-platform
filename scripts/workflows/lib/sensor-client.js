@@ -162,9 +162,11 @@ class SensorClient {
     const sensorLocalNow = localTimeInfo.localTime;
     
     // Round to complete hour periods
-    // End time: Current hour at HH:59:59
+    // End time: Previous completed hour at HH:59:59 
+    // (e.g., if it's 14:35, query up to 13:59:59 to avoid incomplete/future data)
     const queryEndTime = new Date(sensorLocalNow);
-    queryEndTime.setMinutes(59, 59, 999);
+    queryEndTime.setMinutes(0, 0, 0);
+    queryEndTime.setTime(queryEndTime.getTime() - 1000); // Go to previous hour's 59:59:59
     
     // Start time: 3 hours ago at HH:00:00
     const queryStartTime = new Date(sensorLocalNow.getTime() - 3 * 60 * 60 * 1000);

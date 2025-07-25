@@ -203,8 +203,10 @@ async function collectSensorRegionalData(sensor, supabase) {
     const localTime = client.getLocalTime(timezone, now);
     
     // Round to complete hour periods
+    // End time: Previous completed hour at HH:59:59 to avoid incomplete/future data
     const queryEndTime = new Date(localTime.localTime);
-    queryEndTime.setMinutes(59, 59, 999);
+    queryEndTime.setMinutes(0, 0, 0);
+    queryEndTime.setTime(queryEndTime.getTime() - 1000); // Go to previous hour's 59:59:59
     
     // Query last 3 hours
     const queryStartTime = new Date(localTime.localTime.getTime() - 3 * 60 * 60 * 1000);
