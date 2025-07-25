@@ -344,30 +344,88 @@ function getLanguageForStore(store) {
   return 'pt';
 }
 
-// Map of email addresses to first names
-const EMAIL_TO_NAME = {
-  'pedro@blipee.com': 'Pedro',
-  'jmunoz@patrimi.com': 'Jesús',
-  'jmelo@patrimi.com': 'João'
-};
+// Get report recipients based on roles and permissions
+async function getReportRecipients(store) {
+  const recipients = [];
+  
+  try {
+    // 1. Get all platform admins (they receive ALL reports)
+    const { data: platformAdmins, error: platformError } = await supabase
+      .from('user_profiles')
+      .select('email, full_name')
+      .eq('role', 'platform_admin')
+      .eq('is_active', true);
+    
+    if (platformError) {
+      console.error('Error fetching platform admins:', platformError);
+    } else if (platformAdmins && platformAdmins.length > 0) {
+      console.log(`   Found ${platformAdmins.length} platform admin(s)`);
+      recipients.push(...platformAdmins);
+    }
+    
+    // 2. Get organization admins for this store's organization
+    const { data: orgAdmins, error: orgError } = await supabase
+      .from('user_profiles')
+      .select('email, full_name')
+      .eq('role', 'tenant_admin')
+      .eq('organization_id', store.organization_id)
+      .eq('is_active', true);
+    
+    if (orgError) {
+      console.error('Error fetching org admins:', orgError);
+    } else if (orgAdmins && orgAdmins.length > 0) {
+      console.log(`   Found ${orgAdmins.length} org admin(s) for ${store.organizations?.name || 'organization'}`);
+      recipients.push(...orgAdmins);
+    }
+    
+    // 3. Add store-specific recipients if configured
+    if (store.report_emails) {
+      const emails = store.report_emails.split(',').map(email => email.trim()).filter(Boolean);
+      for (const email of emails) {
+        if (!recipients.find(r => r.email === email)) {
+          recipients.push({
+            email: email,
+            full_name: email.split('@')[0] // Fallback name
+          });
+        }
+      }
+      console.log(`   Found ${emails.length} store-specific recipient(s)`);
+    }
+    
+    // Remove duplicates by email
+    const uniqueRecipients = recipients.reduce((acc, recipient) => {
+      if (!acc.find(r => r.email === recipient.email)) {
+        acc.push(recipient);
+      }
+      return acc;
+    }, []);
+    
+    console.log(`   Total unique recipients: ${uniqueRecipients.length}`);
+    return uniqueRecipients;
+    
+  } catch (error) {
+    console.error('Error getting report recipients:', error);
+    // Fallback to store emails or default
+    if (store.report_emails) {
+      return store.report_emails.split(',').map(email => ({
+        email: email.trim(),
+        full_name: email.split('@')[0]
+      }));
+    }
+    return [];
+  }
+}
 
 // Send email report to multiple recipients with personalized greetings
 async function sendReport(store, data, reportDate) {
-  // Default recipient for all reports
-  const DEFAULT_RECIPIENT = 'pedro@blipee.com';
+  // Get recipients dynamically from database
+  const recipients = await getReportRecipients(store);
   
-  // Additional recipients that should always receive reports
-  const ADDITIONAL_RECIPIENTS = ['jmunoz@patrimi.com', 'jmelo@patrimi.com'];
+  if (recipients.length === 0) {
+    console.warn(`⚠️  No recipients found for ${store.name}`);
+    return false;
+  }
   
-  // Check for email recipients in various fields
-  const storeRecipients = TEST_MODE ? 
-    process.env.EMAIL_TO || 'test@blipee.com' : 
-    store.report_emails || store.contact_email || store.email || DEFAULT_RECIPIENT;
-  
-  // Combine store recipients with additional recipients
-  const recipientList = Array.isArray(storeRecipients) ? storeRecipients : [storeRecipients];
-  const allRecipients = [...new Set([...recipientList, ...ADDITIONAL_RECIPIENTS])]; // Remove duplicates
-    
   const subject = `Daily Traffic Report - ${store.name} - ${format(reportDate, 'MMM d, yyyy')}`;
   const language = getLanguageForStore(store);
   
@@ -375,25 +433,27 @@ async function sendReport(store, data, reportDate) {
   let failureCount = 0;
   
   // Send personalized email to each recipient
-  for (const recipient of allRecipients) {
+  for (const recipient of recipients) {
     try {
-      // Get recipient's first name
-      const recipientName = EMAIL_TO_NAME[recipient] || recipient.split('@')[0];
+      // Extract first name from full_name
+      const firstName = recipient.full_name ? 
+        recipient.full_name.split(' ')[0] : 
+        recipient.email.split('@')[0];
       
       // Generate personalized HTML
-      const html = generateReport(store, data, reportDate, language, recipientName);
+      const html = generateReport(store, data, reportDate, language, firstName);
       
       await transporter.sendMail({
         from: process.env.EMAIL_FROM || 'analytics@blipee.com',
-        to: recipient,
+        to: recipient.email,
         subject: subject,
         html: html
       });
       
-      console.log(`✅ Report sent to ${recipient} (${recipientName}) for ${store.name}`);
+      console.log(`✅ Report sent to ${recipient.email} (${recipient.full_name || firstName}) for ${store.name}`);
       successCount++;
     } catch (error) {
-      console.error(`❌ Failed to send email to ${recipient} for ${store.name}:`, error);
+      console.error(`❌ Failed to send email to ${recipient.email} for ${store.name}:`, error);
       failureCount++;
     }
   }
