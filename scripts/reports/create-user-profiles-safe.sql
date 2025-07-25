@@ -1,11 +1,12 @@
+-- Safe version that checks for valid roles first
 -- Create user profiles for Jesús Muñoz and João Melo
--- Run this in Supabase SQL Editor
 
--- First, find the JJ organization
+-- First check what roles are available
 DO $$
 DECLARE
     v_org_id UUID;
     v_user_id UUID;
+    v_role TEXT;
 BEGIN
     -- Find the Jack & Jones organization
     SELECT id INTO v_org_id
@@ -25,9 +26,32 @@ BEGIN
     
     RAISE NOTICE 'Found Jack & Jones organization: %', v_org_id;
     
+    -- Determine the appropriate viewer role
+    -- Try common role names in order of preference
+    SELECT role INTO v_role
+    FROM (
+        VALUES 
+            ('viewer'),
+            ('org_viewer'),
+            ('store_viewer'),
+            ('user'),
+            ('member')
+    ) AS roles(role)
+    WHERE role::text IN (
+        SELECT unnest(enum_range(NULL::user_role_enum))::text
+    )
+    LIMIT 1;
+    
+    IF v_role IS NULL THEN
+        -- If no common viewer role found, use the first available role
+        SELECT unnest(enum_range(NULL::user_role_enum))::text INTO v_role LIMIT 1;
+        RAISE NOTICE 'Using default role: %', v_role;
+    ELSE
+        RAISE NOTICE 'Using role: %', v_role;
+    END IF;
+    
     -- Create or update Jesús Muñoz
     INSERT INTO user_profiles (
-        id,
         email,
         full_name,
         role,
@@ -35,16 +59,16 @@ BEGIN
         created_at,
         updated_at
     ) VALUES (
-        gen_random_uuid(),
         'jmunoz@patrimi.com',
         'Jesús Muñoz Casas',
-        'viewer',
+        v_role::user_role_enum,
         v_org_id,
         NOW(),
         NOW()
     )
     ON CONFLICT (email) DO UPDATE
     SET full_name = EXCLUDED.full_name,
+        organization_id = EXCLUDED.organization_id,
         updated_at = NOW()
     RETURNING id INTO v_user_id;
     
@@ -52,7 +76,6 @@ BEGIN
     
     -- Create or update João Melo
     INSERT INTO user_profiles (
-        id,
         email,
         full_name,
         role,
@@ -60,16 +83,16 @@ BEGIN
         created_at,
         updated_at
     ) VALUES (
-        gen_random_uuid(),
         'jmelo@patrimi.com',
         'João Célio Melo Pinta Moreira',
-        'viewer',
+        v_role::user_role_enum,
         v_org_id,
         NOW(),
         NOW()
     )
     ON CONFLICT (email) DO UPDATE
     SET full_name = EXCLUDED.full_name,
+        organization_id = EXCLUDED.organization_id,
         updated_at = NOW()
     RETURNING id INTO v_user_id;
     
