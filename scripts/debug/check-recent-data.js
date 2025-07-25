@@ -1,66 +1,95 @@
-const { createClient } = require('@supabase/supabase-js');
-require('dotenv').config({ path: '/workspaces/retail-platform/.env' });
+#!/usr/bin/env node
 
-const supabaseUrl = process.env.BLIPEE_NEXT_PUBLIC_SUPABASE_URL;
-const supabaseServiceKey = process.env.BLIPEE_SUPABASE_SERVICE_ROLE_KEY;
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+require('dotenv').config({ path: '.env.local' });
+const { createClient } = require('@supabase/supabase-js');
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 
 async function checkRecentData() {
-  console.log('🔍 Checking for recent data in Supabase...\n');
-  
-  // Check people_counting_raw
-  console.log('📊 Recent data in people_counting_raw:');
-  const { data: countingData, error: countingError } = await supabase
-    .from('people_counting_raw')
-    .select('*')
-    .order('timestamp', { ascending: false })
-    .limit(5);
-  
-  if (countingError) {
-    console.error('Error:', countingError.message);
-  } else if (countingData && countingData.length > 0) {
-    countingData.forEach(row => {
-      console.log(`  ${new Date(row.timestamp).toLocaleString()} - Sensor: ${row.sensor_id}, IN: ${row.total_in}, OUT: ${row.total_out}`);
-    });
-    console.log(`\n  Latest entry: ${new Date(countingData[0].timestamp).toLocaleString()}`);
-  } else {
-    console.log('  No data found');
-  }
-  
-  // Check sensor health
-  console.log('\n🏥 Sensor Health Status:');
-  const { data: sensors, error: sensorError } = await supabase
-    .from('sensor_metadata')
-    .select('sensor_id, sensor_name, status, last_data_received, consecutive_failures')
-    .order('sensor_name');
-  
-  if (sensorError) {
-    console.error('Error:', sensorError.message);
-  } else if (sensors) {
-    sensors.forEach(sensor => {
-      const statusIcon = sensor.status === 'online' ? '🟢' : sensor.status === 'warning' ? '🟡' : '🔴';
-      const lastData = sensor.last_data_received ? new Date(sensor.last_data_received).toLocaleString() : 'Never';
-      console.log(`  ${statusIcon} ${sensor.sensor_name}: Last data: ${lastData}, Failures: ${sensor.consecutive_failures}`);
-    });
-  }
-  
-  // Check for recent alerts
-  console.log('\n🚨 Recent Alerts:');
-  const { data: alerts, error: alertError } = await supabase
-    .from('alerts')
-    .select('*')
-    .order('created_at', { ascending: false })
-    .limit(5);
-  
-  if (alertError) {
-    console.error('Error:', alertError.message);
-  } else if (alerts && alerts.length > 0) {
-    alerts.forEach(alert => {
-      console.log(`  ${new Date(alert.created_at).toLocaleString()} - ${alert.title}: ${alert.description}`);
-    });
-  } else {
-    console.log('  No recent alerts');
+  console.log('🔍 Checking recent sensor data...\n');
+
+  try {
+    // Check people_counting_raw for recent data
+    const { data: recentData, error } = await supabase
+      .from('people_counting_raw')
+      .select('sensor_id, timestamp, in_count, out_count, created_at')
+      .order('timestamp', { ascending: false })
+      .limit(10);
+
+    if (error) throw error;
+
+    console.log('📊 Latest 10 records in people_counting_raw:');
+    if (recentData && recentData.length > 0) {
+      recentData.forEach(record => {
+        console.log(`  ${record.sensor_id}: ${record.timestamp} - In: ${record.in_count}, Out: ${record.out_count} (Created: ${record.created_at})`);
+      });
+      
+      // Get the most recent timestamp
+      const latestTimestamp = new Date(recentData[0].timestamp);
+      const now = new Date();
+      const hoursSinceLastData = (now - latestTimestamp) / (1000 * 60 * 60);
+      
+      console.log(`\n⏰ Last data: ${latestTimestamp.toISOString()}`);
+      console.log(`⏱️  Hours since last data: ${hoursSinceLastData.toFixed(1)} hours`);
+    } else {
+      console.log('  No data found!');
+    }
+
+    // Check sensor health
+    console.log('\n🏥 Checking sensor health...');
+    const { data: sensorHealth, error: healthError } = await supabase
+      .from('sensor_metadata')
+      .select('sensor_id, name, is_active, last_seen, health_status')
+      .eq('is_active', true)
+      .order('sensor_id');
+
+    if (healthError) throw healthError;
+
+    if (sensorHealth) {
+      sensorHealth.forEach(sensor => {
+        const lastSeen = sensor.last_seen ? new Date(sensor.last_seen) : null;
+        const hoursSinceLastSeen = lastSeen ? ((new Date() - lastSeen) / (1000 * 60 * 60)).toFixed(1) : 'Never';
+        console.log(`  ${sensor.sensor_id} (${sensor.name}): ${sensor.health_status || 'unknown'} - Last seen: ${hoursSinceLastSeen} hours ago`);
+      });
+    }
+
+    // Check if data exists for today during business hours
+    console.log('\n📅 Checking today\'s business hours data...');
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const { data: todayData, error: todayError } = await supabase
+      .from('people_counting_raw')
+      .select('sensor_id, timestamp')
+      .gte('timestamp', today.toISOString())
+      .lt('timestamp', tomorrow.toISOString())
+      .order('timestamp', { ascending: false });
+
+    if (todayError) throw todayError;
+
+    console.log(`  Records for today: ${todayData?.length || 0}`);
+    if (todayData && todayData.length > 0) {
+      // Group by hour
+      const hourlyCount = {};
+      todayData.forEach(record => {
+        const hour = new Date(record.timestamp).getHours();
+        hourlyCount[hour] = (hourlyCount[hour] || 0) + 1;
+      });
+      
+      console.log('  Records by hour:');
+      Object.keys(hourlyCount).sort((a, b) => parseInt(a) - parseInt(b)).forEach(hour => {
+        console.log(`    ${hour}:00 - ${hourlyCount[hour]} records`);
+      });
+    }
+
+  } catch (error) {
+    console.error('❌ Error:', error.message);
   }
 }
 
-checkRecentData().catch(console.error);
+checkRecentData();

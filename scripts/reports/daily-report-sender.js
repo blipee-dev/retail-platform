@@ -79,59 +79,96 @@ async function getStoresForReports() {
 
 // Get report data for a store
 async function getReportData(store, reportDate) {
-  const startOfDayUTC = zonedTimeToUtc(startOfDay(reportDate), store.timezone);
-  const endOfDayUTC = zonedTimeToUtc(endOfDay(reportDate), store.timezone);
+  const reportDateStr = format(reportDate, 'yyyy-MM-dd');
   
-  // Get people counting data
-  const { data: trafficData, error: trafficError } = await supabase
-    .from('people_counting_raw')
+  console.log(`📊 Fetching data for ${store.name} (ID: ${store.id})`);
+  console.log(`   Date: ${reportDateStr}`);
+  
+  // Get daily analytics data
+  const { data: dailyData, error: dailyError } = await supabase
+    .from('daily_analytics')
     .select('*')
     .eq('store_id', store.id)
-    .gte('timestamp', startOfDayUTC.toISOString())
-    .lt('timestamp', endOfDayUTC.toISOString())
-    .order('timestamp');
+    .eq('date', reportDateStr)
+    .single();
     
-  if (trafficError) {
-    console.error('Error fetching traffic data:', trafficError);
+  if (dailyError) {
+    console.error('Error fetching daily analytics:', dailyError);
+  }
+  
+  // Get hourly analytics data
+  const { data: hourlyData, error: hourlyError } = await supabase
+    .from('hourly_analytics')
+    .select('*')
+    .eq('store_id', store.id)
+    .eq('date', reportDateStr)
+    .order('hour');
+    
+  if (hourlyError) {
+    console.error('Error fetching hourly analytics:', hourlyError);
     return null;
   }
   
-  // Get previous day data for comparison
-  const prevDate = subDays(reportDate, 1);
-  const prevStartUTC = zonedTimeToUtc(startOfDay(prevDate), store.timezone);
-  const prevEndUTC = zonedTimeToUtc(endOfDay(prevDate), store.timezone);
+  console.log(`   Found daily data: ${dailyData ? 'Yes' : 'No'}`);
+  console.log(`   Found ${hourlyData.length} hourly records`);
   
-  const { data: prevData } = await supabase
-    .from('people_counting_raw')
+  // Handle case where no data is found
+  if (!dailyData && hourlyData.length === 0) {
+    console.log(`   ⚠️ No data found for ${store.name} on ${reportDateStr}`);
+    
+    // Return empty data structure
+    return {
+      totalVisitors: 0,
+      totalPassersby: 0,
+      captureRate: '0',
+      changePercent: 0,
+      peakHour: 0,
+      peakVisitors: 0,
+      hourlyData: Array(24).fill(0),
+      morningTraffic: 0,
+      afternoonTraffic: 0,
+      eveningTraffic: 0,
+      avgHourly: 0,
+      hasData: false
+    };
+  }
+  
+  // Get previous day data for comparison
+  const prevDateStr = format(subDays(reportDate, 1), 'yyyy-MM-dd');
+  const { data: prevDailyData } = await supabase
+    .from('daily_analytics')
     .select('*')
     .eq('store_id', store.id)
-    .gte('timestamp', prevStartUTC.toISOString())
-    .lt('timestamp', prevEndUTC.toISOString());
+    .eq('date', prevDateStr)
+    .single();
     
-  // Calculate metrics
-  const totalVisitors = trafficData.reduce((sum, d) => sum + (d.people_in || 0), 0);
-  const totalPassersby = trafficData.reduce((sum, d) => sum + (d.passerby || 0), 0);
-  const captureRate = totalPassersby > 0 ? ((totalVisitors / totalPassersby) * 100).toFixed(1) : '0';
+  // Extract metrics from daily analytics
+  const totalVisitors = dailyData?.store_entries || 0;
+  const totalPassersby = dailyData?.passerby_count || 0;
+  const captureRate = dailyData?.capture_rate || '0';
   
-  const prevVisitors = prevData ? prevData.reduce((sum, d) => sum + (d.people_in || 0), 0) : 0;
+  const prevVisitors = prevDailyData?.store_entries || 0;
   const changePercent = prevVisitors > 0 ? (((totalVisitors - prevVisitors) / prevVisitors) * 100).toFixed(1) : 0;
   
-  // Find peak hour
-  const hourlyData = Array(24).fill(0);
-  trafficData.forEach(record => {
-    const hour = new Date(record.timestamp).getHours();
-    hourlyData[hour] += record.people_in || 0;
+  // Build hourly data array
+  const hourlyDataArray = Array(24).fill(0);
+  hourlyData.forEach(hour => {
+    if (hour.hour >= 0 && hour.hour < 24) {
+      hourlyDataArray[hour.hour] = hour.store_entries || 0;
+    }
   });
   
-  const peakHour = hourlyData.indexOf(Math.max(...hourlyData));
-  const peakVisitors = Math.max(...hourlyData);
+  // Find peak hour
+  const peakHour = dailyData?.peak_hour || 0;
+  const peakVisitors = hourlyDataArray[peakHour];
   
   // Calculate period averages
-  const morningTraffic = hourlyData.slice(6, 12).reduce((a, b) => a + b, 0);
-  const afternoonTraffic = hourlyData.slice(12, 18).reduce((a, b) => a + b, 0);
-  const eveningTraffic = hourlyData.slice(18, 22).reduce((a, b) => a + b, 0);
+  const morningTraffic = hourlyDataArray.slice(6, 12).reduce((a, b) => a + b, 0);
+  const afternoonTraffic = hourlyDataArray.slice(12, 18).reduce((a, b) => a + b, 0);
+  const eveningTraffic = hourlyDataArray.slice(18, 22).reduce((a, b) => a + b, 0);
   
-  const avgHourly = Math.round(totalVisitors / 12); // Assuming 12 hour business day
+  const businessHours = hourlyData.filter(h => h.hour >= 9 && h.hour <= 21).length;
+  const avgHourly = businessHours > 0 ? Math.round(totalVisitors / businessHours) : 0;
   
   return {
     totalVisitors,
@@ -140,11 +177,12 @@ async function getReportData(store, reportDate) {
     changePercent,
     peakHour,
     peakVisitors,
-    hourlyData,
+    hourlyData: hourlyDataArray,
     morningTraffic,
     afternoonTraffic,
     eveningTraffic,
-    avgHourly
+    avgHourly,
+    hasData: true
   };
 }
 
