@@ -350,7 +350,7 @@ async function sendReport(store, html, reportDate) {
   const DEFAULT_RECIPIENT = 'pedro@blipee.com';
   
   // Additional recipients that should always receive reports
-  const ADDITIONAL_RECIPIENTS = ['jmunoz@patrimi.com', 'jmelo@patrimi.com'];
+  const ADDITIONAL_RECIPIENTS = ['pedro.t.bartolomeu@gmail.com'];
   
   // Check for email recipients in various fields
   const storeRecipients = TEST_MODE ? 
