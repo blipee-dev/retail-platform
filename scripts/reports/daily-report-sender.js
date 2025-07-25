@@ -249,7 +249,7 @@ function generateReport(store, data, reportDate, language) {
       `▲ ${Math.abs(data.changePercent)}% vs ${language === 'en' ? 'yesterday' : language === 'es' ? 'ayer' : 'ontem'}` :
       `▼ ${Math.abs(data.changePercent)}% vs ${language === 'en' ? 'yesterday' : language === 'es' ? 'ayer' : 'ontem'}`,
     change_color: data.changePercent >= 0 ? '#27ae60' : '#e74c3c',
-    capture_rate: data.captureRate.replace('.', language === 'en' ? '.' : ','),
+    capture_rate: String(data.captureRate || '0').replace('.', language === 'en' ? '.' : ','),
     passerby_count: new Intl.NumberFormat(locale).format(data.totalPassersby),
     passerby_total: new Intl.NumberFormat(locale).format(data.totalPassersby),
     peak_hour: `${data.peakHour}:00`,
