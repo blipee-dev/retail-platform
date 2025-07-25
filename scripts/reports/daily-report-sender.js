@@ -7,6 +7,7 @@ const path = require('path');
 const nodemailer = require('nodemailer');
 const { format, subDays, startOfDay, endOfDay } = require('date-fns');
 const { zonedTimeToUtc, utcToZonedTime } = require('date-fns-tz');
+const { enUS, es, pt } = require('date-fns/locale');
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -192,11 +193,19 @@ function generateReport(store, data, reportDate, language) {
     }
   };
   
+  // Get the correct locale object
+  const localeMap = {
+    'en': enUS,
+    'es': es,
+    'pt': pt
+  };
+  const dateLocale = localeMap[language] || enUS;
+  
   // Replace placeholders
   const replacements = {
     recipient_name: store.contact_name || 'Store Manager',
     store_name: store.name,
-    report_date: format(reportDate, dateFormatStr, { locale: require(`date-fns/locale/${language}`) }),
+    report_date: format(reportDate, dateFormatStr, { locale: dateLocale }),
     total_visitors: new Intl.NumberFormat(locale).format(data.totalVisitors),
     change_percentage: data.changePercent > 0 ? 
       `▲ ${Math.abs(data.changePercent)}% vs ${language === 'en' ? 'yesterday' : language === 'es' ? 'ayer' : 'ontem'}` :
