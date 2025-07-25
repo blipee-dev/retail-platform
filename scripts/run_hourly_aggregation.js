@@ -237,7 +237,23 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
         { headers }
       );
       
-      if (checkResponse.ok && (await checkResponse.json()).length > 0) {
+      console.log(`    🔍 Checking for existing record...`);
+      
+      if (!checkResponse.ok) {
+        const errorText = await checkResponse.text();
+        console.log(`    ❌ Check failed: ${checkResponse.status} - ${errorText}`);
+        continue;
+      }
+      
+      const existingRecords = await checkResponse.json();
+      
+      if (existingRecords.length > 0) {
+        console.log(`    ✅ Found existing record, updating...`);
+      } else {
+        console.log(`    ➕ No existing record, inserting new...`);
+      }
+      
+      if (existingRecords.length > 0) {
         // Update existing
         const updateResponse = await fetch(
           `${supabaseUrl}/rest/v1/hourly_analytics?` +
@@ -253,6 +269,9 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
         if (updateResponse.ok) {
           totalProcessed++;
           console.log(`  📝 Updated ${store.name} - ${hourStart.toISOString()}`);
+        } else {
+          const errorText = await updateResponse.text();
+          console.log(`  ❌ Failed to update: ${updateResponse.status} - ${errorText}`);
         }
       } else {
         // Insert new
@@ -268,6 +287,9 @@ async function manualAggregation(supabaseUrl, supabaseKey) {
         if (insertResponse.ok) {
           totalProcessed++;
           console.log(`  ➕ Inserted ${store.name} - ${hourStart.toISOString()}`);
+        } else {
+          const errorText = await insertResponse.text();
+          console.log(`  ❌ Failed to insert: ${insertResponse.status} - ${errorText}`);
         }
       }
       
@@ -438,7 +460,8 @@ async function showRecentAnalytics(supabaseUrl, supabaseKey) {
       console.log('⚠️  No hourly analytics records found');
     }
   } else {
-    console.log('❌ Failed to fetch recent analytics');
+    const errorText = await recentResponse.text();
+    console.log(`❌ Failed to fetch recent analytics: ${recentResponse.status} - ${errorText}`);
   }
 }
 
