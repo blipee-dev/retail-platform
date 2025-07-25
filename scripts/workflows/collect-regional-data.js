@@ -267,8 +267,13 @@ async function collectSensorRegionalData(sensor, supabase) {
         const sensorTimestamp = new Date(values[0].replace(/\//g, '-'));
         const sensorEndTime = new Date(values[1].replace(/\//g, '-'));
         
-        // Skip future data
-        if (sensorTimestamp > localTime.localTime) {
+        // Skip future data - only skip if the hour START is in the future
+        // e.g., at 14:35, keep 14:00 data but skip 15:00 data
+        const currentHour = new Date(localTime.localTime);
+        currentHour.setMinutes(0, 0, 0);
+        currentHour.setHours(currentHour.getHours() + 1); // Next hour start
+        
+        if (sensorTimestamp >= currentHour) {
           console.log(`      ⏭️  Skipping future record: ${formatLocalTime(sensorTimestamp)}`);
           skippedFuture++;
           continue;

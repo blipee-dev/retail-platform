@@ -73,35 +73,64 @@ jobs:
       - name: Send success notification
         if: success() && github.event_name == 'schedule'
         env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
-          curl -X POST $SLACK_WEBHOOK \
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "⚠️ DISCORD_WEBHOOK_URL not configured - skipping notification"
+            exit 0
+          fi
+          
+          curl -X POST $DISCORD_WEBHOOK \
             -H 'Content-Type: application/json' \
             -d '{
-              "text": "✅ Sensor Collection Successful",
-              "blocks": [{
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "*Sensor Collection Complete*\n• Successful: ${{ steps.collect.outputs.successful }}\n• Failed: ${{ steps.collect.outputs.failed }}\n• Total: ${{ steps.collect.outputs.total }}"
-                }
+              "embeds": [{
+                "title": "✅ Sensor Collection Successful",
+                "color": 5763719,
+                "fields": [
+                  {
+                    "name": "Results",
+                    "value": "• Successful: ${{ steps.collect.outputs.successful }}\n• Failed: ${{ steps.collect.outputs.failed }}\n• Total: ${{ steps.collect.outputs.total }}",
+                    "inline": false
+                  }
+                ],
+                "footer": {
+                  "text": "Sensor Collection"
+                },
+                "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'"
               }]
             }'
 
       - name: Send failure notification
         if: failure()
         env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
-          curl -X POST $SLACK_WEBHOOK \
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "⚠️ DISCORD_WEBHOOK_URL not configured - skipping notification"
+            exit 0
+          fi
+          
+          curl -X POST $DISCORD_WEBHOOK \
             -H 'Content-Type: application/json' \
             -d '{
-              "text": "❌ Sensor Collection Failed",
-              "blocks": [{
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "*Sensor Collection Failed*\n• Workflow: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>\n• Error: Check logs for details"
-                }
+              "embeds": [{
+                "title": "❌ Sensor Collection Failed",
+                "color": 15158332,
+                "fields": [
+                  {
+                    "name": "Error",
+                    "value": "Check logs for details",
+                    "inline": false
+                  },
+                  {
+                    "name": "Workflow Run",
+                    "value": "[View Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})",
+                    "inline": false
+                  }
+                ],
+                "footer": {
+                  "text": "Sensor Collection"
+                },
+                "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'"
               }]
             }'

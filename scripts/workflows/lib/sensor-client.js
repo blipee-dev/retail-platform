@@ -208,8 +208,13 @@ class SensorClient {
               const sensorTimestamp = new Date(parts[0].replace(/\//g, '-'));
               const sensorEndTime = new Date(parts[1].replace(/\//g, '-'));
               
-              // Skip future data (according to sensor local time)
-              if (sensorTimestamp > localNow) {
+              // Skip future data - only skip if the hour START is in the future
+              // e.g., at 14:35, keep 14:00 data but skip 15:00 data
+              const currentHour = new Date(localNow);
+              currentHour.setMinutes(0, 0, 0);
+              currentHour.setHours(currentHour.getHours() + 1); // Next hour start
+              
+              if (sensorTimestamp >= currentHour) {
                 console.log(`      ⏭️  Skipping future record: ${this.formatLocalTime(sensorTimestamp)}`);
                 skippedFuture++;
                 continue;
