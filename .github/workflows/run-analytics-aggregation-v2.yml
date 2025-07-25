@@ -60,16 +60,27 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           PIPELINE_ID: ${{ inputs.pipeline_id }}
+          HOURS_TO_AGGREGATE: "24"
+          FORCE_REAGGREGATE: "false"
         run: |
           echo "🔄 Running analytics aggregation..."
           echo "Pipeline ID: ${{ inputs.pipeline_id }}"
           echo "Sensor data status: ${{ inputs.sensor_data_status }}"
           echo "Regional data status: ${{ inputs.regional_data_status }}"
+          echo "Hours to aggregate: $HOURS_TO_AGGREGATE"
           
           # Run the aggregation script
           cd scripts
           if [ -f "run_hourly_aggregation.js" ]; then
+            echo "Running standard aggregation (last 3 hours)..."
             node run_hourly_aggregation.js
+            
+            # Also run extended aggregation for missing data
+            if [ -f "run_hourly_aggregation_extended.js" ]; then
+              echo ""
+              echo "Running extended aggregation (last 24 hours)..."
+              node run_hourly_aggregation_extended.js
+            fi
           else
             echo "⚠️ Aggregation script not found, skipping..."
           fi
