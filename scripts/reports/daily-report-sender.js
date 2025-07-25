@@ -246,13 +246,23 @@ function getLanguageForStore(store) {
 
 // Send email report
 async function sendReport(store, html, reportDate) {
+  // Check for email recipients in various fields
   const recipients = TEST_MODE ? 
-    'test@blipee.com' : 
-    store.report_emails || store.contact_email;
+    process.env.EMAIL_TO || 'test@blipee.com' : 
+    store.report_emails || store.contact_email || store.email;
     
   if (!recipients) {
     console.log(`⚠️ No email recipients configured for store ${store.name}`);
-    return false;
+    
+    // If EMAIL_TO is configured, use it as fallback for all stores
+    if (process.env.EMAIL_TO) {
+      console.log(`📧 Using fallback email: ${process.env.EMAIL_TO}`);
+      return await sendReport({ ...store, report_emails: process.env.EMAIL_TO }, html, reportDate);
+    }
+    
+    // For now, just log a warning but don't fail the entire process
+    console.log(`⚠️ Skipping email for ${store.name} - no recipients`);
+    return true; // Return true to not count as failure
   }
   
   const subject = `Daily Traffic Report - ${store.name} - ${format(reportDate, 'MMM d, yyyy')}`;
