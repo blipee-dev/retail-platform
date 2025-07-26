@@ -7,6 +7,7 @@
 
 const { SupabaseClient } = require('./lib/supabase-client');
 const { SensorClient } = require('./lib/sensor-client');
+const { CircuitBreaker } = require('./lib/circuit-breaker');
 const config = require('./lib/config');
 const pLimit = require('p-limit');
 
@@ -26,6 +27,10 @@ async function collectRegionalData() {
   try {
     // Initialize Supabase client
     const supabase = new SupabaseClient();
+    const circuitBreaker = new CircuitBreaker(supabase, {
+      failureThreshold: 5,
+      recoveryTimeout: 3600000  // 1 hour
+    });
     
     // Get all active sensors (all Milesight sensors support regional counting)
     console.log('📡 Fetching active sensors...');
@@ -45,6 +50,15 @@ async function collectRegionalData() {
     const promises = sensors.map(sensor => 
       limit(async () => {
         console.log(`  Processing ${sensor.sensor_name} (${sensor.sensor_id})...`);
+        
+        // Check circuit breaker state first
+        const circuitStatus = await circuitBreaker.shouldProcessSensor(sensor);
+        
+        if (!circuitStatus.shouldProcess) {
+          console.log(`    ⚡ Circuit breaker ${circuitStatus.state}: ${circuitStatus.reason}`);
+          results.successful++; // Count as successful to avoid false alarms
+          return;
+        }
         
         try {
           // Get sensor's timezone and check business hours
@@ -69,6 +83,9 @@ async function collectRegionalData() {
             console.log(`    ✅ Success: ${result.recordsCollected} records collected`);
             results.successful++;
             
+            // Reset circuit breaker on success
+            await circuitBreaker.handleSuccess(sensor.sensor_id);
+            
             // Update sensor health
             await supabase.updateSensorHealth(sensor.sensor_id, {
               status: 'online',
@@ -87,6 +104,10 @@ async function collectRegionalData() {
           } else {
             console.log(`    ❌ Failed: ${result.error}`);
             results.failed++;
+            
+            // Update circuit breaker on failure
+            const isRecoveryAttempt = circuitStatus.state === 'HALF_OPEN';
+            await circuitBreaker.handleFailure(sensor, isRecoveryAttempt);
             results.errors[sensor.sensor_id] = result.error;
             
             // Update sensor health
