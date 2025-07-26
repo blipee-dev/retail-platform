@@ -1,12 +1,12 @@
 # CLAUDE.md - AI Assistant Context
 
-This file provides context for AI assistants (like Claude) working on the Retail Platform project.
+This file provides context for AI assistants (like Claude) working on the blipee OS Retail Intelligence project.
 
 ## Project Overview
 
-**Retail Platform** is a comprehensive retail analytics system that integrates with people counting sensors to provide real-time analytics, heatmaps, and customer flow insights for retail environments. The platform supports global deployments with automatic timezone handling and multi-language support.
+**blipee OS Retail Intelligence** is a comprehensive enterprise-grade retail analytics platform that integrates with people counting sensors to provide real-time analytics, heatmaps, and customer flow insights for retail environments. The platform supports global deployments with automatic timezone handling, multi-language support, and AI-powered insights.
 
-## Current Project State (Last Updated: 2025-07-25)
+## Current Project State (Last Updated: 2025-07-26)
 
 ### ✅ Completed Features
 - **Core Platform**: Next.js 14 with App Router, TypeScript, Supabase
@@ -19,7 +19,7 @@ This file provides context for AI assistants (like Claude) working on the Retail
 - **Data Collection**: Automated 30-minute collection via GitHub Actions
 - **Frontend Components**: Date formatting with timezone indicators
 - **Project Organization**: Clean structure with organized scripts (2025-07-22)
-- **Documentation**: Comprehensive guides and API docs
+- **Documentation**: Enterprise-grade comprehensive guides and API docs (2025-07-26)
 - **Database Optimization**: Enterprise features with 89% performance boost (2025-07-23)
 - **Sensor Health Monitoring**: Real-time online/offline detection
 - **Audit Trail**: Complete change tracking for compliance
@@ -29,13 +29,14 @@ This file provides context for AI assistants (like Claude) working on the Retail
 ### 🚧 In Progress
 - WebSocket/real-time updates
 - Advanced heat map visualizations
+- Dashboard live data connection
 - Custom domain configuration
 - Mobile app development
 
-## Clean Project Structure (Updated 2025-07-22)
+## Clean Project Structure (Updated 2025-07-26)
 
 ```
-retail-platform/
+blipee-os-retail-intelligence/
 ├── app/                    # Next.js 14 App Router
 │   ├── api/               # API routes (sensors, auth, analytics)
 │   ├── components/        # Reusable React components
@@ -104,10 +105,12 @@ retail-platform/
 
 ### Key Improvements
 - **68% reduction** in table count (34 → 11)
+- **89% performance improvement** in query execution
 - **No duplicate data** - single source of truth
 - **Sensor health monitoring** - automatic offline detection
 - **Audit trail** - track all configuration changes
 - **Performance optimized** - proper indexes and partitioning ready
+- **Complete documentation** - enterprise-grade database schema docs
 
 ## Key Technologies
 
@@ -121,6 +124,19 @@ retail-platform/
 - **Styling**: Tailwind CSS + Shadcn/ui
 
 ## Recent Major Changes
+
+### 2025-07-26 - Enterprise Documentation Overhaul
+- **Complete documentation update**
+  - Updated all docs to use "blipee OS Retail Intelligence" branding
+  - Created comprehensive database schema documentation
+  - Fixed all outdated API references and table names
+  - Added enterprise-grade deployment guide
+  - Created CONTRIBUTING.md for community contributions
+- **Fixed documentation inconsistencies**
+  - Corrected all deployment URLs
+  - Updated API endpoints to match implementation
+  - Removed references to unimplemented features
+  - Added missing setup guides references
 
 ### 2025-07-25 - Analytics Aggregation Pipeline Fixed
 - **Fixed hourly and daily aggregation**
@@ -180,7 +196,6 @@ retail-platform/
   - Created reusable libraries for common operations
   - Standardized error handling and logging
 
-
 ### 2025-07-22 - Timezone Support & Project Cleanup
 - **Fixed timezone handling** in sensor data collection workflow
   - Proper timezone detection for sensors globally
@@ -214,6 +229,8 @@ retail-platform/
 - `.env.example` - Environment template
 - `vercel.json` - Deployment config
 - `middleware.ts` - Auth middleware
+- `LICENSE` - MIT License
+- `CONTRIBUTING.md` - Contribution guidelines
 
 ### Core Components
 - `app/lib/utils/date-formatter.ts` - Timezone formatting
@@ -221,7 +238,7 @@ retail-platform/
 - `app/lib/services/analytics.service.ts` - Analytics logic
 
 ### Workflows
-- `.github/workflows/main-pipeline.yml` - Single-cron orchestrator (NEW!)
+- `.github/workflows/main-pipeline.yml` - Single-cron orchestrator
 - `.github/workflows/collect-sensor-data-v2.yml` - Modular sensor collection
 - `.github/workflows/run-analytics-aggregation-v2.yml` - Hourly + Daily aggregation
 - `.github/workflows/run-daily-aggregation.yml` - Standalone daily aggregation
@@ -229,7 +246,7 @@ retail-platform/
 - `.github/workflows/ci.yml` - Testing
 
 ### Scripts
-- `scripts/workflows/` - Modular workflow scripts (NEW!)
+- `scripts/workflows/` - Modular workflow scripts
   - `collect-sensor-data.js` - Main collection logic
   - `lib/supabase-client.js` - Database operations
   - `lib/retry-handler.js` - Retry logic
@@ -314,17 +331,18 @@ const formatted = formatTableDate(timestamp, 'Europe/Lisbon')
 
 ## Current Priorities
 
-1. **Performance**: Optimize data queries
+1. **Dashboard Integration**: Connect live data to UI components
 2. **Real-time**: Implement WebSocket updates
-3. **Mobile**: Responsive improvements
-4. **Analytics**: Advanced visualizations
+3. **Performance**: Optimize data queries
+4. **Mobile**: Responsive improvements
+5. **Analytics**: Advanced visualizations
 
 ## Deployment
 
 ### Environments
-- **Production**: `main` → retail-platform.vercel.app
-- **Staging**: `staging` → retail-platform-git-staging.vercel.app
-- **Development**: `develop` → retail-platform-git-develop.vercel.app
+- **Production**: `main` → https://retail-platform.vercel.app
+- **Staging**: `staging` → https://retail-platform-git-staging.vercel.app
+- **Development**: `develop` → https://retail-platform-git-develop.vercel.app
 
 ### Environment Variables
 Required in all environments:
@@ -334,12 +352,25 @@ Required in all environments:
 
 ## Tips for AI Assistants
 
-1. **Always check timezone handling** when working with timestamps
-2. **Use the organized script directories** - don't create files in root
-3. **Follow the established patterns** - check similar files first
-4. **Test with multiple timezones** when working on time-related features
-5. **Update this file** when making significant changes
+1. **Always use "blipee OS Retail Intelligence"** as the project name
+2. **Check timezone handling** when working with timestamps
+3. **Use the organized script directories** - don't create files in root
+4. **Follow the established patterns** - check similar files first
+5. **Test with multiple timezones** when working on time-related features
+6. **Update documentation** when making significant changes
+7. **Use correct table names** - people_counting_raw, not people_counting_data
+8. **Reference actual URLs** - retail-platform.vercel.app, not placeholder domains
 
 ---
 
-**Remember**: The platform must work globally. Always consider timezone implications and ensure all user-facing content supports i18n.
+**Remember**: 
+- The platform must work globally. Always consider timezone implications.
+- All user-facing content must support i18n (EN/PT/ES).
+- This is an enterprise-grade platform - maintain professional documentation.
+- The project name is **blipee OS Retail Intelligence**, not "Retail Platform".
+
+# important-instruction-reminders
+Do what has been asked; nothing more, nothing less.
+NEVER create files unless they're absolutely necessary for achieving your goal.
+ALWAYS prefer editing an existing file to creating a new one.
+NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.

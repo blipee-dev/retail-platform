@@ -1,4 +1,4 @@
-# Deployment Guide
+# blipee OS Retail Intelligence - Deployment Guide
 
 This guide covers deployment procedures for blipee OS Retail Intelligence using our cloud-first architecture with Supabase and Vercel.
 
@@ -9,7 +9,7 @@ This guide covers deployment procedures for blipee OS Retail Intelligence using 
 - [Deployment Strategies](#deployment-strategies)
 - [Vercel Deployment](#vercel-deployment)
 - [Supabase Setup](#supabase-setup)
-- [CI/CD Pipeline](#cicd-pipeline)
+- [GitHub Actions](#github-actions)
 - [Monitoring](#monitoring)
 - [Rollback Procedures](#rollback-procedures)
 - [Troubleshooting](#troubleshooting)
@@ -18,67 +18,61 @@ This guide covers deployment procedures for blipee OS Retail Intelligence using 
 
 ### Required Accounts
 - GitHub account with repository access
-- Vercel account (Pro/Enterprise for production)
-- Supabase account (Pro/Enterprise for production)
-- Domain name and DNS access (for custom domains)
+- Vercel account (Pro recommended for production)
+- Supabase account (Pro recommended for production)
+- Domain name and DNS access (optional)
 
-### Cloud-First Deployment
-**No local tools required!** Everything deploys from:
-- GitHub Codespaces (development)
-- GitHub Actions (CI/CD)
-- Vercel (automatic deployments)
-- Supabase (managed database & functions)
+### Cloud-First Architecture
+- **GitHub Codespaces**: Development environment
+- **GitHub Actions**: Automated workflows and data collection
+- **Vercel**: Hosting and edge functions
+- **Supabase**: PostgreSQL database with RLS
+- **No containers needed**: Everything runs in managed services
 
 ## Environment Setup
 
 ### Environment Strategy
 
 ```
-main branch     → Production (https://retail-platform-blipee.vercel.app)
-staging branch  → Staging (https://retail-platform-git-staging-blipee.vercel.app)
-develop branch  → Development (https://retail-platform-git-develop-blipee.vercel.app)
+main branch     → Production (https://retail-platform.vercel.app)
+staging branch  → Staging (https://retail-platform-git-staging.vercel.app)
+develop branch  → Development (https://retail-platform-git-develop.vercel.app)
 feature/*      → Preview deployments (auto-generated URLs)
-codespaces     → Individual development environments
 ```
 
 ### Current Deployment Status
 
-- ✅ **Staging**: Deployed and accessible at https://retail-platform-git-staging-blipee.vercel.app
-- ✅ **Development**: Deployed and accessible at https://retail-platform-git-develop-blipee.vercel.app
-- ⏳ **Production**: Ready to deploy when main branch is updated
+- ✅ **Production**: Live at https://retail-platform.vercel.app
+- ✅ **Staging**: Live at https://retail-platform-git-staging.vercel.app
+- ✅ **Development**: Live at https://retail-platform-git-develop.vercel.app
+- ✅ **Preview**: Automatic deployments for all PRs
 
 ### Environment Variables
 
-Create `.env` files for each environment:
+Required environment variables for each environment:
 
 ```bash
-# .env.production
-NEXT_PUBLIC_APP_URL=https://app.blipee.com
-NEXT_PUBLIC_SUPABASE_URL=https://your-prod-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-prod-anon-key
-SUPABASE_SERVICE_KEY=your-prod-service-key
+# Database
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-key
 
-# API Keys
-OPENAI_API_KEY=your-openai-key
-STRIPE_SECRET_KEY=your-stripe-key
-STRIPE_WEBHOOK_SECRET=your-webhook-secret
+# GitHub Actions (set in GitHub Secrets)
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_KEY=your-service-key
 
-# Monitoring
-SENTRY_DSN=your-sentry-dsn
-NEW_RELIC_LICENSE_KEY=your-newrelic-key
-
-# Email
+# Email (optional)
 RESEND_API_KEY=your-resend-key
 EMAIL_FROM=noreply@blipee.com
 
 # Feature Flags
-ENABLE_AI_INSIGHTS=true
-ENABLE_BENCHMARKING=false
+ENABLE_DAILY_REPORTS=true
+ENABLE_REGIONAL_DATA=true
 ```
 
 ## Deployment Strategies
 
-### 1. Continuous Deployment (Recommended)
+### 1. Continuous Deployment (Active)
 
 Automatic deployment on git push:
 
@@ -93,14 +87,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Deploy to Vercel
-        run: |
-          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-            vercel --prod --token=${{ secrets.VERCEL_TOKEN }}
-          else
-            vercel --token=${{ secrets.VERCEL_TOKEN }}
-          fi
+        # Handled automatically by Vercel GitHub integration
 ```
 
 ### 2. Manual Deployment
@@ -125,10 +114,10 @@ git push origin main --tags
 ### Initial Setup
 
 1. **Import Project**
-   ```bash
-   vercel
-   # Follow prompts to link to GitHub repo
-   ```
+   - Go to [Vercel Dashboard](https://vercel.com)
+   - Click "Import Project"
+   - Select GitHub repository
+   - Configure project settings
 
 2. **Configure Project**
    - Framework Preset: Next.js
@@ -143,9 +132,9 @@ git push origin main --tags
 
 4. **Domain Configuration**
    ```
-   Production: app.retailintelligence.io
-   Staging: staging.retailintelligence.io
-   Dev: dev.retailintelligence.io
+   Production: retail-platform.vercel.app (custom domain pending)
+   Staging: retail-platform-git-staging.vercel.app
+   Dev: retail-platform-git-develop.vercel.app
    ```
 
 ### Deployment Configuration
@@ -157,37 +146,18 @@ git push origin main --tags
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
-  "regions": ["iad1", "sfo1", "lhr1"],
+  "regions": ["iad1"],
   "functions": {
-    "app/api/sensors/ingest/route.ts": {
+    "app/api/sensors/data/route.ts": {
       "maxDuration": 60
     },
-    "app/api/ai/insights/route.ts": {
-      "maxDuration": 300
+    "app/api/analytics/route.ts": {
+      "maxDuration": 120
     }
   },
-  "crons": [
-    {
-      "path": "/api/cron/hourly-aggregation",
-      "schedule": "0 * * * *"
-    },
-    {
-      "path": "/api/cron/daily-reports",
-      "schedule": "0 0 * * *"
-    }
-  ]
-}
-```
-
-### Edge Functions Configuration
-
-```typescript
-// app/api/realtime/route.ts
-export const runtime = 'edge';
-export const dynamic = 'force-dynamic';
-
-export async function GET(request: Request) {
-  // Edge function implementation
+  "github": {
+    "silent": false
+  }
 }
 ```
 
@@ -196,303 +166,157 @@ export async function GET(request: Request) {
 ### 1. Create Projects
 
 Create separate projects for each environment:
-- `retail-platform-prod`
-- `retail-platform-staging`
-- `retail-platform-dev`
+- `blipee-retail-prod`
+- `blipee-retail-staging`
+- `blipee-retail-dev`
 
 ### 2. Database Setup
 
-```bash
-# Run migrations
-supabase db push
+Run migrations in order through Supabase SQL editor:
 
-# Enable extensions
+```sql
+-- 1. Enable extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-CREATE EXTENSION IF NOT EXISTS "pg_stat_statements";
+
+-- 2. Run migration files from app/lib/migrations/ in order:
+-- - 20250721_core_schema.sql
+-- - 20250721_create_profiles_table.sql
+-- - 20250721_people_counting_base_schema.sql
+-- - 20250721_sensor_metadata_schema.sql
+-- - 20250721_regional_analytics_schema.sql
+-- - 20250722_create_hourly_aggregation.sql
+-- - 20250722_create_daily_analytics.sql
 ```
 
 ### 3. Row Level Security
 
-```sql
--- Enable RLS on all tables
-ALTER TABLE organizations ENABLE ROW LEVEL SECURITY;
-ALTER TABLE sites ENABLE ROW LEVEL SECURITY;
-ALTER TABLE users ENABLE ROW LEVEL SECURITY;
-
--- Create policies
-CREATE POLICY "Users can view their organization"
-  ON organizations FOR SELECT
-  USING (auth.uid() IN (
-    SELECT user_id FROM organization_members 
-    WHERE organization_id = organizations.id
-  ));
-```
-
-### 4. Edge Functions
-
-```bash
-# Deploy edge functions
-supabase functions deploy sensor-processor
-supabase functions deploy ai-insights
-supabase functions deploy webhook-handler
-```
-
-### 5. Realtime Configuration
+RLS is automatically enabled by migration scripts. Verify with:
 
 ```sql
--- Enable realtime for specific tables
-ALTER PUBLICATION supabase_realtime ADD TABLE people_counts;
-ALTER PUBLICATION supabase_realtime ADD TABLE performance_metrics;
+-- Check RLS status
+SELECT tablename, rowsecurity 
+FROM pg_tables 
+WHERE schemaname = 'public' 
+  AND tablename NOT LIKE 'pg_%';
 ```
 
-## CI/CD Pipeline
+### 4. Authentication Setup
 
-### GitHub Actions Workflow
+1. Go to Authentication → Providers
+2. Enable Email provider
+3. Configure email templates
+4. Set up redirect URLs
 
-```yaml
-# .github/workflows/ci-cd.yml
-name: CI/CD Pipeline
+### 5. API Configuration
 
-on:
-  push:
-    branches: [main, staging, develop]
-  pull_request:
-    branches: [main, staging]
+1. Go to Settings → API
+2. Note your project URL and anon key
+3. Configure CORS if needed
 
-env:
-  NODE_VERSION: '20'
+## GitHub Actions
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-      
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Run linting
-        run: npm run lint
-      
-      - name: Run type checking
-        run: npm run type-check
-      
-      - name: Run tests
-        run: npm run test:ci
-        env:
-          DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
-      
-      - name: Build application
-        run: npm run build
+### Automated Workflows
 
-  security:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Run security audit
-        run: npm audit --audit-level=high
-      
-      - name: Run Snyk scan
-        uses: snyk/actions/node@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+The platform uses GitHub Actions for:
 
-  deploy:
-    needs: [test, security]
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-    
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }}
-      
-      - name: Run E2E tests
-        if: success()
-        run: npm run test:e2e
-        env:
-          PLAYWRIGHT_BASE_URL: ${{ steps.vercel.outputs.preview-url }}
-      
-      - name: Notify deployment
-        if: github.ref == 'refs/heads/main'
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          text: 'Production deployment completed'
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+1. **Data Collection** (`main-pipeline.yml`)
+   - Runs every 30 minutes
+   - Collects sensor data
+   - Updates analytics
+
+2. **Daily Reports** (`daily-reports.yml`)
+   - Runs at 9 AM store local time
+   - Sends email summaries
+
+3. **CI/CD** (`ci.yml`)
+   - Runs on every push
+   - Linting and type checking
+   - Test execution
+
+### Setting up GitHub Secrets
+
+Go to Settings → Secrets and variables → Actions:
+
 ```
-
-### Pre-deployment Checklist
-
-```yaml
-# .github/PULL_REQUEST_TEMPLATE/deploy.md
-## Deployment Checklist
-
-### Code Quality
-- [ ] All tests passing
-- [ ] No linting errors
-- [ ] Type checking passes
-- [ ] Code reviewed and approved
-
-### Database
-- [ ] Migrations tested
-- [ ] Rollback script prepared
-- [ ] Data backup completed
-
-### Configuration
-- [ ] Environment variables updated
-- [ ] Feature flags configured
-- [ ] API rate limits reviewed
-
-### Monitoring
-- [ ] Error tracking configured
-- [ ] Performance baselines established
-- [ ] Alerts configured
-
-### Documentation
-- [ ] CHANGELOG updated
-- [ ] API docs updated
-- [ ] Runbook updated
+SUPABASE_URL
+SUPABASE_SERVICE_KEY
+RESEND_API_KEY
+VERCEL_TOKEN (optional)
 ```
 
 ## Monitoring
 
-### 1. Application Monitoring
+### 1. Vercel Analytics
 
-```typescript
-// lib/monitoring.ts
-import * as Sentry from '@sentry/nextjs';
-import { Analytics } from '@vercel/analytics/react';
+Automatically enabled for all deployments:
+- Real User Monitoring (RUM)
+- Web Vitals tracking
+- Error tracking
 
-// Initialize Sentry
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-  environment: process.env.VERCEL_ENV,
-  tracesSampleRate: 1.0,
-  beforeSend(event) {
-    // Filter sensitive data
-    return event;
-  }
-});
+### 2. Supabase Monitoring
 
-// Custom error boundary
-export function MonitoringProvider({ children }: { children: React.ReactNode }) {
-  return (
-    <Sentry.ErrorBoundary fallback={ErrorFallback}>
-      {children}
-      <Analytics />
-    </Sentry.ErrorBoundary>
-  );
-}
-```
+Available in Supabase dashboard:
+- Query performance
+- Database size
+- API usage
+- Error logs
 
-### 2. Performance Monitoring
+### 3. GitHub Actions Monitoring
 
-```typescript
-// middleware.ts
-import { NextResponse } from 'next/server';
+Check workflow runs:
+- Go to Actions tab
+- View workflow history
+- Check for failures
 
-export function middleware(request: Request) {
-  const start = Date.now();
-  
-  const response = NextResponse.next();
-  
-  // Add performance headers
-  response.headers.set('X-Response-Time', `${Date.now() - start}ms`);
-  response.headers.set('X-Region', process.env.VERCEL_REGION || 'unknown');
-  
-  // Log slow requests
-  if (Date.now() - start > 1000) {
-    console.warn('Slow request:', {
-      path: request.url,
-      duration: Date.now() - start
-    });
-  }
-  
-  return response;
-}
-```
-
-### 3. Health Checks
+### 4. Application Health Checks
 
 ```typescript
 // app/api/health/route.ts
 export async function GET() {
   const checks = {
-    app: 'healthy',
-    database: 'unknown',
-    cache: 'unknown',
-    external: 'unknown'
+    database: await checkDatabase(),
+    api: 'healthy',
+    timestamp: new Date().toISOString()
   };
   
-  try {
-    // Check database
-    await supabase.from('health_check').select('id').single();
-    checks.database = 'healthy';
-  } catch {
-    checks.database = 'unhealthy';
-  }
-  
-  // Check Redis
-  try {
-    await redis.ping();
-    checks.cache = 'healthy';
-  } catch {
-    checks.cache = 'unhealthy';
-  }
-  
-  const status = Object.values(checks).every(s => s === 'healthy') ? 200 : 503;
-  
-  return Response.json({
-    status: status === 200 ? 'healthy' : 'degraded',
-    timestamp: new Date().toISOString(),
-    checks
-  }, { status });
+  return Response.json(checks);
 }
 ```
 
 ## Rollback Procedures
 
-### Immediate Rollback
+### Vercel Rollback
+
+Instant rollback to previous deployment:
 
 ```bash
-# Vercel instant rollback
+# Via Vercel CLI
 vercel rollback
 
-# Or via dashboard
-# Vercel Dashboard → Project → Deployments → Promote to Production
+# Via Dashboard
+# Go to Deployments → Select previous deployment → Promote to Production
 ```
 
 ### Database Rollback
 
-```bash
-# Revert last migration
-supabase db reset --version [previous-version]
+For critical database issues:
 
-# Or manual rollback
-psql $DATABASE_URL < backups/backup-[timestamp].sql
+```sql
+-- Restore from Supabase backup
+-- Go to Database → Backups → Restore
+
+-- Or manual restore from backup
+psql $DATABASE_URL < backup.sql
 ```
 
-### Feature Flag Rollback
+### GitHub Actions Rollback
 
-```typescript
-// Disable problematic feature immediately
-await updateFeatureFlag('new-feature', false);
+Revert workflow changes:
+
+```bash
+git revert <commit-hash>
+git push origin main
 ```
 
 ## Troubleshooting
@@ -502,62 +326,99 @@ await updateFeatureFlag('new-feature', false);
 #### 1. Build Failures
 
 ```bash
-# Clear cache and rebuild
-vercel --force
+# Check build logs in Vercel
+# Common issues:
+- Missing environment variables
+- TypeScript errors
+- Dependency issues
 
-# Check build logs
-vercel logs [deployment-url]
+# Local debugging
+npm run build
 ```
 
 #### 2. Database Connection Issues
 
 ```typescript
-// Add connection pooling
+// Check connection pool settings
 const supabase = createClient(url, key, {
   db: {
-    pooling: {
-      max: 10,
-      min: 2,
-      idle: 30000
-    }
+    schema: 'public'
+  },
+  auth: {
+    persistSession: true
   }
 });
 ```
 
-#### 3. Performance Issues
+#### 3. API Rate Limiting
 
 ```bash
-# Enable debug mode
-DEBUG=* vercel dev
-
-# Check function logs
-vercel logs --function [function-name]
+# Check rate limit headers
+X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 950
+X-RateLimit-Reset: 1627584000
 ```
 
-### Emergency Procedures
+### Debug Mode
 
-1. **Site Down**
-   - Check Vercel status page
-   - Review recent deployments
-   - Rollback if necessary
-   - Enable maintenance mode
+Enable debug logging:
 
-2. **Data Issues**
-   - Stop write operations
-   - Backup current state
-   - Investigate root cause
-   - Apply fixes
-   - Verify data integrity
+```bash
+# Local development
+DEBUG=* npm run dev
 
-3. **Security Breach**
-   - Rotate all API keys
-   - Review access logs
-   - Apply security patches
-   - Notify affected users
+# Production (temporary)
+# Add to environment variables
+NEXT_PUBLIC_DEBUG=true
+```
+
+### Performance Issues
+
+1. **Check Vercel Functions logs**
+   - Go to Functions tab
+   - Review execution times
+   - Check for timeouts
+
+2. **Database query optimization**
+   ```sql
+   EXPLAIN ANALYZE
+   SELECT * FROM hourly_analytics
+   WHERE store_id = '...'
+   AND start_time > NOW() - INTERVAL '7 days';
+   ```
+
+3. **Enable caching**
+   ```typescript
+   export const revalidate = 3600; // Cache for 1 hour
+   ```
+
+## Security Best Practices
+
+1. **Environment Variables**
+   - Never commit secrets to git
+   - Use different keys per environment
+   - Rotate keys regularly
+
+2. **API Security**
+   - Always validate input
+   - Use RLS for data access
+   - Implement rate limiting
+
+3. **Deployment Security**
+   - Review code before deploying
+   - Use preview deployments for testing
+   - Monitor for vulnerabilities
 
 ## Support
 
-- **Vercel Support**: enterprise@vercel.com
-- **Supabase Support**: support@supabase.io
-- **Internal**: devops@retailintelligence.io
-- **Emergency**: +1-555-0123 (24/7 on-call)
+- **Documentation**: [Project Docs](../README.md)
+- **GitHub Issues**: [Report Issues](https://github.com/blipee/retail-intelligence/issues)
+- **Vercel Support**: [Vercel Docs](https://vercel.com/docs)
+- **Supabase Support**: [Supabase Docs](https://supabase.com/docs)
+- **Email**: support@blipee.com
+
+---
+
+**Last Updated**: 2025-07-26  
+**Version**: 2.0  
+**Maintained By**: blipee Engineering Team

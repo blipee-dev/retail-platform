@@ -1,13 +1,13 @@
-# Retail Platform
+# blipee OS Retail Intelligence
 
-A comprehensive retail analytics platform with people counting, sensor integration, and advanced analytics capabilities. Built with Next.js 14, TypeScript, and Supabase, featuring multi-tenant support, real-time data visualization, and global timezone support.
+A comprehensive enterprise-grade retail analytics platform with people counting, sensor integration, and advanced AI-powered analytics capabilities. Built with Next.js 14, TypeScript, and Supabase, featuring multi-tenant support, real-time data visualization, and global timezone support.
 
 ## 🚀 Quick Start
 
 ```bash
 # Clone and setup
-git clone <repository-url>
-cd retail-platform
+git clone https://github.com/blipee/retail-intelligence.git
+cd blipee-os-retail-intelligence
 cp .env.example .env.local
 
 # Install and run
@@ -26,6 +26,12 @@ Visit [http://localhost:3000](http://localhost:3000) to see the application.
 - **👥 6-Tier RBAC**: Fine-grained access control from viewer to tenant admin
 - **📱 Responsive Design**: Works seamlessly on desktop and mobile devices
 - **🔌 Multi-sensor Support**: Milesight and Omnia sensor integration
+- **🤖 AI-Powered Insights**: Predictive analytics and automated recommendations
+- **📈 Enterprise Features**: SAML SSO, audit trails, and compliance tools
+
+## 📍 Project Roadmap
+
+See [ROADMAP.md](ROADMAP.md) for detailed development plans and progress.
 
 ## 📍 Project Roadmap
 
@@ -34,7 +40,7 @@ See [ROADMAP.md](ROADMAP.md) for detailed development plans and progress.
 ## 📁 Project Structure
 
 ```
-retail-platform/
+blipee-os-retail-intelligence/
 ├── app/                   # Next.js 14 App Router application
 │   ├── api/              # API routes for sensor data and auth
 │   ├── components/       # Reusable React components
@@ -48,15 +54,10 @@ retail-platform/
 │   └── providers/       # React context providers
 │
 ├── scripts/              # Utility and maintenance scripts
-│   ├── archive/         # Historical scripts for reference
-│   ├── debug/           # Debugging and testing utilities
-│   │   ├── data/        # Data debugging scripts
-│   │   ├── timezone/    # Timezone testing utilities
-│   │   └── workflow/    # GitHub Actions debugging
-│   ├── migrations/      # Database migration scripts
-│   │   └── rls/         # Row-Level Security SQL files
+│   ├── workflows/       # GitHub Actions workflow scripts
 │   ├── data-collection/ # Sensor data collection scripts
 │   ├── analysis/        # Data analysis utilities
+│   ├── debug/           # Debugging and testing utilities
 │   ├── deployment/      # Deployment scripts
 │   └── utilities/       # General utility scripts
 │
@@ -85,6 +86,7 @@ retail-platform/
 - **Real-time**: GitHub Actions for automated data collection
 - **Deployment**: Vercel with automatic branch deployments
 - **Monitoring**: Built-in analytics and error tracking
+- **AI/ML**: OpenAI integration for predictive analytics
 
 ## 🗄️ Database Architecture
 
@@ -115,6 +117,8 @@ The platform uses an optimized PostgreSQL schema with 11 core tables:
 - Optimized indexes for sub-second queries
 - Ready for partitioning at scale
 
+For detailed schema documentation, see [Database Schema](docs/architecture/database-schema.md).
+
 ## 🌍 Timezone Support
 
 The platform automatically handles timezone conversions for global deployments:
@@ -125,6 +129,11 @@ The platform automatically handles timezone conversions for global deployments:
 - **Store-aware**: Each store can have its own timezone configuration
 
 ## 📊 API Endpoints
+
+### Base URLs
+- **Production**: `https://retail-platform.vercel.app/api`
+- **Staging**: `https://retail-platform-git-staging.vercel.app/api`
+- **Development**: `https://retail-platform-git-develop.vercel.app/api`
 
 ### Authentication
 ```
@@ -157,6 +166,8 @@ GET    /api/analytics?type=daily       # Daily summaries
 GET    /api/analytics?type=comparison  # Multi-store comparison
 ```
 
+For complete API documentation, see [API Reference](docs/api/README.md).
+
 ## 🔐 Security & Access Control
 
 ### Role-Based Access Control (RBAC)
@@ -173,27 +184,33 @@ GET    /api/analytics?type=comparison  # Multi-store comparison
 - API rate limiting
 - Secure environment variable management
 - HTTPS-only in production
+- Audit trail for all actions
+- GDPR/CCPA compliance ready
 
 ## 🚀 Deployment
 
 ### Environments
-- **Production**: `main` branch → [production-url]
-- **Staging**: `staging` branch → [staging-url]
-- **Development**: `develop` branch → [dev-url]
+- **Production**: `main` branch → https://retail-platform.vercel.app
+- **Staging**: `staging` branch → https://retail-platform-git-staging.vercel.app
+- **Development**: `develop` branch → https://retail-platform-git-develop.vercel.app
 
 ### Automated Workflows
 - **CI/CD**: Automatic testing and deployment on push
 - **Data Collection**: Runs every 30 minutes via GitHub Actions
+- **Analytics Aggregation**: Hourly and daily aggregations
+- **Health Monitoring**: Continuous sensor status checks
 - **Database Backups**: Daily automated backups
 
 ## 📚 Documentation
 
 - [Getting Started Guide](docs/guides/getting-started.md)
 - [API Documentation](docs/api/README.md)
+- [Database Schema](docs/architecture/database-schema.md)
 - [Architecture Overview](docs/architecture/overview.md)
 - [Deployment Guide](docs/deployment/README.md)
-- [Sensor Setup Guide](docs/implementation/sensor-integration-guide.md)
+- [Sensor Setup Guide](docs/setup/sensor-integration.md)
 - [Timezone Handling](docs/implementation/timezone-support.md)
+- [Contributing Guide](CONTRIBUTING.md)
 
 ## 🛠️ Development
 
@@ -224,6 +241,8 @@ Run migrations in order through Supabase SQL editor:
 6. Enable RLS policies
 7. Create sensor tables
 
+See [Database Setup Guide](docs/setup/database-setup.md) for detailed instructions.
+
 ### Running Tests
 ```bash
 # Frontend tests
@@ -237,7 +256,7 @@ npm run test:e2e
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
 
 ### Development Workflow
 1. Fork the repository
@@ -257,6 +276,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Deployed on [Vercel](https://vercel.com/)
 - UI components from [Shadcn/ui](https://ui.shadcn.com/)
 
+## 📞 Support
+
+- **Documentation**: This guide and our [comprehensive docs](docs/)
+- **Issues**: [GitHub Issues](https://github.com/blipee/retail-intelligence/issues)
+- **Email**: support@blipee.com
+- **Enterprise**: enterprise@blipee.com
+
 ---
 
-For more information, visit our [documentation](docs/) or contact the development team.
+**blipee OS Retail Intelligence** - Empowering retail with intelligent analytics

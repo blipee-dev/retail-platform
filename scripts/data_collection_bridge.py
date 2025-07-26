@@ -42,11 +42,11 @@ class DataCollectionBridge:
         """Load all sensor configurations"""
         sensor_configs = [
             {
-                "id": "176.79.62.167:2102",
+                "id": "188.82.28.148:2102",
                 "name": "J&J - 01 - ArrábidaShopping",
                 "organization": "jack-jones",
                 "store": "J&J - 01 - ArrábidaShopping",
-                "host": "176.79.62.167",
+                "host": "188.82.28.148",
                 "port": 2102
             },
             {

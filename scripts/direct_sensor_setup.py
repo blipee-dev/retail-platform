@@ -123,7 +123,7 @@ def setup_sensors():
             "sensor_name": "J&J-ARR-01-PC",
             "sensor_type": "people_counter",
             "sensor_model": "Milesight VS121",
-            "sensor_ip": "176.79.62.167",
+            "sensor_ip": "188.82.28.148",
             "sensor_port": 2102,
             "api_endpoint": "/dataloader.cgi",
             "location": "Main Entrance",

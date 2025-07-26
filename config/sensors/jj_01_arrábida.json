@@ -2,7 +2,7 @@
   "sensor_id": "jj_01_arrabida",
   "sensor_name": "J&J - 01 - ArrábidaShopping",
   "connection": {
-    "host": "176.79.62.167",
+    "host": "188.82.28.148",
     "port": 2102,
     "auth": {
       "type": "basic",

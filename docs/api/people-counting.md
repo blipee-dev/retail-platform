@@ -1,170 +1,131 @@
-# People Counting API
+# blipee OS Retail Intelligence - People Counting API
 
-The People Counting API provides access to foot traffic data from sensors installed at retail locations.
+The People Counting API provides access to foot traffic data from sensors installed at retail locations. All data is stored in the `people_counting_raw` table and aggregated into `hourly_analytics` and `daily_analytics` tables for performance.
+
+## Base URL
+
+```
+https://retail-platform.vercel.app/api
+```
+
+## Authentication
+
+All endpoints require Bearer token authentication:
+
+```bash
+Authorization: Bearer <your-supabase-token>
+```
 
 ## Endpoints
 
-### Get Current Occupancy
+### Get Hourly Analytics
 
-Returns the current occupancy for a specific site.
+Returns pre-aggregated hourly foot traffic data.
 
 ```http
-GET /sites/{siteId}/occupancy/current
+GET /api/analytics?type=hourly
 ```
 
-#### Parameters
+#### Query Parameters
 
-| Name | Type | Location | Required | Description |
-|------|------|----------|----------|-------------|
-| siteId | string | path | Yes | The site identifier |
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| type | string | Yes | Must be "hourly" |
+| store_id | string | No | Filter by store UUID |
+| sensor_id | string | No | Filter by sensor ID |
+| start_date | string | No | Start date (ISO 8601) |
+| end_date | string | No | End date (ISO 8601) |
 
 #### Response
 
 ```json
 {
-  "data": {
-    "siteId": "site_123",
-    "occupancy": 145,
-    "capacity": 500,
-    "percentage": 29,
-    "lastUpdated": "2025-07-16T10:30:00Z",
-    "trend": "increasing",
-    "zones": [
-      {
-        "id": "entrance",
-        "occupancy": 23
-      },
-      {
-        "id": "main_floor",
-        "occupancy": 98
-      }
-    ]
-  }
-}
-```
-
-### Get Historical Foot Traffic
-
-Retrieves historical foot traffic data for a specified period.
-
-```http
-GET /sites/{siteId}/footfall
-```
-
-#### Parameters
-
-| Name | Type | Location | Required | Description |
-|------|------|----------|----------|-------------|
-| siteId | string | path | Yes | The site identifier |
-| start_date | string | query | Yes | Start date (ISO 8601) |
-| end_date | string | query | Yes | End date (ISO 8601) |
-| granularity | string | query | No | Data granularity: `hour`, `day`, `week`, `month` (default: `hour`) |
-| include_predictions | boolean | query | No | Include AI predictions (default: `false`) |
-
-#### Response
-
-```json
-{
-  "data": {
-    "siteId": "site_123",
-    "period": {
-      "start": "2025-07-01T00:00:00Z",
-      "end": "2025-07-07T23:59:59Z"
-    },
-    "summary": {
-      "totalFootfall": 15420,
-      "avgDaily": 2203,
-      "peakHour": "2025-07-05T14:00:00Z",
-      "peakCount": 487
-    },
-    "data": [
-      {
-        "timestamp": "2025-07-01T00:00:00Z",
-        "entries": 45,
-        "exits": 42,
-        "passersby": 230,
-        "occupancy": 3
-      }
-    ],
-    "predictions": {
-      "nextHour": 156,
-      "confidence": 0.92
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "store_id": "123e4567-e89b-12d3-a456-426614174000",
+      "sensor_id": "OML01-PC",
+      "start_time": "2025-07-26T10:00:00Z",
+      "end_time": "2025-07-26T11:00:00Z",
+      "total_in": 145,
+      "total_out": 142,
+      "net_occupancy": 3,
+      "peak_occupancy": 25,
+      "conversion_rate": 0.00,
+      "transactions": 0
     }
-  },
-  "pagination": {
+  ],
+  "meta": {
+    "total": 24,
     "page": 1,
-    "per_page": 168,
-    "total": 168
+    "per_page": 50
   }
 }
 ```
 
-### Get Capture Rate
+### Get Daily Analytics
 
-Calculates the capture rate (store entries vs. mall traffic).
+Returns daily aggregated metrics with comparisons.
 
 ```http
-GET /sites/{siteId}/capture-rate
+GET /api/analytics?type=daily
 ```
 
-#### Parameters
+#### Query Parameters
 
-| Name | Type | Location | Required | Description |
-|------|------|----------|----------|-------------|
-| siteId | string | path | Yes | The site identifier |
-| date | string | query | No | Specific date (default: today) |
-| compare_to | string | query | No | Comparison period: `yesterday`, `last_week`, `last_month` |
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| type | string | Yes | Must be "daily" |
+| store_id | string | No | Filter by store UUID |
+| date | string | No | Specific date (YYYY-MM-DD) |
+| start_date | string | No | Start date range |
+| end_date | string | No | End date range |
 
 #### Response
 
 ```json
 {
-  "data": {
-    "siteId": "site_123",
-    "date": "2025-07-16",
-    "captureRate": {
-      "value": 12.5,
-      "storeEntries": 1250,
-      "mallTraffic": 10000
-    },
-    "comparison": {
-      "period": "yesterday",
-      "value": 11.8,
-      "change": 0.7,
-      "changePercent": 5.9
-    },
-    "hourlyBreakdown": [
-      {
-        "hour": 10,
-        "rate": 8.5,
-        "entries": 85,
-        "traffic": 1000
-      }
-    ]
-  }
+  "data": [
+    {
+      "id": "660e8400-e29b-41d4-a716-446655440000",
+      "store_id": "123e4567-e89b-12d3-a456-426614174000",
+      "date": "2025-07-26",
+      "total_footfall": 2450,
+      "unique_visitors": 1890,
+      "peak_hour": 14,
+      "peak_hour_footfall": 287,
+      "conversion_rate": 0.00,
+      "avg_dwell_time": 0,
+      "vs_yesterday_percent": 5.2,
+      "vs_last_week_percent": -2.1,
+      "vs_last_month_percent": 8.7,
+      "total_revenue": 0.00,
+      "total_transactions": 0
+    }
+  ]
 }
 ```
 
-### Create Manual Count
+### Submit Sensor Data
 
-Allows manual entry of people counting data (for locations without sensors).
+Ingests raw people counting data from sensors.
 
 ```http
-POST /sites/{siteId}/footfall/manual
+POST /api/sensors/data
 ```
 
 #### Request Body
 
 ```json
 {
-  "timestamp": "2025-07-16T10:00:00Z",
-  "period": "hour",
-  "counts": {
-    "entries": 150,
-    "exits": 145,
-    "passersby": 500
-  },
-  "notes": "Holiday sale event"
+  "sensor_id": "OML01-PC",
+  "timestamp": "2025-07-26T10:30:00Z",
+  "in_count": 15,
+  "out_count": 12,
+  "metadata": {
+    "temperature": 22.5,
+    "battery": 85
+  }
 }
 ```
 
@@ -172,168 +133,273 @@ POST /sites/{siteId}/footfall/manual
 
 ```json
 {
+  "success": true,
   "data": {
-    "id": "count_789",
-    "siteId": "site_123",
-    "timestamp": "2025-07-16T10:00:00Z",
-    "source": "manual",
-    "counts": {
-      "entries": 150,
-      "exits": 145,
-      "passersby": 500
-    },
-    "createdBy": "user_456",
-    "createdAt": "2025-07-16T10:05:00Z"
+    "id": "770e8400-e29b-41d4-a716-446655440000",
+    "sensor_id": "OML01-PC",
+    "timestamp": "2025-07-26T10:30:00Z",
+    "in_count": 15,
+    "out_count": 12
   }
 }
 ```
 
-### Get Dwell Time Analysis
+### Bulk Data Ingestion
 
-Analyzes how long people stay in different zones.
+Submit multiple sensor readings at once.
 
 ```http
-GET /sites/{siteId}/dwell-time
+POST /api/sensors/bulk-ingest
 ```
 
-#### Parameters
+#### Request Body
 
-| Name | Type | Location | Required | Description |
-|------|------|----------|----------|-------------|
-| siteId | string | path | Yes | The site identifier |
-| date | string | query | No | Analysis date (default: today) |
-| zones | string | query | No | Comma-separated zone IDs |
+```json
+{
+  "sensor_id": "OML01-PC",
+  "data": [
+    {
+      "timestamp": "2025-07-26T10:00:00Z",
+      "in_count": 10,
+      "out_count": 8
+    },
+    {
+      "timestamp": "2025-07-26T10:30:00Z",
+      "in_count": 15,
+      "out_count": 12
+    }
+  ]
+}
+```
+
+### Get Sensor Status
+
+Returns real-time sensor health and status information.
+
+```http
+GET /api/sensors/status
+```
+
+#### Query Parameters
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| store_id | string | No | Filter by store UUID |
+| sensor_id | string | No | Specific sensor ID |
 
 #### Response
 
 ```json
 {
-  "data": {
-    "siteId": "site_123",
-    "date": "2025-07-16",
-    "avgDwellTime": {
-      "minutes": 12.5,
-      "seconds": 750
-    },
-    "zones": [
-      {
-        "id": "entrance",
-        "name": "Entrance",
-        "avgDwellMinutes": 2.3,
-        "distribution": {
-          "0-5min": 75,
-          "5-10min": 18,
-          "10-20min": 5,
-          "20min+": 2
-        }
-      }
-    ],
-    "insights": [
-      {
-        "type": "high_dwell",
-        "zone": "promotions",
-        "message": "Promotion area shows 45% higher dwell time than average"
-      }
-    ]
-  }
+  "data": [
+    {
+      "sensor_id": "OML01-PC",
+      "name": "Main Entrance",
+      "store_id": "123e4567-e89b-12d3-a456-426614174000",
+      "store_name": "Downtown Store",
+      "is_online": true,
+      "health_status": "healthy",
+      "last_seen_at": "2025-07-26T10:45:00Z",
+      "last_data_timestamp": "2025-07-26T10:30:00Z",
+      "battery_level": 85,
+      "signal_strength": -45
+    }
+  ]
 }
 ```
 
-## WebSocket Events
+### Get Regional Analytics
 
-Subscribe to real-time people counting updates:
+Returns zone/region-specific occupancy data.
 
-```javascript
-// Subscribe to occupancy updates
+```http
+GET /api/analytics/regions
+```
+
+#### Query Parameters
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| store_id | string | Yes | Store UUID |
+| date | string | No | Specific date (default: today) |
+| region_id | string | No | Filter by region |
+
+#### Response
+
+```json
 {
-  "action": "subscribe",
-  "channel": "occupancy:site:123"
-}
-
-// Receive updates
-{
-  "event": "occupancy.updated",
-  "data": {
-    "siteId": "site_123",
-    "occupancy": 156,
-    "change": 3,
-    "timestamp": "2025-07-16T10:35:00Z"
-  }
+  "data": [
+    {
+      "region_id": "entrance",
+      "region_name": "Main Entrance",
+      "store_id": "123e4567-e89b-12d3-a456-426614174000",
+      "date": "2025-07-26",
+      "avg_occupancy": 5.2,
+      "peak_occupancy": 15,
+      "total_visitors": 1250,
+      "avg_dwell_time_seconds": 45
+    }
+  ]
 }
 ```
 
-## Rate Limits
+## Data Sources
 
-- **Standard**: 100 requests per minute
-- **Real-time**: 1000 WebSocket messages per minute
+### Raw Data Tables
+- **people_counting_raw**: Real-time sensor readings
+- **regional_counting_raw**: Zone occupancy data
+
+### Aggregated Tables
+- **hourly_analytics**: Pre-computed hourly metrics
+- **daily_analytics**: Daily summaries with YoY comparisons
+- **latest_sensor_data**: Materialized view for sensor status
+
+### Collection Schedule
+- Raw data: Every 30 minutes via GitHub Actions
+- Hourly aggregation: Every hour at :05
+- Daily aggregation: Every day at 02:00 UTC
+
+## Supported Sensors
+
+### Milesight Sensors
+- WS301, WS302 series
+- VS series with people counting
+- API integration via Python bridge
+
+### Omnia Sensors
+- OML01-PC through OML04-PC
+- Direct HTTP API integration
+- 4 regions per sensor support
+
+### Manual Entry
+- Support for locations without sensors
+- Mobile app integration (future)
+
+## Rate Limiting
+
+- **Default**: 100 requests/minute/IP
+- **Authenticated**: 1000 requests/minute/user
+- **Bulk operations**: 10 requests/minute
+
+Headers:
+- `X-RateLimit-Limit`: Total allowed
+- `X-RateLimit-Remaining`: Requests left
+- `X-RateLimit-Reset`: Unix timestamp
 
 ## Error Codes
 
 | Code | Description |
 |------|-------------|
-| `SITE_NOT_FOUND` | The specified site does not exist |
-| `NO_SENSOR_DATA` | No sensor configured for this site |
-| `INVALID_DATE_RANGE` | Date range exceeds maximum allowed (90 days) |
-| `INSUFFICIENT_PERMISSIONS` | User lacks permission to view this data |
+| `UNAUTHORIZED` | Missing or invalid token |
+| `FORBIDDEN` | Insufficient permissions |
+| `STORE_NOT_FOUND` | Invalid store UUID |
+| `SENSOR_NOT_FOUND` | Unknown sensor ID |
+| `INVALID_TIMESTAMP` | Timestamp format error |
+| `RATE_LIMITED` | Too many requests |
+| `SENSOR_OFFLINE` | Sensor not responding |
 
 ## Examples
 
 ### cURL
 
 ```bash
-# Get current occupancy
-curl -X GET https://api.retailintelligence.io/v1/sites/site_123/occupancy/current \
-  -H "Authorization: Bearer YOUR_API_TOKEN"
+# Get today's hourly data
+curl -X GET "https://retail-platform.vercel.app/api/analytics?type=hourly&store_id=123e4567-e89b-12d3-a456-426614174000" \
+  -H "Authorization: Bearer YOUR_TOKEN"
 
-# Get weekly foot traffic
-curl -X GET "https://api.retailintelligence.io/v1/sites/site_123/footfall?start_date=2025-07-01&end_date=2025-07-07&granularity=day" \
-  -H "Authorization: Bearer YOUR_API_TOKEN"
+# Submit sensor data
+curl -X POST "https://retail-platform.vercel.app/api/sensors/data" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sensor_id": "OML01-PC",
+    "timestamp": "2025-07-26T10:30:00Z",
+    "in_count": 15,
+    "out_count": 12
+  }'
+
+# Check sensor status
+curl -X GET "https://retail-platform.vercel.app/api/sensors/status?sensor_id=OML01-PC" \
+  -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
-### JavaScript SDK
+### JavaScript/TypeScript
 
-```javascript
-import { RetailIntelligence } from '@retail-intelligence/sdk';
+```typescript
+// Using Supabase client
+import { createClient } from '@supabase/supabase-js';
 
-const client = new RetailIntelligence('YOUR_API_TOKEN');
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Get current occupancy
-const occupancy = await client.sites.getOccupancy('site_123');
+// Get hourly analytics
+const { data, error } = await supabase
+  .from('hourly_analytics')
+  .select('*')
+  .eq('store_id', '123e4567-e89b-12d3-a456-426614174000')
+  .gte('start_time', '2025-07-26T00:00:00Z')
+  .order('start_time', { ascending: false });
 
-// Get historical data
-const footfall = await client.sites.getFootfall('site_123', {
-  startDate: '2025-07-01',
-  endDate: '2025-07-07',
-  granularity: 'day'
+// Using fetch API
+const response = await fetch('/api/analytics?type=daily', {
+  headers: {
+    'Authorization': `Bearer ${token}`
+  }
 });
-
-// Subscribe to real-time updates
-client.realtime.subscribe('occupancy:site:123', (event) => {
-  console.log('Occupancy updated:', event.data.occupancy);
-});
+const analytics = await response.json();
 ```
 
-### Python SDK
+### Python
 
 ```python
-from retail_intelligence import Client
+import requests
+from datetime import datetime, timezone
 
-client = Client('YOUR_API_TOKEN')
+# Configuration
+BASE_URL = 'https://retail-platform.vercel.app/api'
+headers = {
+    'Authorization': f'Bearer {YOUR_TOKEN}',
+    'Content-Type': 'application/json'
+}
 
-# Get current occupancy
-occupancy = client.sites.get_occupancy('site_123')
-
-# Get historical data
-footfall = client.sites.get_footfall(
-    'site_123',
-    start_date='2025-07-01',
-    end_date='2025-07-07',
-    granularity='day'
+# Get analytics
+response = requests.get(
+    f'{BASE_URL}/analytics',
+    params={
+        'type': 'hourly',
+        'store_id': '123e4567-e89b-12d3-a456-426614174000',
+        'start_date': '2025-07-26'
+    },
+    headers=headers
 )
+analytics = response.json()
 
-# Subscribe to real-time updates
-def on_occupancy_update(event):
-    print(f"Occupancy updated: {event['data']['occupancy']}")
+# Submit sensor data
+sensor_data = {
+    'sensor_id': 'OML01-PC',
+    'timestamp': datetime.now(timezone.utc).isoformat(),
+    'in_count': 25,
+    'out_count': 20
+}
 
-client.realtime.subscribe('occupancy:site:123', on_occupancy_update)
+response = requests.post(
+    f'{BASE_URL}/sensors/data',
+    json=sensor_data,
+    headers=headers
+)
 ```
+
+## Best Practices
+
+1. **Timestamp Format**: Always use ISO 8601 with timezone
+2. **Batch Operations**: Use bulk endpoints for multiple readings
+3. **Error Handling**: Implement exponential backoff on rate limits
+4. **Data Validation**: Ensure counts are non-negative integers
+5. **Timezone Awareness**: Submit data in UTC, display in local time
+
+## Future Enhancements
+
+- WebSocket support for real-time updates
+- GraphQL endpoint for flexible queries
+- Predictive analytics API
+- Computer vision integration
+- Mobile SDK support

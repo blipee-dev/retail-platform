@@ -22,7 +22,7 @@ def test_regional_data():
         },
         {
             "name": "J&J-ARR-01-PC", 
-            "host": "176.79.62.167",
+            "host": "188.82.28.148",
             "port": 2102,
             "auth": "admin:grnl.2024",
             "endpoint": "regionalcountlogcsv"

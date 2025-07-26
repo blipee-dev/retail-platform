@@ -20,7 +20,7 @@ async function testSensor() {
   const path = `/dataloader.cgi?dw=vcalogcsv&report_type=0&statistics_type=3&linetype=31&time_start=${timeStart}&time_end=${timeEnd}`;
   
   const options = {
-    hostname: '176.79.62.167',
+    hostname: '188.82.28.148',
     port: 2102,
     path: path,
     method: 'GET',

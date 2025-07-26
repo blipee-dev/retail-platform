@@ -17,7 +17,7 @@ export default function SensorsPage() {
   // J&J Sensor configuration
   const jjSensorConfig = {
     sensor_name: "J&J - 01 - ArrábidaShopping",
-    sensor_ip: "176.79.62.167",
+    sensor_ip: "188.82.28.148",
     sensor_port: 2102,
     sensor_type: "milesight_people_counter",
     location: "J&J Store - ArrábidaShopping",

@@ -224,13 +224,13 @@ export async function POST(request: NextRequest) {
     const jjStoreRecord = allStores?.find(s => s.name === 'J&J - 01 - ArrábidaShopping')
     if (jjStoreRecord) {
       sensorRegistrations.push({
-        sensor_id: '176.79.62.167:2102',
+        sensor_id: '188.82.28.148:2102',
         store_id: jjStoreRecord.id,
         sensor_name: 'J&J-ARR-01-PC',
         sensor_type: 'milesight_people_counter',
         manufacturer: 'Milesight',
         model: 'VS121',
-        ip_address: '176.79.62.167',
+        ip_address: '188.82.28.148',
         port: 2102,
         api_endpoint: '/dataloader.cgi',
         location_in_store: 'Main Entrance',

@@ -1,15 +1,15 @@
-# API Documentation
+# blipee OS Retail Intelligence - API Documentation
 
 ## Overview
 
-The blipee OS Retail Intelligence API provides programmatic access to all platform features through a RESTful interface, GraphQL endpoint, and real-time WebSocket connections.
+The blipee OS Retail Intelligence API provides programmatic access to all platform features through a RESTful interface with plans for GraphQL and WebSocket support in future releases.
 
 ## Base URLs
 
-- **Production**: `https://app.blipee.com/api/v1`
-- **Staging**: `https://staging.blipee.com/api/v1`
-- **Development**: `https://dev.blipee.com/api/v1`
-- **Codespaces**: `https://[codespace-url]/api/v1`
+- **Production**: `https://retail-platform.vercel.app/api`
+- **Staging**: `https://retail-platform-git-staging.vercel.app/api`
+- **Development**: `https://retail-platform-git-develop.vercel.app/api`
+- **Local**: `http://localhost:3000/api`
 
 ## Authentication
 
@@ -86,96 +86,160 @@ Authorization: Bearer <your-api-token>
 ### Core APIs
 
 - [Authentication](./authentication.md) - User auth, tokens, sessions
-- [Organizations](./organizations.md) - Tenant management
-- [Users](./users.md) - User management and permissions
+- [Authentication](./authentication.md) - User auth and session management
+- [Stores](./stores.md) - Store and location management
+- [Users](./users.md) - User profiles and permissions
 
 ### Analytics APIs
 
+- [Sensors](./sensors.md) - Sensor configuration and status
 - [People Counting](./people-counting.md) - Foot traffic data
-- [Sales](./sales.md) - Transaction and revenue data
-- [Metrics](./metrics.md) - Combined analytics
-- [Reports](./reports.md) - Generated reports
+- [Analytics](./analytics.md) - Aggregated metrics and insights
+- [Reports](./reports.md) - Daily email reports (implemented)
 
 ### Management APIs
 
-- [Sites](./sites.md) - Store/location management
-- [Sensors](./sensors.md) - Device configuration
-- [Targets](./targets.md) - KPI management
-- [Alerts](./alerts.md) - Notification rules
+- [Alerts](./alerts.md) - System alerts and notifications
+- [Regions](./regions.md) - Zone configuration within stores
+- [Health](./health.md) - System health monitoring
 
 ### Integration APIs
 
-- [Webhooks](./webhooks.md) - Event notifications
-- [Power BI](./powerbi.md) - Microsoft Power BI integration
-- [Dynamics 365](./dynamics.md) - Microsoft Dynamics integration
-- [POS Systems](./pos-systems.md) - Point of Sale integrations
+- [Bulk Operations](./bulk-operations.md) - Batch data processing
+- [Export](./export.md) - Data export capabilities
+- Future: Webhooks, Power BI, POS integrations
 
 ### AI APIs
 
-- [Predictions](./predictions.md) - ML predictions
-- [Insights](./insights.md) - AI-generated insights
-- [Recommendations](./recommendations.md) - Action suggestions
+- Future: AI predictions, insights, and recommendations
 
-## GraphQL API
+## Current API Endpoints
 
-The platform also provides a GraphQL endpoint at `/graphql`:
+### Authentication
+```
+POST   /api/auth/signin
+POST   /api/auth/signup
+POST   /api/auth/signout
+GET    /api/auth/profile
+```
 
-```graphql
-query GetStoreMetrics($storeId: ID!, $date: Date!) {
-  store(id: $storeId) {
-    name
-    metrics(date: $date) {
-      footfall
-      revenue
-      conversionRate
-      captureRate
-    }
-    predictions {
-      nextHourFootfall
-      endOfDayRevenue
+### Sensors
+```
+GET    /api/sensors
+POST   /api/sensors/data
+GET    /api/sensors/status
+```
+
+### Analytics
+```
+GET    /api/analytics?type=hourly
+GET    /api/analytics?type=daily
+```
+
+### Setup (Admin)
+```
+POST   /api/setup/tenants
+POST   /api/setup/sensors
+POST   /api/setup/bypass-rls
+```
+
+## Authentication
+
+### Bearer Token
+All API requests require authentication using Supabase auth tokens:
+
+```bash
+Authorization: Bearer <your-supabase-token>
+```
+
+### Session Management
+Sessions are managed by Supabase Auth with automatic refresh handling.
+
+## Request Examples
+
+### cURL
+```bash
+# Get sensor status
+curl -X GET https://retail-platform.vercel.app/api/sensors/status \
+  -H "Authorization: Bearer YOUR_TOKEN"
+
+# Ingest sensor data
+curl -X POST https://retail-platform.vercel.app/api/sensors/data \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"sensor_id": "OML01-PC", "in_count": 10, "out_count": 8}'
+```
+
+### JavaScript/TypeScript
+```typescript
+// Using fetch
+const response = await fetch('/api/analytics?type=hourly', {
+  headers: {
+    'Authorization': `Bearer ${token}`
+  }
+});
+const data = await response.json();
+```
+
+## Data Models
+
+### Sensor Data
+```typescript
+interface SensorData {
+  sensor_id: string;
+  timestamp: string;
+  in_count: number;
+  out_count: number;
+  metadata?: Record<string, any>;
+}
+```
+
+### Analytics Response
+```typescript
+interface AnalyticsResponse {
+  store_id: string;
+  sensor_id: string;
+  start_time: string;
+  end_time: string;
+  total_in: number;
+  total_out: number;
+  conversion_rate?: number;
+}
+```
+
+## Error Handling
+
+### Error Response Format
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid sensor_id format",
+    "details": {
+      "field": "sensor_id",
+      "value": "invalid-id"
     }
   }
 }
 ```
 
-## WebSocket API
+### Common Error Codes
+| Code | Description |
+|------|-------------|
+| `UNAUTHORIZED` | Missing or invalid authentication |
+| `FORBIDDEN` | Insufficient permissions |
+| `NOT_FOUND` | Resource not found |
+| `VALIDATION_ERROR` | Invalid request parameters |
+| `RATE_LIMITED` | Too many requests |
 
-Real-time updates are available via WebSocket:
+## Rate Limiting
 
-```javascript
-const ws = new WebSocket('wss://api.retailintelligence.io/v1/ws');
-
-ws.on('message', (data) => {
-  const event = JSON.parse(data);
-  // Handle real-time updates
-});
-
-// Subscribe to events
-ws.send(JSON.stringify({
-  action: 'subscribe',
-  channels: ['metrics:store:123', 'alerts:org:456']
-}));
-```
-
-## SDKs
-
-Official SDKs are available for:
-
-- [JavaScript/TypeScript](https://github.com/blipee/js-sdk)
-- [Python](https://github.com/blipee/python-sdk)
-- [Go](https://github.com/blipee/go-sdk)
-- [Ruby](https://github.com/blipee/ruby-sdk)
-
-## Postman Collection
-
-Download our [Postman Collection](https://www.postman.com/blipee/workspace/blipee-os-retail-intelligence-api) for easy API exploration.
-
-## API Changelog
-
-See [API Changelog](./CHANGELOG.md) for version history and migration guides.
+- **Default**: 100 requests per minute per IP
+- **Authenticated**: 1000 requests per minute per user
+- **Headers**: `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`
 
 ## Support
 
-- **Documentation**: This guide
-- **API Status**: [status.blipee.com](https://status.blipee.com)
-- **Support**: api-support@blipee.com
+- **Documentation**: This guide and endpoint-specific docs
+- **GitHub Issues**: [Report issues](https://github.com/blipee/retail-intelligence/issues)
+- **Email**: support@blipee.com

@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     // Insert test data for each store
     const inserts = [
       {
-        sensor_id: '176.79.62.167:2102',
+        sensor_id: '188.82.28.148:2102',
         store_id: storeMap['JJ-ARR-01'],
         timestamp: new Date().toISOString(),
         line1_in: 9,

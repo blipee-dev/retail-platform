@@ -1,6 +1,6 @@
-# Cloudflare Tunnel Setup Guide
+# blipee OS Retail Intelligence - Cloudflare Tunnel Setup Guide
 
-This guide will help you set up Cloudflare Tunnel to make your Milesight sensors accessible from Vercel's cloud infrastructure.
+This guide will help you set up Cloudflare Tunnel to make your Milesight and Omnia sensors accessible from blipee OS Retail Intelligence's cloud infrastructure.
 
 ## Prerequisites
 
@@ -35,7 +35,7 @@ This will open a browser window. Log in to your Cloudflare account and select th
 ## Step 3: Create the Tunnel
 
 ```bash
-cloudflared tunnel create retail-sensors
+cloudflared tunnel create blipee-sensors
 ```
 
 This creates a tunnel and generates a credentials file. Note the tunnel ID shown.
@@ -46,12 +46,12 @@ For each sensor, create a subdomain:
 
 ```bash
 # J&J Sensor
-cloudflared tunnel route dns retail-sensors jj-sensor.yourdomain.com
+cloudflared tunnel route dns blipee-sensors jj-sensor.yourdomain.com
 
 # Omnia Sensors
-cloudflared tunnel route dns retail-sensors omnia1.yourdomain.com
-cloudflared tunnel route dns retail-sensors omnia2.yourdomain.com
-cloudflared tunnel route dns retail-sensors omnia3.yourdomain.com
+cloudflared tunnel route dns blipee-sensors omnia1.yourdomain.com
+cloudflared tunnel route dns blipee-sensors omnia2.yourdomain.com
+cloudflared tunnel route dns blipee-sensors omnia3.yourdomain.com
 ```
 
 ## Step 5: Configure the Tunnel
@@ -65,7 +65,7 @@ credentials-file: /home/YOUR_USER/.cloudflared/YOUR_TUNNEL_ID.json
 ingress:
   # J&J Sensor - ArrábidaShopping
   - hostname: jj-sensor.yourdomain.com
-    service: http://176.79.62.167:2102
+    service: http://188.82.28.148:2102
     originRequest:
       noTLSVerify: true
       
@@ -95,7 +95,7 @@ ingress:
 
 Test the tunnel:
 ```bash
-cloudflared tunnel run retail-sensors
+cloudflared tunnel run blipee-sensors
 ```
 
 ## Step 7: Install as a Service
@@ -154,7 +154,7 @@ git push origin main
 
 ### Authentication Errors
 - Verify sensor credentials are correct
-- Test manually: `curl -u admin:grnl.2024 http://176.79.62.167:2102/dataloader.cgi?dw=vcalogcsv`
+- Test manually: `curl -u admin:password http://188.82.28.148:2102/dataloader.cgi?dw=vcalogcsv`
 
 ### No Data in Database
 - Check Vercel function logs for errors
@@ -186,3 +186,8 @@ This solution provides:
 - ✅ Automatic failover and redundancy
 - ✅ Easy scaling for additional sensors
 - ✅ Professional monitoring and logging
+
+---
+
+**Last Updated**: 2025-07-26  
+**Platform**: blipee OS Retail Intelligence

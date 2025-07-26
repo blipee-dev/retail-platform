@@ -132,7 +132,7 @@ def main():
     sensors = [
         {
             "name": "J&J Arrábida",
-            "host": "176.79.62.167",
+            "host": "188.82.28.148",
             "port": 2102,
             "username": "admin",
             "password": "grnl.2024"
