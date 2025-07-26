@@ -28,10 +28,18 @@ class RetryHandler {
 
   async execute(fn, context = {}) {
     let lastError;
+    const contextStr = context.sensorName ? ` for ${context.sensorName}` : '';
     
     for (let attempt = 0; attempt <= this.maxRetries; attempt++) {
       try {
-        return await fn();
+        const result = await fn();
+        
+        // Log success on retry
+        if (attempt > 0) {
+          console.log(`    ✅ Success on retry ${attempt}/${this.maxRetries}${contextStr}`);
+        }
+        
+        return result;
       } catch (error) {
         lastError = error;
         
@@ -40,7 +48,7 @@ class RetryHandler {
         }
 
         const delay = this.calculateDelay(attempt);
-        console.log(`Retry ${attempt + 1}/${this.maxRetries} after ${delay}ms: ${error.message}`);
+        console.log(`    ⚠️  Retry ${attempt + 1}/${this.maxRetries}${contextStr} after ${Math.round(delay)}ms: ${error.message}`);
         
         await this.delay(delay);
       }

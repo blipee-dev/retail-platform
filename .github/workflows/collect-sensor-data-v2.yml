@@ -39,7 +39,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+
+      - name: Cache workflow dependencies
+        uses: actions/cache@v4
+        with:
+          path: scripts/workflows/node_modules
+          key: ${{ runner.os }}-workflow-${{ hashFiles('scripts/workflows/package*.json') }}
+          restore-keys: |
+            ${{ runner.os }}-workflow-
 
       - name: Install dependencies
         run: |

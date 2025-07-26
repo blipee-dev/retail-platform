@@ -74,6 +74,18 @@ class SupabaseClient {
   }
 
   /**
+   * Update sensor metadata (includes circuit breaker state)
+   */
+  async updateSensorMetadata(sensorId, metadata) {
+    const { error } = await this.client
+      .from('sensor_metadata')
+      .update(metadata)
+      .eq('sensor_id', sensorId);
+
+    if (error) throw error;
+  }
+
+  /**
    * Insert sensor data with duplicate checking
    */
   async insertSensorData(data) {

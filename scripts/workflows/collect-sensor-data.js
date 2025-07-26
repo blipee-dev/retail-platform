@@ -3,6 +3,8 @@
 const { SupabaseClient } = require('./lib/supabase-client');
 const { SensorClient } = require('./lib/sensor-client');
 const { ParallelCollector } = require('./lib/parallel-collector');
+const { RetryHandler } = require('./lib/retry-handler');
+const { CircuitBreaker } = require('./lib/circuit-breaker');
 
 /**
  * Main sensor data collection script for GitHub Actions
@@ -13,9 +15,15 @@ async function main() {
   console.log(`🔧 Environment: ${process.env.NODE_ENV || 'production'}`);
   
   const supabase = new SupabaseClient();
+  const circuitBreaker = new CircuitBreaker(supabase, {
+    failureThreshold: 5,
+    recoveryTimeout: 3600000  // 1 hour
+  });
+  
   const results = {
     successful: 0,
     failed: 0,
+    skipped: 0,
     total: 0,
     errors: [],
     sensors: []
@@ -49,12 +57,14 @@ async function main() {
       });
 
       const typeResults = await collector.collect(typeSensors, async (sensor) => {
-        return processSensor(sensor, type, supabase);
+        return processSensor(sensor, type, supabase, circuitBreaker);
       });
 
       // Aggregate results
       typeResults.forEach(result => {
-        if (result.success) {
+        if (result.skipped) {
+          results.skipped++;
+        } else if (result.success) {
           results.successful++;
         } else {
           results.failed++;
@@ -71,7 +81,8 @@ async function main() {
     console.log('\n📈 Collection Summary:');
     console.log(`  ✅ Successful: ${results.successful}`);
     console.log(`  ❌ Failed: ${results.failed}`);
-    console.log(`  📊 Success Rate: ${((results.successful / results.total) * 100).toFixed(1)}%`);
+    console.log(`  ⏭️  Skipped (circuit open): ${results.skipped}`);
+    console.log(`  📊 Success Rate: ${results.total > 0 ? ((results.successful / (results.total - results.skipped)) * 100).toFixed(1) : 0}% (excluding skipped)`);
     
     // Calculate totals
     const totalInserted = results.sensors.reduce((sum, s) => sum + (s.recordsInserted || 0), 0);
@@ -116,16 +127,47 @@ async function main() {
 /**
  * Process individual sensor
  */
-async function processSensor(sensor, type, supabase) {
+async function processSensor(sensor, type, supabase, circuitBreaker) {
   const startTime = Date.now();
   console.log(`  Processing ${sensor.sensor_name} (${sensor.sensor_id})...`);
+
+  // Check circuit breaker state
+  const circuitStatus = await circuitBreaker.shouldProcessSensor(sensor);
+  
+  if (!circuitStatus.shouldProcess) {
+    console.log(`    ⚡ Circuit breaker ${circuitStatus.state}: ${circuitStatus.reason}`);
+    return {
+      success: false,
+      skipped: true,
+      sensor: sensor.sensor_name,
+      sensorId: sensor.sensor_id,
+      reason: circuitStatus.reason,
+      circuitState: circuitStatus.state
+    };
+  }
+
+  const isRecoveryAttempt = circuitStatus.state === 'HALF_OPEN';
+  if (isRecoveryAttempt) {
+    console.log(`    🔄 Circuit breaker HALF_OPEN: ${circuitStatus.reason}`);
+  }
 
   try {
     // Create sensor client - always use 'milesight' for client creation
     const client = new SensorClient('milesight');
     
-    // Collect data
-    const result = await client.collect(sensor);
+    // Create retry handler with sensor-specific settings
+    const retryHandler = new RetryHandler({
+      maxRetries: 3,
+      initialDelay: 2000,  // Start with 2 seconds
+      maxDelay: 10000,     // Max 10 seconds between retries
+      backoff: 'exponential'
+    });
+    
+    // Collect data with retry logic
+    const result = await retryHandler.execute(
+      async () => client.collect(sensor),
+      { sensorName: sensor.sensor_name, sensorId: sensor.sensor_id }
+    );
     
     if (result.success) {
       // Save to database
@@ -167,6 +209,9 @@ async function processSensor(sensor, type, supabase) {
         consecutiveFailures: 0,
         offlineSince: null
       });
+
+      // Reset circuit breaker on success
+      await circuitBreaker.handleSuccess(sensor.sensor_id);
 
       // Log health
       await supabase.logSensorHealth(
@@ -217,6 +262,9 @@ async function processSensor(sensor, type, supabase) {
         consecutiveFailures: newFailureCount,
         offlineSince: newFailureCount === 3 ? new Date().toISOString() : sensor.offline_since
       });
+
+      // Update circuit breaker state
+      await circuitBreaker.handleFailure(sensor, isRecoveryAttempt);
 
       // Log health as offline/warning
       await supabase.logSensorHealth(
