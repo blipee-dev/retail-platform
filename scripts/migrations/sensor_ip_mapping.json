@@ -1,0 +1,23 @@
+{
+  "sensor_mappings": [
+    {
+      "sensor_id": "ffc2438a-ee4f-4324-96da-08671ea3b23c",
+      "sensor_name_pattern": "%Omnia Guimarães Shopping%",
+      "host": "62.28.114.102:21001",
+      "description": "OML01 - Omnia Guimarães Shopping"
+    },
+    {
+      "sensor_id": "f63ef2e9-344e-4373-aedf-04dd05cf8f8b",
+      "sensor_name_pattern": "%Omnia Fórum Almada%",
+      "host": "62.28.114.102:21002",
+      "description": "OML02 - Omnia Fórum Almada"
+    },
+    {
+      "sensor_id": "7976051c-980b-45e1-b099-45d032f3c7aa",
+      "sensor_name_pattern": "%Omnia NorteShopping%",
+      "host": "188.37.124.33:21002",
+      "description": "OML03 - Omnia NorteShopping"
+    }
+  ],
+  "note": "This mapping should be managed through environment variables or database configuration in production"
+}

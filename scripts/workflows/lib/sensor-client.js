@@ -23,8 +23,18 @@ class SensorClient {
    * Fetch data from sensor with retry logic
    */
   async fetchData(sensor, endpoint) {
-    const port = sensor.sensor_port || 80;
-    const url = `http://${sensor.sensor_ip}:${port}${endpoint}`;
+    // Use host field which includes IP:port (e.g., "62.28.114.102:21001")
+    const host = sensor.host || sensor.sensor_ip;
+    
+    // If host already includes port, use it directly
+    let url;
+    if (host.includes(':')) {
+      url = `http://${host}${endpoint}`;
+    } else {
+      // Fallback to separate port if host doesn't include it
+      const port = sensor.sensor_port || 80;
+      url = `http://${host}:${port}${endpoint}`;
+    }
     
     return this.retryHandler.execute(async () => {
       const response = await fetch(url, {

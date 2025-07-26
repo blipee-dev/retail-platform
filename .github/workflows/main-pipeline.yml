@@ -1,7 +1,11 @@
 name: Main Data Pipeline
 
 on:
-  # Triggered by adaptive-scheduler.yml based on traffic patterns
+  # Primary trigger: Every 30 minutes
+  schedule:
+    - cron: '*/30 * * * *'
+  
+  # Also triggered by adaptive-scheduler.yml for more control
   # Manual trigger still available for debugging
   workflow_dispatch:
     inputs:

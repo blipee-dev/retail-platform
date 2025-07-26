@@ -75,15 +75,21 @@ jobs:
               .limit(1);
             
             if (!recentData || recentData.length === 0) {
-              issues.push('No recent sensor data found');
+              // Warning instead of failure - sensors might be offline
+              console.log('⚠️  Warning: No recent sensor data found in the last ' + timeWindow + ' minutes');
+              // Only fail if we're in business hours
+              const hour = new Date().getUTCHours();
+              if (hour >= 9 && hour <= 21) {
+                issues.push('No recent sensor data found during business hours');
+              }
             }
             
             // Check 2: Look for sensors with suspicious values
             const { data: suspicious } = await supabase
               .from('people_counting_raw')
-              .select('sensor_id, in_count, out_count')
+              .select('sensor_id, total_in, total_out')
               .gte('timestamp', since)
-              .or('in_count.gt.1000,out_count.gt.1000,in_count.lt.0,out_count.lt.0');
+              .or('total_in.gt.1000,total_out.gt.1000,total_in.lt.0,total_out.lt.0');
             
             if (suspicious && suspicious.length > 0) {
               issues.push(`Found ${suspicious.length} records with suspicious counts`);
@@ -92,8 +98,8 @@ jobs:
             // Check 3: Verify sensor health
             const { data: unhealthy } = await supabase
               .from('sensor_metadata')
-              .select('sensor_id')
-              .eq('is_online', false);
+              .select('sensor_id, sensor_status')
+              .eq('sensor_status', 'offline');
             
             if (unhealthy && unhealthy.length > 0) {
               console.log(`Warning: ${unhealthy.length} sensors are offline`);
@@ -106,8 +112,16 @@ jobs:
               console.log('Issues found:', issues);
             }
             
-            console.log(`::set-output name=passed::${passed}`);
-            console.log(`::set-output name=issues::${issues.length}`);
+            // Use GitHub Actions environment files (new syntax)
+            const fs = require('fs');
+            if (process.env.GITHUB_OUTPUT) {
+              fs.appendFileSync(process.env.GITHUB_OUTPUT, `passed=${passed}\n`);
+              fs.appendFileSync(process.env.GITHUB_OUTPUT, `issues=${issues.length}\n`);
+            } else {
+              // Fallback for local testing
+              console.log(`passed=${passed}`);
+              console.log(`issues=${issues.length}`);
+            }
             
             process.exit(passed ? 0 : 1);
           }
