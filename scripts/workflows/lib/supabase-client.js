@@ -227,6 +227,60 @@ class SupabaseClient {
   }
 
   /**
+   * Update latest sensor data timestamp
+   */
+  async updateLatestSensorData(sensorId, lastDataTimestamp, recordsCollected) {
+    try {
+      // Check if record exists
+      const { data: existing } = await this.client
+        .from('latest_sensor_data')
+        .select('sensor_id')
+        .eq('sensor_id', sensorId)
+        .single();
+
+      const now = new Date().toISOString();
+      
+      if (existing) {
+        // Update existing record
+        const { error } = await this.client
+          .from('latest_sensor_data')
+          .update({
+            last_data_timestamp: lastDataTimestamp,
+            last_check_timestamp: now,
+            records_collected: recordsCollected,
+            updated_at: now
+          })
+          .eq('sensor_id', sensorId);
+
+        if (error) {
+          console.log(`    Latest data update failed: ${error.message}`);
+          return;
+        }
+      } else {
+        // Insert new record
+        const { error } = await this.client
+          .from('latest_sensor_data')
+          .insert({
+            sensor_id: sensorId,
+            last_data_timestamp: lastDataTimestamp,
+            last_check_timestamp: now,
+            records_collected: recordsCollected
+          });
+
+        if (error) {
+          console.log(`    Latest data insert failed: ${error.message}`);
+          return;
+        }
+      }
+      
+      console.log(`    Latest data updated: ${recordsCollected} records`);
+    } catch (err) {
+      // Fail silently - don't break the collection
+      console.log(`    Latest data update skipped`);
+    }
+  }
+
+  /**
    * Check if data exists for time range
    */
   async hasDataForTimeRange(table, startTime, endTime) {

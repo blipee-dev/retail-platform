@@ -71,14 +71,27 @@ jobs:
       pipeline_id: ${{ needs.initialize.outputs.pipeline_id }}
     secrets: inherit
 
-  # Analytics aggregation (waits for both collections)
-  analytics-aggregation:
-    name: Run Analytics Aggregation
+  # Data validation
+  validate-data:
+    name: Validate Collected Data
     needs: [initialize, collect-sensor-data, collect-regional-data]
     if: |
       always() && 
       needs.initialize.result == 'success' &&
-      (needs.collect-sensor-data.result == 'success' || needs.collect-regional-data.result == 'success' || inputs.force_all_stages)
+      (needs.collect-sensor-data.result == 'success' || needs.collect-regional-data.result == 'success')
+    uses: ./.github/workflows/validate-collected-data.yml
+    with:
+      pipeline_id: ${{ needs.initialize.outputs.pipeline_id }}
+    secrets: inherit
+
+  # Analytics aggregation (waits for validation)
+  analytics-aggregation:
+    name: Run Analytics Aggregation
+    needs: [initialize, collect-sensor-data, collect-regional-data, validate-data]
+    if: |
+      always() && 
+      needs.initialize.result == 'success' &&
+      (needs.validate-data.result == 'success' || inputs.force_all_stages)
     uses: ./.github/workflows/run-analytics-aggregation-v2.yml
     with:
       pipeline_id: ${{ needs.initialize.outputs.pipeline_id }}

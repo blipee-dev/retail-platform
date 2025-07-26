@@ -176,6 +176,20 @@ async function processSensor(sensor, type, supabase) {
         recordsInserted + recordsUpdated
       );
 
+      // Update latest sensor data timestamp
+      if (Array.isArray(result.data) && result.data.length > 0) {
+        // Get the most recent timestamp from collected data
+        const timestamps = result.data.map(r => new Date(r.timestamp)).filter(d => !isNaN(d));
+        if (timestamps.length > 0) {
+          const latestTimestamp = new Date(Math.max(...timestamps));
+          await supabase.updateLatestSensorData(
+            sensor.sensor_id,
+            latestTimestamp.toISOString(),
+            recordsInserted + recordsUpdated
+          );
+        }
+      }
+
       const totalProcessed = recordsInserted + recordsUpdated;
       if (totalProcessed > 0) {
         console.log(`    ✅ Success (${result.responseTime}ms) - ${recordsInserted} new, ${recordsUpdated} updated`);
@@ -203,6 +217,21 @@ async function processSensor(sensor, type, supabase) {
         consecutiveFailures: newFailureCount,
         offlineSince: newFailureCount === 3 ? new Date().toISOString() : sensor.offline_since
       });
+
+      // Log health as offline/warning
+      await supabase.logSensorHealth(
+        sensor.sensor_id,
+        newFailureCount >= 3 ? 'offline' : 'warning',
+        result.responseTime || 0,
+        0  // No records collected on failure
+      );
+
+      // Update latest sensor data with failed check
+      await supabase.updateLatestSensorData(
+        sensor.sensor_id,
+        sensor.last_data_received || null,  // Keep last successful timestamp
+        0  // No records collected
+      );
 
       // Create alert if critical
       if (newFailureCount === 3) {

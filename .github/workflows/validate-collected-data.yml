@@ -1,0 +1,118 @@
+name: Validate Collected Data
+
+on:
+  workflow_call:
+    inputs:
+      pipeline_id:
+        description: 'Pipeline run ID'
+        required: true
+        type: string
+      time_window_minutes:
+        description: 'Minutes to look back for validation'
+        required: false
+        type: number
+        default: 30
+    outputs:
+      validation_passed:
+        description: 'Whether validation passed'
+        value: ${{ jobs.validate.outputs.passed }}
+      issues_found:
+        description: 'Number of data quality issues found'
+        value: ${{ jobs.validate.outputs.issues }}
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    outputs:
+      passed: ${{ steps.validate.outputs.passed }}
+      issues: ${{ steps.validate.outputs.issues }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: |
+          cd scripts/workflows
+          npm install @supabase/supabase-js date-fns
+      
+      - name: Run validation checks
+        id: validate
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          PIPELINE_ID: ${{ inputs.pipeline_id }}
+          TIME_WINDOW: ${{ inputs.time_window_minutes }}
+        run: |
+          cd scripts/workflows
+          
+          # Create inline validation script
+          cat > validate-data.js << 'EOF'
+          const { createClient } = require('@supabase/supabase-js');
+          const { subMinutes } = require('date-fns');
+          
+          const supabase = createClient(
+            process.env.SUPABASE_URL,
+            process.env.SUPABASE_SERVICE_ROLE_KEY
+          );
+          
+          async function validateData() {
+            const timeWindow = parseInt(process.env.TIME_WINDOW || '30');
+            const since = subMinutes(new Date(), timeWindow).toISOString();
+            
+            let issues = [];
+            
+            // Check 1: Verify we have recent data
+            const { data: recentData, error: recentError } = await supabase
+              .from('people_counting_raw')
+              .select('sensor_id')
+              .gte('timestamp', since)
+              .limit(1);
+            
+            if (!recentData || recentData.length === 0) {
+              issues.push('No recent sensor data found');
+            }
+            
+            // Check 2: Look for sensors with suspicious values
+            const { data: suspicious } = await supabase
+              .from('people_counting_raw')
+              .select('sensor_id, in_count, out_count')
+              .gte('timestamp', since)
+              .or('in_count.gt.1000,out_count.gt.1000,in_count.lt.0,out_count.lt.0');
+            
+            if (suspicious && suspicious.length > 0) {
+              issues.push(`Found ${suspicious.length} records with suspicious counts`);
+            }
+            
+            // Check 3: Verify sensor health
+            const { data: unhealthy } = await supabase
+              .from('sensor_metadata')
+              .select('sensor_id')
+              .eq('is_online', false);
+            
+            if (unhealthy && unhealthy.length > 0) {
+              console.log(`Warning: ${unhealthy.length} sensors are offline`);
+            }
+            
+            // Output results
+            const passed = issues.length === 0;
+            console.log(`Validation ${passed ? 'PASSED' : 'FAILED'}`);
+            if (issues.length > 0) {
+              console.log('Issues found:', issues);
+            }
+            
+            console.log(`::set-output name=passed::${passed}`);
+            console.log(`::set-output name=issues::${issues.length}`);
+            
+            process.exit(passed ? 0 : 1);
+          }
+          
+          validateData().catch(console.error);
+          EOF
+          
+          node validate-data.js
