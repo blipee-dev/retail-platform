@@ -1,0 +1,208 @@
+name: Timezone-Aware Daily Aggregation
+
+on:
+  schedule:
+    # Run every hour to check which stores need aggregation
+    - cron: '0 * * * *'
+  workflow_dispatch:
+    inputs:
+      store_id:
+        description: 'Specific store ID to aggregate (optional)'
+        required: false
+        type: string
+      force_all:
+        description: 'Force aggregation for all stores'
+        required: false
+        type: boolean
+        default: false
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  check-stores:
+    name: Check Stores for Daily Aggregation
+    runs-on: ubuntu-latest
+    outputs:
+      stores_to_aggregate: ${{ steps.check.outputs.stores }}
+      store_count: ${{ steps.check.outputs.count }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      
+      - name: Check which stores need aggregation
+        id: check
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SPECIFIC_STORE: ${{ inputs.store_id }}
+          FORCE_ALL: ${{ inputs.force_all }}
+        run: |
+          cd scripts
+          
+          # Create timezone checker script
+          cat > check-timezone-aggregation.js << 'EOF'
+          const { createClient } = require('@supabase/supabase-js');
+          
+          const supabase = createClient(
+            process.env.SUPABASE_URL,
+            process.env.SUPABASE_SERVICE_ROLE_KEY
+          );
+          
+          async function checkStoresForAggregation() {
+            const now = new Date();
+            const currentUTCHour = now.getUTCHours();
+            
+            // Get all active stores with their timezones
+            const { data: stores, error } = await supabase
+              .from('stores')
+              .select('id, name, timezone')
+              .eq('is_active', true);
+            
+            if (error) {
+              console.error('Error fetching stores:', error);
+              process.exit(1);
+            }
+            
+            const storesToAggregate = [];
+            
+            for (const store of stores) {
+              // Check if specific store requested
+              if (process.env.SPECIFIC_STORE && store.id !== process.env.SPECIFIC_STORE) {
+                continue;
+              }
+              
+              // Force all if requested
+              if (process.env.FORCE_ALL === 'true') {
+                storesToAggregate.push(store);
+                continue;
+              }
+              
+              // Calculate local hour for store
+              const timezone = store.timezone || 'UTC';
+              const offset = getTimezoneOffset(timezone);
+              const localHour = (currentUTCHour + offset + 24) % 24;
+              
+              // Check if it's between midnight and 2 AM local time
+              if (localHour >= 0 && localHour <= 2) {
+                console.log(`✅ ${store.name} (${timezone}): Local time ${localHour}:00 - needs aggregation`);
+                storesToAggregate.push(store);
+              } else {
+                console.log(`⏭️  ${store.name} (${timezone}): Local time ${localHour}:00 - skip`);
+              }
+            }
+            
+            // Output for GitHub Actions
+            console.log(`\nFound ${storesToAggregate.length} stores needing aggregation`);
+            console.log(`::set-output name=stores::${JSON.stringify(storesToAggregate)}`);
+            console.log(`::set-output name=count::${storesToAggregate.length}`);
+          }
+          
+          // Simple timezone offset map (can be expanded)
+          function getTimezoneOffset(timezone) {
+            const offsets = {
+              'UTC': 0,
+              'Europe/London': 0,
+              'Europe/Lisbon': 0,
+              'Europe/Paris': 1,
+              'Europe/Berlin': 1,
+              'Europe/Madrid': 1,
+              'America/New_York': -5,
+              'America/Chicago': -6,
+              'America/Denver': -7,
+              'America/Los_Angeles': -8,
+              'Asia/Tokyo': 9,
+              'Asia/Shanghai': 8,
+              'Australia/Sydney': 11
+            };
+            
+            return offsets[timezone] || 0;
+          }
+          
+          checkStoresForAggregation();
+          EOF
+          
+          npm install @supabase/supabase-js
+          node check-timezone-aggregation.js
+
+  aggregate-stores:
+    name: Run Daily Aggregation
+    needs: check-stores
+    if: needs.check-stores.outputs.store_count > 0
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        store: ${{ fromJson(needs.check-stores.outputs.stores_to_aggregate) }}
+      max-parallel: 5
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      
+      - name: Install dependencies
+        run: |
+          npm install @supabase/supabase-js date-fns date-fns-tz
+      
+      - name: Run aggregation for ${{ matrix.store.name }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          STORE_ID: ${{ matrix.store.id }}
+          STORE_NAME: ${{ matrix.store.name }}
+          STORE_TIMEZONE: ${{ matrix.store.timezone }}
+        run: |
+          echo "🏪 Aggregating data for ${{ matrix.store.name }} (Store ID: ${{ matrix.store.id }})"
+          echo "🌍 Timezone: ${{ matrix.store.timezone }}"
+          
+          cd scripts
+          
+          # Run the daily aggregation with store filter
+          if [ -f "run_daily_aggregation_by_store.js" ]; then
+            node run_daily_aggregation_by_store.js
+          else
+            # Fallback to regular aggregation
+            echo "Store-specific aggregation not found, using standard aggregation"
+            node run_daily_aggregation_fixed.js
+          fi
+      
+      - name: Log completion
+        if: always()
+        run: |
+          echo "✅ Completed aggregation for ${{ matrix.store.name }}"
+
+  summary:
+    name: Aggregation Summary
+    needs: [check-stores, aggregate-stores]
+    if: always()
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Generate summary
+        run: |
+          cat << EOF > $GITHUB_STEP_SUMMARY
+          # Timezone-Aware Daily Aggregation Summary
+          
+          **Time**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **Stores Processed**: ${{ needs.check-stores.outputs.store_count }}
+          
+          ## Results
+          Check individual job logs for detailed aggregation results.
+          
+          ## How it Works
+          - Runs every hour
+          - Checks each store's local time
+          - Aggregates data when it's midnight-2AM in the store's timezone
+          - Ensures daily reports align with local business days
+          EOF
